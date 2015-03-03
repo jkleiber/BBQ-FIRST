@@ -11,7 +11,7 @@ $sqli=$mysqli->query($query);
 
 $row=mysqli_fetch_assoc($sqli);
 $fleg=$row['flag'];
-if($fleg=="minutes" || $fleg=="hours")
+if($fleg=="on_minutes" || $fleg=="on_hours")
 {
 include 'downtime.php';
 }
@@ -96,6 +96,25 @@ else
 			<tr class="ind"><td><div><a href="allregionfacts.php" class="fade">All-time Event BBQ Rankings</a></div></td></tr>
 		</table>
 		!-->
+		<?php
+		$query="SELECT * FROM `maintenance` ORDER BY `flag` ASC LIMIT 1";
+		$sqli=$mysqli->query($query);
+
+		$row=mysqli_fetch_assoc($sqli);
+		$note=$row['flag'];
+		if($note=="ndisplay")
+		{
+		?>
+		<div style="padding: 10px;border-radius: 5px;border: 1px solid orange;background-color: rgba(240, 178, 15, 0.62);width: 80%;">
+			<!--BBQ FIRST is partially up to date on blue banners earned from Week 1 events. It will be fully up-to-date when results are in from all Week 1 events. !-->
+			<?php
+			echo $row['message'];
+			?>
+		</div>
+		
+		<?php
+			}
+		?>
 		<table>
 				<table class="mainpage">
 					<tr><td><div class="the">Main</div></td></tr>
