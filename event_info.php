@@ -85,25 +85,15 @@ $(document).ready(function()
 				WHERE regional_info.reg_key = '$code'
 				LIMIT 1";
 	$event = $mysqli->query($qq);
+	$num = mysqli_num_rows($event);
 	$e = mysqli_fetch_assoc($event);
 	
-	$bbq=$e["bbq"];
-	$bbqpdq=$e["bbq_pdq"];
-	$sauce=$e['sauce'];
-	$briquette=$e['briquette'];
-	$ribs=$e['ribs'];
-	$temcom=$e['teams'];
-	
-	$year = $e['year'];
-	$yweek = $e['yearweek'];
-	$o = $e['sponsored'];
-	
-	if($yweek!="cmp")
+	if($yweek!="cmp" && $yweek!=null && $yweek!=0)
 	{
 		$yw = "wk" . ($yweek-1);
 		$dispwk = $yweek;
 	}
-	else
+	else if($yweek=="cmp")
 	{
 		if($o=="official")
 		{
@@ -116,12 +106,55 @@ $(document).ready(function()
 			$dispwk = "offseason";
 		}
 	}
+	else
+	{
+		$dispwk = "0";
+		$yw = "wk0";
+	}
+	
+	if($num>0)
+	{
+	$bbq=$e["bbq"];
+	$bbqpdq=$e["bbq_pdq"];
+	$sauce=$e['sauce'];
+	$briquette=$e['briquette'];
+	$ribs=$e['ribs'];
+	$temcom=$e['teams'];
+	
+	$year = $e['year'];
+	$yweek = $e['yearweek'];
+	$o = $e['sponsored'];
+	}
+	else
+	{
+		foreach($teamlist as $t)
+		{
+			$n = $t['team_number'];
+			$quer = "SELECT team_info.nickname, team_info.years, team_info.rookie, `".$yer."`.`".$yw."`, team_info.team_num
+			FROM `".$yer."`
+			INNER JOIN team_info
+			ON `".$yer."`.team_num=team_info.team_num
+			WHERE team_info.team_num='$n'";
+			$sql = $mysqli->query($quer);
+			$rowz = mysqli_fetch_assoc($sql);
+			
+			$bbqpdq="N/A";
+			$sauce="N/A";
+			$briquette="N/A";
+			$ribs="N/A";
+			$bans += $rowz[$yw];
+			$yrs += $rowz["years"];
+			$bbq = $bans/$yrs;
+			$temcom++;
+		}
+	}
+	
 	
 	
 ?>
 <div>
 <h1><?php echo $n['name']; ?></h1>
-<h3>Week <?php echo $dispwk; ?> - <?php echo $year; ?></h3>
+<h3>Week <?php echo $dispwk; ?> - <?php echo $yer; ?></h3>
 </div>
 <table class="stats">
 
@@ -234,10 +267,10 @@ foreach($teamlist as $t)
 	
 	//THE NEW WAY
 	$n = $t['team_number'];
-	$quer = "SELECT team_info.nickname, team_info.years, team_info.rookie, `".$year."`.`".$yw."`, team_info.team_num
-	FROM `".$year."`
+	$quer = "SELECT team_info.nickname, team_info.years, team_info.rookie, `".$yer."`.`".$yw."`, team_info.team_num
+	FROM `".$yer."`
 	INNER JOIN team_info
-	ON `".$year."`.team_num=team_info.team_num
+	ON `".$yer."`.team_num=team_info.team_num
 	WHERE team_info.team_num='$n'";
 	$sql = $mysqli->query($quer);
 	//$sql = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`bbq` WHERE `team_num` = '$n' LIMIT 1");
