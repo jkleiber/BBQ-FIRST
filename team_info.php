@@ -1,5 +1,5 @@
 <?php
-$mysqli = new mysqli('localhost','bbqfrcx1_bbquser','bbqpass', "bbqfrcx1_db");
+include('connect.php');
 	
 if ($mysqli->connect_errno) {
 		printf("Connect failed: %s\n", $mysqli->connect_error);
@@ -110,7 +110,7 @@ function step(seconds, action)
 <!--<p id="p"></p>!-->
 <?php
 	error_reporting(E_ALL ^ E_NOTICE);
-	$mysqli = new mysqli('localhost','bbqfrcx1_bbquser','bbqpass', "bbqfrcx1_db");
+	include('connect.php');
 	
 	/* check connection */
 	if ($mysqli->connect_errno) {

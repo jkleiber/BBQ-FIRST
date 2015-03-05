@@ -1,10 +1,5 @@
 <?php
-$mysqli = new mysqli('localhost','bbqfrcx1_bbquser','bbqpass', "bbqfrcx1_db");
-	
-if ($mysqli->connect_errno) {
-		printf("Connect failed: %s\n", $mysqli->connect_error);
-		exit();
-	}
+include('connect.php');
 	
 $query="SELECT * FROM `maintenance` LIMIT 1";
 $sqli=$mysqli->query($query);
@@ -22,14 +17,7 @@ else
 <html>
 
 <?php
-	error_reporting(E_ALL ^ E_NOTICE);
-	$mysqli = new mysqli('localhost','bbqfrcx1_bbquser','bbqpass', "bbqfrcx1_db");
-	
-	/* check connection */
-	if ($mysqli->connect_errno) {
-		printf("Connect failed: %s\n", $mysqli->connect_error);
-		exit();
-	}
+	include('connect.php');
 
 	$bbq = 0;
 	$code = $_GET['key'];

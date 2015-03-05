@@ -1,5 +1,5 @@
 <?php
-$mysqli = new mysqli('localhost','bbqfrcx1_bbquser','bbqpass', "bbqfrcx1_db");
+include('connect.php');
 	
 if ($mysqli->connect_errno) {
 		printf("Connect failed: %s\n", $mysqli->connect_error);

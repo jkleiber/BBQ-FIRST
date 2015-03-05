@@ -1,11 +1,8 @@
 <?php
-$mysqli = new mysqli('localhost','bbqfrcx1_bbquser','bbqpass', "bbqfrcx1_db");
-	
-if ($mysqli->connect_errno) {
-		printf("Connect failed: %s\n", $mysqli->connect_error);
-		exit();
-	}
-	
+/*
+include('connect.php');
+*/	
+include('connect.php');
 $query="SELECT * FROM `maintenance` LIMIT 1";
 $sqli=$mysqli->query($query);
 
