@@ -75,6 +75,8 @@ $(document).ready(function()
   ga('send', 'pageview');
 
 </script>
+<div>
+<h1><?php echo $n['name']; ?></h1>
 <?php
 
 	//$event = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`regionaldata` WHERE `reg_key` = '$code' LIMIT 1");
@@ -114,16 +116,16 @@ $(document).ready(function()
 	
 	if($num>0)
 	{
-	$bbq=$e["bbq"];
-	$bbqpdq=$e["bbq_pdq"];
-	$sauce=$e['sauce'];
-	$briquette=$e['briquette'];
-	$ribs=$e['ribs'];
-	$temcom=$e['teams'];
-	
-	$year = $e['year'];
-	$yweek = $e['yearweek'];
-	$o = $e['sponsored'];
+		$bbq=$e["bbq"];
+		$bbqpdq=$e["bbq_pdq"];
+		$sauce=$e['sauce'];
+		$briquette=$e['briquette'];
+		$ribs=$e['ribs'];
+		$temcom=$e['teams'];
+		
+		$year = $e['year'];
+		$yweek = $e['yearweek'];
+		$o = $e['sponsored'];
 	}
 	else
 	{
@@ -152,8 +154,7 @@ $(document).ready(function()
 	
 	
 ?>
-<div>
-<h1><?php echo $n['name']; ?></h1>
+
 <h3>Week <?php echo $dispwk; ?> - <?php echo $yer; ?></h3>
 </div>
 <table class="stats">
