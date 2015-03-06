@@ -1,2 +1,3 @@
 #files ignored by git:
 *.ini
+now/*.ini

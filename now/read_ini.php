@@ -1,3 +1,3 @@
 <?php
-	$ini = parse_ini_file("../../bbq.ini");
+	$ini = parse_ini_file("./bbq.ini");
 ?>
