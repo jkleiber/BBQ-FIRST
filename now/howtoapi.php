@@ -1,7 +1,7 @@
 <?php
 	//TEST FIRST API v1.0
-	
-	$auth = "Authorization: Basic " . base64_encode("bbqadmin:8DBE41CE-92B0-4A34-BBB2-D0A411276DD3");
+	include("read_ini.php");
+	$auth = "Authorization: Basic " . base64_encode($ini['api-encoder']);
 	echo $auth;
 try{
 $ch = curl_init();

@@ -35,6 +35,9 @@ usort($regional,function($a,$b) {return strnatcasecmp($a['start_date'],$b['start
 		<div id="container">
 			<div class="nav">
 				<a href="index.php" class="nav"></a>
+				<div class="nav_txt">
+					Week 2
+				</div> 
 			</div>
 			
 			<table class="mainpage">
@@ -46,7 +49,7 @@ usort($regional,function($a,$b) {return strnatcasecmp($a['start_date'],$b['start
 						$result = $mysqli->query($query);
 						$ro = mysqli_fetch_assoc($result);
 						
-						if($ro['yearweek']==1)//change week to week
+						if($ro['yearweek']==2)//change week to week
 						{
 						?>
 							<tr>

@@ -90,7 +90,12 @@ $(document).ready(function()
 	$num = mysqli_num_rows($event);
 	$e = mysqli_fetch_assoc($event);
 	
-	if($yweek!="cmp" && $yweek!=null && $yweek!=0)
+	$year = $e['year'];
+	$yweek = $e['yearweek'];
+	//echo $yweek;
+	$o = $e['sponsored'];
+	
+	if($yweek!="cmp" && $yweek!=null && $yweek!="" && $yweek!="0")
 	{
 		$yw = "wk" . ($yweek-1);
 		$dispwk = $yweek;
@@ -123,9 +128,6 @@ $(document).ready(function()
 		$ribs=$e['ribs'];
 		$temcom=$e['teams'];
 		
-		$year = $e['year'];
-		$yweek = $e['yearweek'];
-		$o = $e['sponsored'];
 	}
 	else
 	{
