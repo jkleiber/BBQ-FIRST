@@ -5,7 +5,7 @@
 	echo $auth;
 try{
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://frc-api.usfirst.org/api/v1.0/awards/2015/");
+curl_setopt($ch, CURLOPT_URL, "https://frc-staging-api.usfirst.org/api/v1.0/awards/2015/");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_HEADER, FALSE);
