@@ -114,6 +114,15 @@ else
 		?>
 		<table>
 				<table class="mainpage">
+					<tr><td><div class="the">Featured</div></td></tr>
+					<tr><td>
+						<div>
+							<a onclick="wid()" href="champs.php" class="reg">CMP Division Comparisons</a>
+						</div>
+					</td></tr>
+					
+				</table>
+				<table class="mainpage">
 					<tr><td><div class="the">Main</div></td></tr>
 					<tr><td>
 						<div>
