@@ -20,8 +20,11 @@ else
 ?>
 
 <html>
+<title>BBQ FIRST - Team Search</title>
+<?php include("navheader.html"); ?>
+<!--
 <head profile="http://www.w3.org/2005/10/profile">
-<title>BBQ FIRST - Event List</title>
+
 <link rel="icon" 
       type="image/png" 
       href="http://bbqfrc.x10host.com/favicon.png">
@@ -37,7 +40,7 @@ else
 				Help	
 			</a> 
 	</div>
-	
+	!-->
 
 <?php
 	error_reporting(E_ALL ^ E_NOTICE);
@@ -62,7 +65,7 @@ else
 	</style>
 <div><h1>FRC Team Search </h1></div>
 <form method="get" action="team_info.php">
-	<input type="number" name="year" min="2005" max="2015" placeholder="Year" value="2015" required/><br>
+	<input type="number" name="year" min="2005" max="2016" placeholder="Year" value="2016" required /><br>
 	<input type="number" name="tem" placeholder="Team Number" required/><br>
 	<input type="submit" value="Go!" class="searcher"/>
 <form>

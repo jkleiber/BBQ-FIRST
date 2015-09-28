@@ -92,8 +92,10 @@ $yrs = 0;
 ?>
 
 <html>
-<head profile="http://www.w3.org/2005/10/profile">
+
 <title>BBQ FIRST - Manual BBQ</title>
+<!--
+<head profile="http://www.w3.org/2005/10/profile">
 <link rel="icon" 
       type="image/png" 
       href="http://bbqfrc.x10host.com/favicon.png">
@@ -114,6 +116,8 @@ $yrs = 0;
 			</a> 
 			
 	</div>
+	!-->
+<?php include('navheader.html'); ?>
 <script>
 function linktoteam(key, yr)
 {

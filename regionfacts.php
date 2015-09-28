@@ -33,6 +33,8 @@ else
 				Help	
 			</a> 
 	</div>
+	<br>
+	<br><br><br>
 	<?php
 	error_reporting(E_ALL ^ E_NOTICE);
 	if($_GET['year'])
@@ -41,7 +43,7 @@ else
 	}
 	else
 	{
-		$year=2015;
+		$year=2016;
 	}
 ?>
 	
@@ -198,6 +200,7 @@ function subform(){
 <form method="get" id="yrs">
 <div><select name="year" onchange="subform()">
 	<option value="1" <?php if($year == 1){echo 'selected="selected"';}else{echo "";}?>>All-Time</option>
+	<option value="2016" <?php if($year == 2016){echo 'selected="selected"';}else{echo "";}?>>2016</option>
 	<option value="2015" <?php if($year == 2015){echo 'selected="selected"';}else{echo "";}?>>2015</option>
 	<option value="2014" <?php if($year == 2014){echo 'selected="selected"';}else{echo "";}?>>2014</option>
 	<option value="2013" <?php if($year == 2013){echo 'selected="selected"';}else{echo "";}?>>2013</option>

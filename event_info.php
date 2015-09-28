@@ -48,6 +48,8 @@ else
 				Help	
 			</a> 
 	</div>
+	<br>
+	<br><br><br>
 <script>
 function linktoteam(key, yr)
 {
@@ -80,13 +82,13 @@ $(document).ready(function()
 <?php
 
 	//$event = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`regionaldata` WHERE `reg_key` = '$code' LIMIT 1");
-	$qq = "SELECT regional_info.reg_name, regional_info.year, regional_info.yearweek, regional_data.bbq, regional_data.sauce, regional_data.ribs, regional_data.bbq_pdq, regional_data.briquette, regional_info.sponsored, `regional_data`.`teams`, regional_data.reg_key
+	$qq = "SELECT regional_info.reg_name, regional_info.year, `regional_info`.`yearweek`, regional_data.bbq, regional_data.sauce, regional_data.ribs, regional_data.bbq_pdq, regional_data.briquette, regional_info.sponsored, `regional_data`.`teams`, regional_data.reg_key
 				FROM regional_data
 				INNER JOIN regional_info
 				ON regional_data.reg_key=regional_info.reg_key
 				WHERE regional_info.reg_key = '$code'
 				LIMIT 1";
-	$event = $mysqli->query($qq);
+	$event = $mysqli->query($qq) or trigger_error($mysqli->error."[$qq]");
 	$num = mysqli_num_rows($event);
 	$e = mysqli_fetch_assoc($event);
 	

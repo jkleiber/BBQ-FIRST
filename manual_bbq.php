@@ -50,6 +50,8 @@ function subform(){
 				Help	
 			</a> 
 	</div>
+	<br>
+	<br><br><br>
 <div>
 <h2>Input team numbers or Batch Upload from Text File</h2>
 <form action="loadtems.php" method="post" id="fileform" enctype="multipart/form-data">

@@ -15,8 +15,10 @@ else
 ?>
 
 <html>
-<head profile="http://www.w3.org/2005/10/profile">
+
 <title>BBQ FIRST - Championship Division Rankings</title>
+<!--
+<head profile="http://www.w3.org/2005/10/profile">
 <link rel="icon" 
       type="image/png" 
       href="http://bbqfrc.x10host.com/favicon.png">
@@ -27,6 +29,8 @@ else
 <script type="text/javascript" src="jquery-1.11.1.min.js"></script> 
 <script type="text/javascript" src="jquery.tablesorter.js"></script> 
 </head>
+!-->
+<?php include('navheader.html'); ?>
 
 <script>
 $(document).ready(function() 
@@ -50,7 +54,8 @@ function linktoevent(key, yr)
 				Help	
 			</a> 
 	</div>
-	
+	<br>
+	<br>
 	<h1>Championship Division Comparisons</h1>
 	<h5>You can sort columns by clicking the headers</h5>
 	<?php

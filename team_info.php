@@ -17,6 +17,10 @@ include 'downtime.php';
 }
 else
 {
+	
+	$bbq = 0;
+	$code = $_GET['tem'];
+	$yer = $_GET['year'];
 ?>
 
 <html>
@@ -107,6 +111,8 @@ function step(seconds, action)
   ga('send', 'pageview');
 
 </script>
+
+
 <!--<p id="p"></p>!-->
 <?php
 	error_reporting(E_ALL ^ E_NOTICE);
@@ -118,9 +124,7 @@ function step(seconds, action)
 		exit();
 	}
 
-	$bbq = 0;
-	$code = $_GET['tem'];
-	$yer = $_GET['year'];
+	
 	
 	// /api/v2/event/2010sc/teams
 	$string = file_get_contents("http://www.thebluealliance.com/api/v2/team/frc". $code ."/".$yer."/events?X-TBA-App-Id=justin_kleiber:event_scraper:1");
@@ -154,8 +158,9 @@ function step(seconds, action)
 	
 	//$sauce = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`sauce` WHERE `team_num` = '$code' LIMIT 1");
 	//$sc = mysqli_fetch_assoc($sauce);
+	include "navheader.html";
 ?>
-
+<!--
 <head profile="http://www.w3.org/2005/10/profile">
 <title>BBQ FIRST - <?php echo $t['nickname'];?> - <?php echo $yer;?></title>
 <link rel="icon" 
@@ -163,6 +168,53 @@ function step(seconds, action)
       href="http://bbqfrc.x10host.com/favicon.png">
 <link rel="stylesheet" href="styler.css">
 </head>
+!-->
+<script>
+var stats = [];
+	
+	function getYear(url)
+	{
+		var yearData = [];
+		return $.getJSON(url).then(function(data){
+			$.each(data, function (index, val) {
+				console.log(val);
+				yearData.push(val);
+			});
+			return yearData;
+		});
+	}
+	
+	$(document).ready(function() 
+	{ 
+		load();
+	
+		var context = document.getElementById("bbChart").getContext("2d");
+		var data = {
+			labels : ["2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016"],
+			datasets : [
+				{
+					label: "Highest BBQ Event",
+				    fillColor: "rgba(0,0,255,.4)",
+				    strokeColor: "#3A3AFF",
+				    highlightFill: "#2121CE",
+				    highlightStroke: "rgba(0,0,255,1)",
+				    data: [0,0,0,0,0,0,0,0,0,0,0,0]
+				}
+			
+			]
+		};
+		
+		var bbChart = new Chart(context).Bar(data);
+		var tNum = "<?php echo $code; ?>";
+		getYear("getbbteam.php?t=" + tNum).then(function(returned){
+			for(var i=0;i<11;i++)
+			{
+				bbChart.datasets[0].bars[i].value = returned[i];
+				bbChart.update();
+			}
+		});
+	});
+</script>
 	<style>
 	.searcher
 	{
@@ -190,7 +242,8 @@ function subform()
 	document.getElementById("yrs").submit();
 }
 </script>
-<body onload="load()">
+<body>
+<!--
 <div id="container">
 	<div class="nav">
 			<a href="index.php" class="nav">
@@ -199,7 +252,7 @@ function subform()
 				Help	
 			</a> 
 	</div>
-
+<br><br><br><br>  !-->
 
 <div>
 <?php
@@ -228,6 +281,7 @@ $saucy=$ti["cmp"]-$tisau["wk0"];
 <form method="get" id="yrs">
 <input type="number" name="tem" class="short_input" value="<?php echo $code; ?>" placeholder="Team #"/>
 <select name="year" onchange="subform()">
+	<option value="2016" <?php if($yer == 2016){echo 'selected="selected"';}else{echo "";}?>>2016</option>
 	<option value="2015" <?php if($yer == 2015){echo 'selected="selected"';}else{echo "";}?>>2015</option>
 	<option value="2014" <?php if($yer == 2014){echo 'selected="selected"';}else{echo "";}?>>2014</option>
 	<option value="2013" <?php if($yer == 2013){echo 'selected="selected"';}else{echo "";}?>>2013</option>
@@ -401,6 +455,11 @@ $sql = $mysqli->query($qrq);
 ?>
 </table>
 
+<br>
+
+<h3>Blue Banners Acquired by Year</h3>
+
+<canvas id="bbChart" width="800" height="400"></canvas>
 
  </div>
 <footer class="nav" class="site-footer">

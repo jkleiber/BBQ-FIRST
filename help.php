@@ -103,6 +103,8 @@ function step(seconds, action)
 				Help	
 			</a> 
 	</div>
+	<br>
+	<br><br><br>
 <br>
 <ul>
 <li class="slideli" id="slide_li_0">
@@ -169,8 +171,8 @@ Here are some links from Chief Delphi for more information:</p>
 			<td></td>
 		</tr> !-->
 		<tr class="help">
-			<td>RIBS</td>
-			<td>Recent Index of BannerS</td>
+			<td>RIB</td>
+			<td>Recent Index of Banners</td>
 			<td>Statistic that averages all banners earned last year by all teams. For 2005, this statistic does not exist yet.</td>
 			<td>RIB = Total Blue Banners earned last year by All Teams / Number of Teams</td>
 		</tr>
@@ -197,7 +199,7 @@ Here are some links from Chief Delphi for more information:</p>
 	</li>
 	<div id="slide_2" class="slidediv">
 		<p>The website uses data that is pulled from The Blue Alliance. On an offline server the data is manipulated and is later uploaded to the live website.
-		During these data uploads the website may be down for 10 minutes, but these uploads ensure that information is displayed faster than recalculating every time
+		During these data uploads the website may go down, but these uploads ensure that information is displayed faster than recalculating every time
 		a page is requested.</p>
 	</div>
 	
@@ -207,7 +209,7 @@ Here are some links from Chief Delphi for more information:</p>
 		</span>
 	</li>
 	<div id="slide_6" class="slidediv">
-		<p>The website uses Blue Alliance API data. In order to have the most accurate data possible, we calculate year by year, week by week team banner counts. 
+		<p>The website uses Blue Alliance API data. In order to have the most accurate data possible, we calculate team banner counts on a weekly basis during competition season. 
 		We also classify each event into specific week categories in order to figure out which data goes where. Offseason event victories do not contribute to Blue Banners</p>
 	</div>
 	
@@ -218,7 +220,8 @@ Here are some links from Chief Delphi for more information:</p>
 	</li>
 	<div id="slide_3" class="slidediv">
 		<p>The Main sub-menu contains 'FRC Event Browser By Year' where you can see a list of every FRC event within the years 2005 and 2015.
-		The sub-menu also has 'FRC Team Search Utility' which lets you look up teams and their success by year.</p>
+		The sub-menu also has 'FRC Team Search Utility' which lets you look up teams and their success by year.
+		The 'Top 10' feature lists out the teams with the most blue banners.</p>
 	</div>
 	
 	<li  class="slideli" id="slide_li_4">
@@ -227,7 +230,7 @@ Here are some links from Chief Delphi for more information:</p>
 		</span>
 	</li>
 	<div id="slide_4" class="slidediv">
-		<p>The Rankings sub-menu provides two types of event rankings - BBQ and SAUCE. Each ranks events for a specific year or all time, and provides divisions
+		<p>The Rankings sub-menu provides four types of event rankings - BBQ, SAUCE, BRIQUETTE and RIB. Each ranks events for a specific year or all time, and provides divisions
 		for Overall Top 25, Official, and Unofficial events.</p>
 	</div>
 	
@@ -240,6 +243,7 @@ Here are some links from Chief Delphi for more information:</p>
 		<p>The Labs sub-menu allows you to run your own experiments with our data. You can build an ideal regional with the Manual Calculator and share the link. There will be more labs to come.</p>
 	</div>
 	</ul>
+
 	
 	<p>If you have any questions that aren't covered here, <a href="contact.php" class="standard">Contact Us</a>.</p>
 	</div>

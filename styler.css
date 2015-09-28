@@ -169,18 +169,18 @@ border-bottom-width: 3px;
 }
 	
 tr td:first-child{
-    -moz-border-radius-topleft: 5px;
+    /*-moz-border-radius-topleft: 5px;
     -moz-border-radius-bottomleft: 5px;
     -webkit-border-top-left-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-left-radius: 5px;*/
 
 }
 
 tr td:last-child{
-    -moz-border-radius-topright: 5px;
+   /* -moz-border-radius-topright: 5px;
     -moz-border-radius-bottomright: 5px;
     -webkit-border-top-right-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;*/
 	padding-right: 5px;
 }
 
@@ -284,7 +284,7 @@ tr.regions_win:hover
 	cursor:pointer;
 }
 tr.regions_win{
-	background-color:#FFF200;
+	background-color:#17A9FF;
 }
 
 tr.off_win:hover
@@ -439,34 +439,38 @@ a.nav_txt:link, a.nav_txt:visited
 transition:border .5s ease;
 position:relative;
 background-color: #FF7A00;
+/*background-color: transparent;*/
 text-decoration:none;
 color: #FFF;
 margin: 0 auto;
 float: right;
-font-size: 26px;
+font-size: 16px;
 padding:14.5px;
-height: 41px;
--webkit-border-radius:0px;
--moz-border-radius:0px;
--ms-border-radius:0px;
-border-radius:0px;
+/*height: 41px;*/
+-webkit-border-radius:5px;
+-moz-border-radius:5px;
+-ms-border-radius:5px;
+border-radius:5px;
+margin:10;
 }
 
 a.nav_txt:hover, a.nav_txt:active
 {
-/*background-color: #474747;*/
-background-color: #EF3802;
--webkit-border-radius:0px;
--moz-border-radius:0px;
-border-radius:0px;
+background-color: #474747;
+/*background-color: #EF3802;
+background-color: #FF9F47;*/
+-webkit-border-radius:5px;
+-moz-border-radius:5px;
+border-radius:5px;
 /*border-bottom:#FF0000 5px solid;*/
 text-decoration:none;
 margin: 0 auto;
 color: #FFF;
 float: right;
-font-size: 26px;
+font-size: 16px;
 padding:14.5px;
-height: 41px;
+margin:10;
+/*height: 41px;*/
 
 }
 
@@ -829,7 +833,7 @@ div.unofficials, div.officials, div.tops
 	-moz-border-radius-bottomright: 5px;
 	-webkit-border-bottom-left-radius: 5px;
 	-moz-border-radius-bottomleft: 5px;
-	background-color: #E4E4E4;
+	background-color: #F4F4F4;
 	margin-bottom: 15px;
 	-webkit-transition:     height .8s ease;
     -moz-transition:        height .8s ease;
@@ -848,9 +852,13 @@ div.nav
 {
 	background-color:#313131;
 	color:#FFF;
-	margin: 0 auto;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 9999;
 	width: 100%;
 	height: 70px;
+	position: fixed;
 }
 div.the
 {

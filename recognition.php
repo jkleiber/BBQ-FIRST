@@ -1,5 +1,7 @@
 <html>
 	<head profile="http://www.w3.org/2005/10/profile">
+	<title>Acknowledgements<title>
+	<!--
 	<link rel="icon" 
       type="image/png" 
       href="http://bbqfrc.x10host.com/favicon.png">
@@ -18,6 +20,10 @@
 				Help	
 			</a> 
 	</div>
+	!-->
+	<?php
+include('navheader.html');
+?>
 <br>
 <table>
 <tr >

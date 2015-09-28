@@ -1,7 +1,5 @@
 <?php
-/*
-include('connect.php');
-*/	
+
 include('connect.php');
 $query="SELECT * FROM `maintenance` LIMIT 1";
 $sqli=$mysqli->query($query);
@@ -38,31 +36,18 @@ else
 
 </script>
 	
+	
 	<body onload="wid()">
 	<div id="container">
-	<div class="nav">
-			<a href="index.php" class="nav">
-			</a> 
-			<a href="help.php" class="nav_txt">
-				Help	
-			</a> 
-	</div>
-	<br>
-	<br>
+	<?php include "navheader.html"; ?>
+
 	<script>
 	function wid()
 	{
 		var screenWidth = window.screen.width;
 		document.getElementById("reg").setAttribute("href", "regionals.php?sw=" + screenWidth +"&year=2014");
 	}
-	/*
-	function fadehover(id)
-	{
-		var a = document.getElementById(id);
-		step(1,function(){
-							a.setAttribute("color", "#FFF");
-						});
-	} */
+
 	function step(seconds, action)
 	{
 		var counter = 0;
@@ -77,22 +62,7 @@ else
 		}, 1000 );
 	}
 	</script>
-	<!--
-		<table class="mainpage">
-			<tr><td><div><a href="regionfacts.php" class="fade">Event BBQ Rankings</a></div></td></tr>
-			<tr><td><div><a onclick="wid()" href="regionals.php?sw=1200" class="reg">BBQ for all FRC Events</a></div></td></tr>
-			<tr><td><div><a href="manual_bbq.php" class="fade">Manual BBQ Calculator</a></div></td></tr>
-			<!--<tr><td><div><a href="eventbrowser.php" class="fade">View and Upload Custom Events</a></div></td></tr> 
-		</table> 
-		<div>
-		<table class="ind">
-			
-			<tr class="ind"><td id="indsm"><div><a href="regionfacts.php" class="fade">Current Season Event BBQ Rankings</a></div></td></tr>
-			<tr class="ind"><td><div><a onclick="wid()" href="regionals.php?sw=1200" class="reg">BBQ for all FRC Events</a></div></td></tr>
-			<tr class="ind"><td><div><a href="manual_bbq.php" class="fade">Manual BBQ Calculator</a></div></td></tr>
-			<tr class="ind"><td><div><a href="allregionfacts.php" class="fade">All-time Event BBQ Rankings</a></div></td></tr>
-		</table>
-		!-->
+
 		<?php
 		$query="SELECT * FROM `maintenance` ORDER BY `flag` ASC LIMIT 1";
 		$sqli=$mysqli->query($query);
@@ -114,10 +84,15 @@ else
 		?>
 		<table>
 				<table class="mainpage">
-					<tr><td><div class="the">Featured</div></td></tr>
-					<tr><td>
+					 <tr><td><div class="the">Featured</div></td></tr> 
+					 <tr><td>
 						<div>
-							<a onclick="wid()" href="champs.php" class="reg">CMP Division Comparisons</a>
+							<a onclick="wid()" href="regionals.php?sw=1200&year=2016" class="reg">FRC Event Browser by Year</a>
+						</div>
+					</td></tr>
+						<tr><td>
+						<div>
+							<a onclick="wid()" href="year_compare.php" class="reg">Year Comparisons</a>
 						</div>
 					</td></tr>
 					
@@ -126,12 +101,17 @@ else
 					<tr><td><div class="the">Main</div></td></tr>
 					<tr><td>
 						<div>
-							<a onclick="wid()" href="regionals.php?sw=1200&year=2015" class="reg">FRC Event Browser by Year</a>
+							<a onclick="wid()" href="regionals.php?sw=1200&year=2016" class="reg">FRC Event Browser by Year</a>
 						</div>
 					</td></tr>
 					<tr><td>
 						<div>
 							<a href="teambrowse.php" class="fade">FRC Team Search Utility</a>
+						</div>
+					</td></tr>
+					<tr><td>
+						<div>
+							<a onclick="wid()" href="top10" class="reg">FRC Blue Banner Top 10</a>
 						</div>
 					</td></tr>
 					
@@ -140,16 +120,7 @@ else
 				<br>
 				<table class="mainpage">
 					<tr><td><div class="the">Rankings</div></td></tr>
-				<!--	<tr><td>
-						<div>
-							<a href="allregionfacts.php" class="fade">All-time Event BBQ Rankings</a>
-						</div>
-					</td></tr>
-					<tr><td>
-						<div>
-							<a href="allsaucefacts.php" class="fade">All-time Event SAUCE Event Rankings</a>
-						</div>
-					</td></tr> -->
+				
 					<tr><td>
 						<div>
 							<a href="regionfacts.php" class="fade">BBQ Event Rankings</a>
@@ -171,7 +142,20 @@ else
 						</div>
 					</td></tr>
 				</table>
-				
+				<table class="mainpage">
+					<tr><td><div class="the">Comparisons</div></td></tr>
+					<tr><td>
+						<div>
+							<a onclick="wid()" href="champs.php" class="reg">CMP Division Comparisons</a>
+						</div>
+					</td></tr>
+					<tr><td>
+						<div>
+							<a onclick="wid()" href="year_compare.php" class="reg">Year Comparisons</a>
+						</div>
+					</td></tr>
+					
+				</table>
 				<br>
 				<table class="mainpage">
 					<tr><td><div class="the">Labs</div></td></tr>

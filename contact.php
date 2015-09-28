@@ -24,6 +24,8 @@
 			</a> 
 	</div>
 	<br>
+	<br><br><br>
+	<br>
 	<div class="the" style="padding:10px;">
 	<form name="emailform" method="post" action="send_mail.php">
 	<table class="contact">
