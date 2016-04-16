@@ -20,7 +20,14 @@ else
 	
 	$bbq = 0;
 	$code = $_GET['tem'];
+	if(isset($_GET['year']))
+	{
 	$yer = $_GET['year'];
+	}
+	else
+	{
+		$yer = 2016;
+	}
 ?>
 
 <html>
@@ -207,7 +214,7 @@ var stats = [];
 		var bbChart = new Chart(context).Bar(data);
 		var tNum = "<?php echo $code; ?>";
 		getYear("getbbteam.php?t=" + tNum).then(function(returned){
-			for(var i=0;i<11;i++)
+			for(var i=0;i<12;i++)
 			{
 				bbChart.datasets[0].bars[i].value = returned[i];
 				bbChart.update();
@@ -253,7 +260,7 @@ function subform()
 			</a> 
 	</div>
 <br><br><br><br>  !-->
-
+<title><?=$t['team_number'].": " .$t['nickname']?></title>
 <div>
 <?php
 	if($t['website']!=null)

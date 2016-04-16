@@ -26,12 +26,12 @@ include('navheader.html');
 <?php
 $rnk=1;
 
-		$qq = "SELECT team_info.years, team_info.rookie, `2015`.cmp, GROUP_CONCAT(team_info.nickname ORDER BY `2015`.cmp SEPARATOR ',') as 'nickname',GROUP_CONCAT(team_info.team_num ORDER BY `2015`.cmp SEPARATOR ',') as 'team_num'
-FROM `2015`
+		$qq = "SELECT team_info.years, team_info.rookie, `2016`.cmp, GROUP_CONCAT(team_info.nickname ORDER BY `2016`.cmp SEPARATOR ',') as 'nickname',GROUP_CONCAT(team_info.team_num ORDER BY `2016`.cmp SEPARATOR ',') as 'team_num'
+FROM `2016`
 INNER JOIN team_info
-ON `2015`.team_num=team_info.team_num
-GROUP BY `2015`.cmp
-ORDER BY `2015`.`cmp` DESC, team_info.rookie DESC
+ON `2016`.team_num=team_info.team_num
+GROUP BY `2016`.cmp
+ORDER BY `2016`.`cmp` DESC, team_info.rookie DESC
 LIMIT 10";
 		$sqli = $mysqli->query($qq);
 		while($row = mysqli_fetch_array($sqli))

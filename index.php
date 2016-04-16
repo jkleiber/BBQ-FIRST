@@ -45,7 +45,7 @@ else
 	function wid()
 	{
 		var screenWidth = window.screen.width;
-		document.getElementById("reg").setAttribute("href", "regionals.php?sw=" + screenWidth +"&year=2014");
+		document.getElementById("reg").setAttribute("href", "regionals.php?sw=" + screenWidth +"&year=2016");
 	}
 
 	function step(seconds, action)
@@ -69,8 +69,8 @@ else
 
 		$row=mysqli_fetch_assoc($sqli);
 		$note=$row['flag'];
-		if($note=="ndisplay")
-		{
+			if($note=="ndisplay")
+			{
 		?>
 		<div style="padding: 10px;border-radius: 5px;border: 1px solid orange;background-color: rgba(240, 178, 15, 0.62);width: 80%;">
 			<!--BBQ FIRST is partially up to date on blue banners earned from Week 1 events. It will be fully up-to-date when results are in from all Week 1 events. !-->
@@ -87,12 +87,19 @@ else
 					 <tr><td><div class="the">Featured</div></td></tr> 
 					 <tr><td>
 						<div>
-							<a onclick="wid()" href="regionals.php?sw=1200&year=2016" class="reg">FRC Event Browser by Year</a>
+							<a onclick="wid()" href="regionals.php?sw=1200&year=2016" id="reg" class="reg">FRC Event Browser by Year</a>
 						</div>
 					</td></tr>
-						<tr><td>
+					
+					<tr><td>
 						<div>
-							<a onclick="wid()" href="year_compare.php" class="reg">Year Comparisons</a>
+							<a href="regionfacts.php" class="fade">BBQ Event Rankings</a>
+						</div>
+					</td></tr>
+					
+					<tr><td>
+						<div>
+							<a href="ribsfacts.php" class="fade">RIBS Event Rankings</a>
 						</div>
 					</td></tr>
 					
@@ -144,11 +151,11 @@ else
 				</table>
 				<table class="mainpage">
 					<tr><td><div class="the">Comparisons</div></td></tr>
-					<tr><td>
+			<!--		<tr><td>
 						<div>
 							<a onclick="wid()" href="champs.php" class="reg">CMP Division Comparisons</a>
 						</div>
-					</td></tr>
+					</td></tr> -->
 					<tr><td>
 						<div>
 							<a onclick="wid()" href="year_compare.php" class="reg">Year Comparisons</a>
@@ -175,7 +182,7 @@ else
 		</div>
 	</div>
 		<footer class="nav" class="site-footer">
-				<a href="admin/" class="fstd">Admin</a> - <a href="contact.php" class="fstd">Contact Us</a> - <a href="recognition.php" class="fstd">Acknowledgements</a>
+				<a href="admin/index.php" class="fstd">Admin</a> - <a href="contact.php" class="fstd">Contact Us</a> - <a href="recognition.php" class="fstd">Acknowledgements</a>
 		</footer>
 	</body>
 </html>

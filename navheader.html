@@ -7,14 +7,30 @@
 <script type="text/javascript" src="jquery.tablesorter.js"></script> 
 <script src="Chart.js"></script>
 <script src="jquery-1.11.1.min.js"></script>
+
+<script src="searchBar.js"></script>
+<script src="autocomplete.js"></script>
 </head>
 
 
 <div id="container">
 	<div class="nav">
-			<a href="index.php" class="nav">
-			</a>
+			<a href="index.php" class="nav"></a>
+			
+			<!--Right Aligned Elements-->
 			<a href="help" class="nav_txt">Help</a> 
+			
+			
+			<div id="search_bar">
+				<span class="search">
+					<input type="text" name="q" id="searcher" class="search" placeholder="Search" autocomplete="off"></input>
+					<div id="results">
+					</div>
+				</span>
+			</div>
+			<!--<button type="button" class="search_button" onclick="expandSearch()"></button>
+			
+			<div class="clearer"></div> -->
 			
 	</div>
 	<br>
