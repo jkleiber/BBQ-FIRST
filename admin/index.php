@@ -12,7 +12,7 @@ else
 <head profile="http://www.w3.org/2005/10/profile">
 <link rel="icon"
       type="image/png"
-      href="http://justrun.x10.mx/BBQ/favicon.png">
+      href="http://bbqfrc.x10host.com/favicon.png">
 <link rel="stylesheet" href="../styler.css">
 <title>Admin Login</title>
 </head>

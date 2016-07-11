@@ -1,9 +1,21 @@
+<html>
+<head profile="http://www.w3.org/2005/10/profile">
+<link rel="icon" 
+      type="image/png" 
+      href="http://bbqfrc.x10host.com/favicon.png">
+<link rel="stylesheet" href="../styler.css">
+<link rel="stylesheet" href="../mobile_styler.css">
+<link rel="stylesheet" href="../small_styler.css">
+
+<title>Maintenance Page Controller</title>
+</head>
 <?php
-	error_reporting(E_ALL ^ E_NOTICE);
+	//error_reporting(E_ALL ^ E_NOTICE);
 	session_start();
 if($_SESSION['user']!='bbqadmin')
 {
-	header("Location: index.php");
+	echo "Access Denied.";
+	//header("Location: index.php");
 }
 else
 {
@@ -14,41 +26,34 @@ else
 	include("connect.php");
 	
 	$query="SELECT * FROM `maintenance` LIMIT 1";
-$sqli=$mysqli->query($query);
-
-$row=mysqli_fetch_assoc($sqli);
-
-$tim=$row['duration'];
-
-$fleg=$row['flag'];
-
-$start=$row['start'];
+	$sqli=$mysqli->query($query);
+	
+	$row=mysqli_fetch_assoc($sqli);
+	
+	$tim=$row['duration'];
+	
+	$fleg=$row['flag'];
+	
+	$start=$row['start'];
 
 ?>
-<html>
-<head profile="http://www.w3.org/2005/10/profile">
-<link rel="icon" 
-      type="image/png" 
-      href="http://justrun.x10.mx/BBQ/favicon.png">
-<link rel="stylesheet" href="../styler.css">
-<link rel="stylesheet" href="../mobile_styler.css">
-<link rel="stylesheet" href="../small_styler.css">
-</head>
+
+
 <body>
-<a href="adpanel.php" class="adm">Go Back</a>
-<br><br>
-<div>
-<form method="post" name="mten">
-<input type="submit" value="Set maintenance flag"></input><br><br>
-<input type="number" name="time"></input><br>
-<textarea rows="8" cols="50" name="message" ></textarea><br>
-<input type="radio" name="flag" value="off" required>Off</input><br>
-<input type="radio" name="flag" value="minutes">On for minutes</input><br>
-<input type="radio" name="flag" value="hours">On for hours</input><br>
+	<a href="adpanel.php" class="adm">Go Back</a>
+	<br><br>
+	<div>
+	<form method="post" name="mten">
+	<input type="submit" value="Set maintenance flag"></input><br><br>
+	<input type="number" name="time"></input><br>
+	<textarea rows="8" cols="50" name="message" ></textarea><br>
+	<input type="radio" name="flag" value="off" required>Off</input><br>
+	<input type="radio" name="flag" value="minutes">On for minutes</input><br>
+	<input type="radio" name="flag" value="hours">On for hours</input><br>
+	
+	</form>
 
-</form>
-
-<h1>DO NOT Refresh this page OR ELSE the timer will reset</h1>
+	<h1>DO NOT Refresh this page OR ELSE the timer will reset</h1>
 <script>
 var myVar=setInterval(function () {myTimer()}, 1000);
 
@@ -76,9 +81,9 @@ var myVar=setInterval(function () {myTimer()}, 1000);
 			document.getElementById("strt").innerHTML = dd;
 		}
 </script>
-<h3 class="strt"> </h3>
-<h3 class="times"> </h3>
-</div>
+	<h3 class="strt"> </h3>
+	<h3 class="times"> </h3>
+	</div>
 </body>
 </html>
 

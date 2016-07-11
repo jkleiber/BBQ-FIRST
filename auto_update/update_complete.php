@@ -2,7 +2,7 @@
 	include("connect.php");
 	
 	$year = date("Y");
-	$month = date("M");
+	$month = date("m");
 	$day = date("d");
 	
 	$hour = date("G");
