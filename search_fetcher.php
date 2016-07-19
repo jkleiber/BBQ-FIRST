@@ -11,7 +11,7 @@ function searchForStuff($mysqli,$text)
 	
 	$team_query = "SELECT * FROM `team_info` WHERE (`team_num` LIKE '%" . $text . "%') OR (`nickname` LIKE '%".$text."%') ORDER BY `team_num` ASC";
 	//$team_query = "SELECT * FROM `team_info` WHERE `nickname` LIKE '" . $text . "' ORDER BY `nickname` ASC";
-	$event_query = "SELECT * FROM `regional_info` WHERE `reg_name` LIKE '%" . $text . "%' ORDER BY `reg_name` ASC";
+	$event_query = "SELECT * FROM `regional_info` WHERE (`reg_name` LIKE '%".$text."%') OR (`short_name` LIKE '%".$text."%') ORDER BY `reg_name` ASC, `year` DESC";
 	
 	$team_result = $mysqli->query($team_query) or trigger_error;
 	//$team_name_result = $mysqli->query($team_name_query) or trigger_error;
@@ -39,8 +39,15 @@ function searchForStuff($mysqli,$text)
 		while($row = $event_result->fetch_array(MYSQLI_ASSOC))
 		{
 			$newRow = [];
-			$newRow['display'] = $row['reg_name'];
-			$newRow["link"] = "./event_info.php?key=" . $row['reg_key'] . "&year=" . $row['year'];
+			$name = $row['reg_name'];
+			
+			if(strlen($name) > 30 && strlen($row['short_name'])>0)//If the name is long, and the short name exists
+			{
+				$name = $row['short_name'];//replace name with short name
+			}
+			
+			$newRow['display'] = $name . " - " . $row['year'];
+			$newRow["link"] = "./event_info.php?key=" . $row['reg_key'];
 			//echo $row;
 			
 			$rows[] = $newRow;
@@ -48,6 +55,5 @@ function searchForStuff($mysqli,$text)
 	}
 	
 	return json_encode($rows);
-	//return json_encode($rows);
 }
 ?>

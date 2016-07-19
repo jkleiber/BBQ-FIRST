@@ -31,12 +31,14 @@
 		$yearweek = $week - $start_week + 1;
 		$yearweek = $sponsored == "unofficial" ? "cmp" : $yearweek;
 		
+		$short_name = $r['short_name'];
+		
 		if(!doesEventInfoExist($key,$mysqli) && $event_year == $year)
 		{
 			$new_keys .= $key;
 			$new_keys .= "\n";
 			
-			$info_query = "INSERT INTO `regional_info` (`reg_name`,`reg_key`,`year`,`week`,`yearweek`,`sponsored`) VALUES ('$name','$key','$event_year','$week','$yearweek','$sponsored')";
+			$info_query = "INSERT INTO `regional_info` (`reg_name`,`reg_key`,`year`,`week`,`yearweek`,`sponsored`,`short_name`) VALUES ('$name','$key','$event_year','$week','$yearweek','$sponsored','$short_name')";
 			$mysqli->query($info_query);
 		}
 	}

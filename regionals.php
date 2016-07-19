@@ -96,11 +96,11 @@ else
 	{
 ?>
 <tr>
-<td><div><a href="<?='event_info.php?key=' . $r['key'] . "&year=" . $year ?>" class="fade"><?php echo $r['name'];?> </a></div></td>
+<td><div><a href="<?='event_info.php?key=' . $r['key']?>" class="fade"><?php echo $r['name'];?> </a></div></td>
 </tr>
 <?php }else{ ?>
 <tr>
-<td><div><a href="<?='event_info.php?key=' . $r['key'] . "&year=" . $year ?>" class="fade"><?php echo $r['short_name'];?> </a></div></td>
+<td><div><a href="<?='event_info.php?key=' . $r['key']?>" class="fade"><?php echo $r['short_name'];?> </a></div></td>
 </tr>
 <?php }} ?>
 </table>

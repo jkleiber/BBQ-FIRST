@@ -21,7 +21,7 @@ else
 
 	$bbq = 0;
 	$code = $_GET['key'];
-	$yer = $_GET['year'];
+	$yer = substr($code,0,4);
 	
 	// /api/v2/event/2010sc/teams
 	$string = file_get_contents("http://www.thebluealliance.com/api/v2/event/". $code ."?X-TBA-App-Id=justin_kleiber:event_scraper:1");

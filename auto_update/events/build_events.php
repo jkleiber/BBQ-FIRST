@@ -31,13 +31,13 @@ function build_event($key, $current_year, $mysqli)
 	}
 	else
 	{
-		if($real_event = "official") //champs mainly
+		if(strcmp($real_event,"official")==0) //Championship event, and other official events in the last weeks
 		{
-			if($year >= 2016)
+			if($year >= 2016)//2016 was the first year to have 8 weeks
 			{
 				$week_column = "wk8"; 
 			}
-			else //offseason events
+			else
 			{
 				$week_column = "wk7";
 			}
@@ -123,11 +123,22 @@ function build_event($key, $current_year, $mysqli)
 	}
 	
 	//Event = gud b0ss
-	$mysqli->query($query)  or trigger_error($mysqli->error."[$query]");
+	$mysqli->query($query) or trigger_error($mysqli->error."[$query]");
 }
 
 function getTeamBanners($team_number, $year, $week_column, $mysqli)
 {
+	//Filter week 8 stuff, because that was added in 2016
+	$briquette_week = $week_column;
+	$rib_week = $week_column;
+	if($year < 2020 && strcmp($week_column,"wk8")==0)
+	{
+		$briquette_week = "wk7";
+	}
+	if($year < 2017 && strcmp($week_column,"wk8")==0)
+	{
+		$rib_week = "wk7";
+	}
 	
 	//set return vars to 0
 	$blue_banners = 0;
@@ -137,22 +148,24 @@ function getTeamBanners($team_number, $year, $week_column, $mysqli)
 	$years = 0;
 	
 	//Time to get blue banner data
-	$team_raw = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`".$year."` WHERE `team_num` = '$team_number' LIMIT 1")or trigger_error($mysqli->error);
-	$row = mysqli_fetch_assoc($team_raw);
+	$team_raw = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`$year` WHERE `team_num` = '$team_number' LIMIT 1")or trigger_error($mysqli->error);
+	$row = $team_raw->fetch_assoc();
 	$blue_banners = $row[$week_column];
 	
 	//Get 2005 banners as reference point for SAUCE calculations
 	$team_2005 = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`2005` WHERE `team_num` = '$team_number' LIMIT 1") or trigger_error($mysqli->error);
-	$row_2005 = mysqli_fetch_assoc($team_2005);
+	$row_2005 = $team_2005->fetch_assoc();
 	$sauce = ($blue_banners - $row_2005['wk0']);
 	
 	//BRIQUETTE Calculations
 	if(($year-4)>=2005)
 	{
 		$range = ($year-4);
-		$team_briquette_result = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`".$range."` WHERE `team_num` = '$team_number' LIMIT 1") or trigger_error($mysqli->error);
-		$team_briquette_row = mysqli_fetch_assoc($team_briquette_result);
-		$briquette = $blue_banners-$team_briquette_row[$week_column];
+		$briquette_query = "SELECT * FROM `bbqfrcx1_db`.`$range` WHERE `team_num` = '$team_number' LIMIT 1";
+		$team_briquette_result = $mysqli->query($briquette_query) or trigger_error($mysqli->error."[$briquette_query]");
+		$team_briquette_row = $team_briquette_result->fetch_assoc();
+		
+		$briquette = $blue_banners-$team_briquette_row[$briquette_week];
 	}
 	else
 	{
@@ -163,9 +176,10 @@ function getTeamBanners($team_number, $year, $week_column, $mysqli)
 	if(($year-1)>=2005)
 	{
 		$last_year=($year-1);
-		$team_ribs = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`".$last_year."` WHERE `team_num` = '$team_number' LIMIT 1") or trigger_error($mysqli->error);
-		$team_ribs_row = mysqli_fetch_assoc($team_ribs);
-		$ribs = $blue_banners-$team_ribs_row[$week_column];
+		$team_ribs = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`$last_year` WHERE `team_num` = '$team_number' LIMIT 1") or trigger_error($mysqli->error);
+		$team_ribs_row = $team_ribs->fetch_assoc();
+		
+		$ribs = $blue_banners - $team_ribs_row[$rib_week];
 	}
 	else
 	{
@@ -173,9 +187,9 @@ function getTeamBanners($team_number, $year, $week_column, $mysqli)
 	}
 	
 	//Get years participated in FRC
-	$team_expereince_query = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`team_info` WHERE `team_num` = '$team_number' LIMIT 1") or trigger_error($mysqli->error);
-	$team_expereince_result = mysqli_fetch_assoc($team_expereince_query);
-	$years = $team_expereince_result['years'];
+	$team_experience_query = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`team_info` WHERE `team_num` = '$team_number' LIMIT 1") or trigger_error($mysqli->error);
+	$team_experience_result = $team_experience_query->fetch_assoc();
+	$years = $team_experience_result['years'];
 	
 	$data = [];
 	$data['blue_banners'] = $blue_banners;

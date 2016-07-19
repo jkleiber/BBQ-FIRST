@@ -190,7 +190,7 @@ function step(seconds, action)
 
 function linktoevent(key, yr)
 {
-	location.href = 'event_info.php?key=' + key + "&year=" +yr;
+	location.href = 'event_info.php?key=' + key;
 }
 function subform(){
 		document.getElementById("yrs").submit();

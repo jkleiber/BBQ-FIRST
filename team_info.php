@@ -242,7 +242,7 @@ var stats = [];
 <script>
 function linktoevent(key, yr)
 {
-	location.href = 'event_info.php?key=' + key + "&year=" +yr;
+	location.href = 'event_info.php?key=' + key;
 }
 function subform()
 {
