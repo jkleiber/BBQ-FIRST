@@ -45,7 +45,7 @@ else
 	function wid()
 	{
 		var screenWidth = window.screen.width;
-		document.getElementById("reg").setAttribute("href", "regionals.php?sw=" + screenWidth +"&year=2016");
+		document.getElementById("reg").setAttribute("href", "regionals.php?sw=" + screenWidth);
 	}
 
 	function step(seconds, action)
@@ -83,37 +83,12 @@ else
 			}
 		?>
 		<table>
-				<table class="mainpage">
-					 <tr><td><div class="the">Featured</div></td></tr> 
-					 <tr><td>
-						<div>
-							<a onclick="wid()" href="regionals.php?sw=1200&year=2016" id="reg" class="reg">FRC Event Browser by Year</a>
-						</div>
-					</td></tr>
-					
-					<tr><td>
-						<div>
-							<a href="regionfacts.php" class="fade">BBQ Event Rankings</a>
-						</div>
-					</td></tr>
-					
-					<tr><td>
-						<div>
-							<a href="ribsfacts.php" class="fade">RIBS Event Rankings</a>
-						</div>
-					</td></tr>
-					
-				</table>
+			
 				<table class="mainpage">
 					<tr><td><div class="the">Main</div></td></tr>
 					<tr><td>
 						<div>
-							<a onclick="wid()" href="regionals.php?sw=1200&year=2016" class="reg">FRC Event Browser by Year</a>
-						</div>
-					</td></tr>
-					<tr><td>
-						<div>
-							<a href="teambrowse.php" class="fade">FRC Team Search Utility</a>
+							<a onclick="wid()" id="reg" href="regionals.php?sw=1200" class="reg">FRC Event Browser by Year</a>
 						</div>
 					</td></tr>
 					<tr><td>
@@ -149,20 +124,6 @@ else
 						</div>
 					</td></tr>
 				</table>
-				<table class="mainpage">
-					<tr><td><div class="the">Comparisons</div></td></tr>
-			<!--		<tr><td>
-						<div>
-							<a onclick="wid()" href="champs.php" class="reg">CMP Division Comparisons</a>
-						</div>
-					</td></tr> -->
-					<tr><td>
-						<div>
-							<a onclick="wid()" href="year_compare.php" class="reg">Year Comparisons</a>
-						</div>
-					</td></tr>
-					
-				</table>
 				<br>
 				<table class="mainpage">
 					<tr><td><div class="the">Labs</div></td></tr>
@@ -171,11 +132,6 @@ else
 							<a href="manual_bbq.php" class="fade" >Manual Calculator</a>
 						</div>
 					</td></tr>
-			<!--		<tr><td>
-						<div>
-							<a href="" class="fade">View and Upload Custom Events</a>
-						</div>
-					</td></tr> !-->
 				</table>
 			</tbody>
 		</table>
