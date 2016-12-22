@@ -15,7 +15,7 @@ else
 	$team = $_GET['t'];
 	
 	$arr = array();
-	for($year = 2005; $year < 2017; $year++)
+	for($year = 2005; $year < 2018; $year++)
 	{
 		$querys = "SELECT `".$year."`.`cmp`, `".$year."`.`wk0`
 				FROM `bbqfrcx1_db`.`".$year."`

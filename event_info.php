@@ -41,15 +41,7 @@ else
 <script type="text/javascript" src="jquery.tablesorter.js"></script> 
 </head>
 <div id="container">
-	<div class="nav">
-			<a href="index.php" class="nav">
-			</a> 
-			<a href="help.php" class="nav_txt">
-				Help	
-			</a> 
-	</div>
-	<br>
-	<br><br><br>
+<?php include "navheader.html"; ?>
 <script>
 function linktoteam(key, yr)
 {

@@ -65,7 +65,7 @@ else
 	</style>
 <div><h1>FRC Team Search </h1></div>
 <form method="get" action="team_info.php">
-	<input type="number" name="year" min="2005" max="2016" placeholder="Year" value="2016" required /><br>
+	<input type="number" name="year" min="2005" max="3000" placeholder="Year" value="<?= date("Y")?>" required /><br>
 	<input type="number" name="tem" placeholder="Team Number" required/><br>
 	<input type="submit" value="Go!" class="searcher"/>
 <form>

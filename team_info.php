@@ -20,13 +20,11 @@ else
 	
 	$bbq = 0;
 	$code = $_GET['tem'];
+	$yer = date("Y");
+	
 	if(isset($_GET['year']))
 	{
-	$yer = $_GET['year'];
-	}
-	else
-	{
-		$yer = 2016;
+		$yer = $_GET['year'];
 	}
 ?>
 
@@ -124,20 +122,8 @@ function step(seconds, action)
 <?php
 	error_reporting(E_ALL ^ E_NOTICE);
 	include('connect.php');
-	
-	/* check connection */
-	if ($mysqli->connect_errno) {
-		printf("Connect failed: %s\n", $mysqli->connect_error);
-		exit();
-	}
 
-	
-	
-	// /api/v2/event/2010sc/teams
-	$string = file_get_contents("http://www.thebluealliance.com/api/v2/team/frc". $code ."/".$yer."/events?X-TBA-App-Id=justin_kleiber:event_scraper:1");
-	$n=json_decode($string,true);
-	
-	usort($n,function($a,$b) {return strnatcasecmp($a['start_date'],$b['start_date']);});
+	//Get the selected team data from TBA API
 	$teams = file_get_contents("http://www.thebluealliance.com/api/v2/team/frc". $code ."?X-TBA-App-Id=justin_kleiber:team_scraper:1");
 	$t=json_decode($teams,true);
 	//usort($teamlist,function($a,$b) {return strnatcasecmp($a['team_number'],$b['team_number']);});
@@ -197,7 +183,7 @@ var stats = [];
 	
 		var context = document.getElementById("bbChart").getContext("2d");
 		var data = {
-			labels : ["2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016"],
+			labels : ["2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017"],
 			datasets : [
 				{
 					label: "Highest BBQ Event",
@@ -205,7 +191,7 @@ var stats = [];
 				    strokeColor: "#3A3AFF",
 				    highlightFill: "#2121CE",
 				    highlightStroke: "rgba(0,0,255,1)",
-				    data: [0,0,0,0,0,0,0,0,0,0,0,0]
+				    data: [0,0,0,0,0,0,0,0,0,0,0,0,0]
 				}
 			
 			]
@@ -214,7 +200,7 @@ var stats = [];
 		var bbChart = new Chart(context).Bar(data);
 		var tNum = "<?php echo $code; ?>";
 		getYear("getbbteam.php?t=" + tNum).then(function(returned){
-			for(var i=0;i<12;i++)
+			for(var i=0;i<data.labels.length;i++)
 			{
 				bbChart.datasets[0].bars[i].value = returned[i];
 				bbChart.update();
@@ -288,6 +274,7 @@ $saucy=$ti["cmp"]-$tisau["wk0"];
 <form method="get" id="yrs">
 <input type="number" name="tem" class="short_input" value="<?php echo $code; ?>" placeholder="Team #"/>
 <select name="year" onchange="subform()">
+	<option value="2017" <?php if($yer == 2017){echo 'selected="selected"';}else{echo "";}?>>2017</option>
 	<option value="2016" <?php if($yer == 2016){echo 'selected="selected"';}else{echo "";}?>>2016</option>
 	<option value="2015" <?php if($yer == 2015){echo 'selected="selected"';}else{echo "";}?>>2015</option>
 	<option value="2014" <?php if($yer == 2014){echo 'selected="selected"';}else{echo "";}?>>2014</option>
@@ -354,6 +341,10 @@ while($rower = mysqli_fetch_array($eventas))
 <th class="region">BBQ</th>
 <th class="region">SAUCE</th>
 <?php	
+	//Get Team data from TBA from the selected year
+	$string = file_get_contents("http://www.thebluealliance.com/api/v2/team/frc". $code ."/".$yer."/events?X-TBA-App-Id=justin_kleiber:event_scraper:1");
+	$n=json_decode($string,true);
+	usort($n,function($a,$b) {return strnatcasecmp($a['start_date'],$b['start_date']);});
 
 	foreach($n as $event)
 	{

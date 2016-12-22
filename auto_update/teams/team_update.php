@@ -88,7 +88,17 @@
 			$b_count[] = $glob;
 		}
 		
-		$sql = "UPDATE `bbqfrcx1_db`.`".$year."` SET `wk0`='$b_count[0]',`wk1`='$b_count[1]',`wk2`='$b_count[2]',`wk3`='$b_count[3]',`wk4`='$b_count[4]',`wk5`='$b_count[5]',`wk6`='$b_count[6]',`wk7`='$b_count[7]',`wk8`='$b_count[8]',`cmp`='$b_count[9]' WHERE `team_num`='$t'";
+		$doesTeamExistQuery = "SELECT COUNT(*) FROM `$year` WHERE `team_num`='$t'";
+		$teamCount = $mysqli->query($doesTeamExistQuery) or trigger_error($mysqli->error."[$doesTeamExistQuery]");
+		$row = $teamCount->fetch_assoc();
+		
+		$sql = "INSERT INTO `$year` (wk0,wk1,wk2,wk3,wk4,wk5,wk6,wk7,wk8,cmp,team_num) VALUES ('$b_count[0]','$b_count[1]','$b_count[2]','$b_count[3]','$b_count[4]','$b_count[5]','$b_count[6]','$b_count[7]','$b_count[8]','$b_count[9]','$t')";
+		
+		if($row["COUNT(*)"] > 0)
+		{
+			$sql = "UPDATE `bbqfrcx1_db`.`".$year."` SET `wk0`='$b_count[0]',`wk1`='$b_count[1]',`wk2`='$b_count[2]',`wk3`='$b_count[3]',`wk4`='$b_count[4]',`wk5`='$b_count[5]',`wk6`='$b_count[6]',`wk7`='$b_count[7]',`wk8`='$b_count[8]',`cmp`='$b_count[9]' WHERE `team_num`='$t'";
+		}
+		
 		$mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 		unset($b_count);
 		

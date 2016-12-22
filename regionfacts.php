@@ -26,15 +26,7 @@ else
 </head>
 <body onload="load()">
 <div id="container">
-	<div class="nav">
-			<a href="index.php" class="nav">
-			</a> 
-			<a href="help.php" class="nav_txt">
-				Help	
-			</a> 
-	</div>
-	<br>
-	<br><br><br>
+<?php include "navheader.html"; ?>
 	<?php
 	error_reporting(E_ALL ^ E_NOTICE);
 	if($_GET['year'])
@@ -43,7 +35,14 @@ else
 	}
 	else
 	{
-		$year=2016;
+		if(date("n") < 11)
+		{
+			$year = date("Y");
+		}
+		else
+		{
+			$year = date("Y") + 1;
+		}
 	}
 ?>
 	
@@ -200,6 +199,7 @@ function subform(){
 <form method="get" id="yrs">
 <div><select name="year" onchange="subform()">
 	<option value="1" <?php if($year == 1){echo 'selected="selected"';}else{echo "";}?>>All-Time</option>
+	<option value="2017" <?php if($year == 2017){echo 'selected="selected"';}else{echo "";}?>>2017</option>
 	<option value="2016" <?php if($year == 2016){echo 'selected="selected"';}else{echo "";}?>>2016</option>
 	<option value="2015" <?php if($year == 2015){echo 'selected="selected"';}else{echo "";}?>>2015</option>
 	<option value="2014" <?php if($year == 2014){echo 'selected="selected"';}else{echo "";}?>>2014</option>

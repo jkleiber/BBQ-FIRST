@@ -24,17 +24,10 @@ else
 <link rel="stylesheet" href="mobile_styler.css">
 <link rel="stylesheet" href="small_styler.css">
 </head>
+
 <div id="container">
-	<div class="nav">
-			<a href="index.php" class="nav">
-			</a> 
-			<a href="help.php" class="nav_txt">
-				Help	
-			</a> 
-	</div>
-	<br>
-	<br><br><br>
-	
+<?php include "navheader.html"; ?>	
+
 	<script>
 	function subform(){
 		document.getElementById("yrs").submit();
@@ -43,30 +36,32 @@ else
 
 <?php
 	error_reporting(E_ALL ^ E_NOTICE);
-	if($_GET['year'])
-	{
-	$sw = (int)$_GET['sw'];
-	$year = $_GET['year'];
-	$string = file_get_contents("http://www.thebluealliance.com/api/v2/events/". $year ."?X-TBA-App-Id=justin_kleiber:event_scraper:1");
-	$regional=json_decode($string,true);
 	
-	usort($regional,function($a,$b) {return strnatcasecmp($a['name'],$b['name']);});
+	if(date("n") < 11)
+	{
+		$year = date("Y");
 	}
 	else
 	{
-	$sw = (int)$_GET['sw'];
-	$year = 2015;
-	//justin_kleiber:event_scraper:1
-	$string = file_get_contents("http://www.thebluealliance.com/api/v2/events/2014?X-TBA-App-Id=justin_kleiber:event_scraper:1");
-	$regional=json_decode($string,true);
-	
-	usort($regional,function($a,$b) {return strnatcasecmp($a['name'],$b['name']);});
+		$year = date("Y") + 1;
 	}
+	
+	$sw = (int)$_GET['sw'];
+	
+	if($_GET['year'])
+	{
+		$year = $_GET['year'];
+	}
+	
+	$string = file_get_contents("http://www.thebluealliance.com/api/v2/events/". $year ."?X-TBA-App-Id=justin_kleiber:event_scraper:1");
+	$regional=json_decode($string,true);
+	usort($regional,function($a,$b) {return strnatcasecmp($a['name'],$b['name']);});
 ?>
 	
 <div><h1>FRC Event List 
 <form method="get" id="yrs">
 <select name="year" onchange="subform()">
+	<option value="2017" <?php if($year == 2017){echo 'selected="selected"';}else{echo "";}?>>2017</option>
 	<option value="2016" <?php if($year == 2016){echo 'selected="selected"';}else{echo "";}?>>2016</option>
 	<option value="2015" <?php if($year == 2015){echo 'selected="selected"';}else{echo "";}?>>2015</option>
 	<option value="2014" <?php if($year == 2014){echo 'selected="selected"';}else{echo "";}?>>2014</option>

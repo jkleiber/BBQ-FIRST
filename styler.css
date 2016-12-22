@@ -650,6 +650,52 @@ font-size:14px;
 }
 
 
+a.box:link, a.box:visited
+{
+	padding:100px;
+	background-color: #000;
+	color: #FFF;
+}
+a.box:hover, a.box:active
+{
+	padding:100px;
+	background-color: #FF7A00;
+	color: #FFF;
+}
+div.leftbox
+{
+	float:left;
+	margin:20px;
+	width:initial;
+}
+div.rightbox
+{
+	float:right;
+	margin:20px;
+	width:initial;
+}
+
+div.square
+{
+	width:300px;
+	height:300px;
+	background-color: #000;
+	color:#FFF;
+	text-align:center;
+}
+span.square
+{
+	line-height:300px;
+}
+div.squareText
+{
+	vertical-align:middle;
+	display:inline-block; 
+	width:initial;
+	margin:0;
+	padding:0;
+}
+
 ul
 {
     list-style-type: none;
