@@ -6,7 +6,6 @@
 	$mysqli->query($display);
 	
 	$year = date("Y");
-	$week = date("W");
 	
 	$string = file_get_contents("http://www.thebluealliance.com/api/v2/events/".$year."?X-TBA-App-Id=justin_kleiber:event_scraper:3");
 	$regional = json_decode($string,true);

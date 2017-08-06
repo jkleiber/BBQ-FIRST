@@ -2,6 +2,8 @@
 error_reporting(E_ALL ^ E_NOTICE);
 include('connect.php');
 
+$year = date("Y");
+
 $bbq = 0;	
 $sum = 0;
 $num = 0;
@@ -17,10 +19,10 @@ $yrs = 0;
 		// Do something with $key and $value
 		if($value != "" && $value != null)
 		{
-		$qq = "SELECT team_info.nickname, team_info.years, team_info.rookie, `2015`.cmp
-				FROM `2015`
+		$qq = "SELECT team_info.nickname, team_info.years, team_info.rookie, `$year`.cmp
+				FROM `$year`
 				INNER JOIN team_info
-				ON `2015`.team_num=team_info.team_num
+				ON `$year`.team_num=team_info.team_num
 				WHERE team_info.`team_num`='$value'";
 		$sql = $mysqli->query($qq);
 		//$sql = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`bbq` WHERE `team_num` = '$value' LIMIT 1");
@@ -169,10 +171,10 @@ if(!$alltems && !$topten)
 		// Do something with $key and $value
 		if($value != "" && $value != null)
 		{
-		$qq = "SELECT team_info.team_num, team_info.nickname, team_info.years, team_info.rookie, `2015`.cmp
-				FROM `2015`
+		$qq = "SELECT team_info.team_num, team_info.nickname, team_info.years, team_info.rookie, `$year`.cmp
+				FROM `$year`
 				INNER JOIN team_info
-				ON `2015`.team_num=team_info.team_num
+				ON `$year`.team_num=team_info.team_num
 				WHERE team_info.`team_num`='$value'";
 		$sqli = $mysqli->query($qq);
 		$row = mysqli_fetch_assoc($sqli);
@@ -180,7 +182,7 @@ if(!$alltems && !$topten)
 	//if($row['nickname']!="" && $row['team_num']!="" && $row['rookie']!="")
 	//{
 	
-	$vars = array($row["team_num"], 2015);
+	$vars = array($row["team_num"], $year);
 	$jsvars = json_encode($vars, JSON_HEX_TAG | JSON_HEX_AMP);
 	$jsvars = str_replace("[","", $jsvars);
 	$jsvars = str_replace(" ","", $jsvars);
@@ -220,11 +222,11 @@ else if($alltems && !$topten)
 	//if($val != "" && $val != null)
 	//{
 		//$sqli = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`bbq` WHERE `team_num` = '$val' LIMIT 1");
-		$qq = "SELECT team_info.team_num, team_info.nickname, team_info.years, team_info.rookie, `2015`.cmp
-				FROM `2015`
+		$qq = "SELECT team_info.team_num, team_info.nickname, team_info.years, team_info.rookie, `$year`.cmp
+				FROM `$year`
 				INNER JOIN team_info
-				ON `2015`.team_num=team_info.team_num
-				ORDER BY `2015`.`cmp` DESC, team_info.rookie DESC";
+				ON `$year`.team_num=team_info.team_num
+				ORDER BY `$year`.`cmp` DESC, team_info.rookie DESC";
 		$sqli = $mysqli->query($qq);
 		//$row = mysqli_fetch_assoc($sqli);
 	//$sqli = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`bbq` ORDER BY `banners` DESC, `team_num` ASC");
@@ -233,7 +235,7 @@ else if($alltems && !$topten)
 		
 	//if($row['nickname']!="" && $row['team_num']!="" && $row['rookie']!="")
 	//{
-	$vars = array($row["team_num"], 2015);
+	$vars = array($row["team_num"], $year);
 	$jsvars = json_encode($vars, JSON_HEX_TAG | JSON_HEX_AMP);
 	$jsvars = str_replace("[","", $jsvars);
 	$jsvars = str_replace(" ","", $jsvars);
@@ -275,11 +277,11 @@ else if($topten)
 	//if($val != "" && $val != null)
 	//{
 		//$sqli = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`bbq` WHERE `team_num` = '$val' LIMIT 1");
-		$qq = "SELECT team_info.team_num, team_info.nickname, team_info.years, team_info.rookie, `2015`.cmp
-				FROM `2015`
+		$qq = "SELECT team_info.team_num, team_info.nickname, team_info.years, team_info.rookie, `$year`.cmp
+				FROM `$year`
 				INNER JOIN team_info
-				ON `2015`.team_num=team_info.team_num
-				ORDER BY `2015`.`cmp` DESC, team_info.rookie DESC
+				ON `$year`.team_num=team_info.team_num
+				ORDER BY `$year`.`cmp` DESC, team_info.rookie DESC
 				LIMIT 10";
 		$sqli = $mysqli->query($qq);
 		//$sqli = $mysqli->query("SELECT * FROM `bbqfrcx1_db`.`bbq` ORDER BY `banners` DESC, `team_num` ASC LIMIT 10");
@@ -289,7 +291,7 @@ else if($topten)
 	//if($row['nickname']!="" && $row['team_num']!="" && $row['rookie']!="")
 	//{
 	
-	$vars = array($row["team_num"], 2015);
+	$vars = array($row["team_num"], $year);
 	$jsvars = json_encode($vars, JSON_HEX_TAG | JSON_HEX_AMP);
 	$jsvars = str_replace("[","", $jsvars);
 	$jsvars = str_replace(" ","", $jsvars);

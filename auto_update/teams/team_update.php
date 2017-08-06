@@ -1,7 +1,5 @@
 <?php
-	$date = new DateTime();
-	$start = $date->getTimestamp();
-	
+
 	include("../connect.php");
 	
 	$display = "UPDATE `bbqfrcx1_db`.`maintenance` SET `message`='Automatically Updating Team Data...' WHERE `flag` = 'ndisplay'";
@@ -111,9 +109,5 @@
 	$contents = str_replace($keys,"",$contents);
 	$contents = str_replace("_","\n",$contents);
 	file_put_contents("./award_teams.txt", $contents);
-	
-	$newDate = new DateTime();
-	$elapsed = $newDate->getTimestamp() - $start;
-	echo $elapsed;
 	
 ?>

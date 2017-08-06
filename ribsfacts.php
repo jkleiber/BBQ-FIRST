@@ -426,6 +426,8 @@ $rnk = 0;
 	</div>
 </ul>
  </div>
+ </div>
+ </div>
 <footer class="nav" class="site-footer">
 				<a href="admin/" class="fstd">Admin</a> - <a href="contact.php" class="fstd">Contact Us</a>
 		</footer>

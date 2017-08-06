@@ -134,7 +134,7 @@ else
 					</td></tr>
 				</table>
 			</tbody>
-		</table>
+			</table>
 		</div>
 	</div>
 		<footer class="nav" class="site-footer">

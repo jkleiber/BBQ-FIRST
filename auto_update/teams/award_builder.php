@@ -3,9 +3,6 @@
 	//Script that gets all awards for later compilation
 	
 	$award_teams = "";
-	
-	$d = new DateTime();
-	$start = $d->getTimestamp();
 
 	include("../connect.php");
 	$year = date("Y");
@@ -83,8 +80,4 @@
 	
 	//add the new teams to our list
 	file_put_contents("award_teams.txt",$award_teams);
-	
-	$newDate = new DateTime();
-	$elapsed = ($newDate->getTimestamp()) - $start;
-	echo $elapsed;
 ?>

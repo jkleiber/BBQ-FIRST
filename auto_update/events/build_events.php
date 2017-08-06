@@ -12,7 +12,7 @@ function build_event($key, $current_year, $mysqli)
 
 	
 	//Get List of Teams
-	$teams = file_get_contents("http://www.thebluealliance.com/api/v2/event/".$key."/teams?X-TBA-App-Id=justin_kleiber:team_scraper:1");
+	$teams = file_get_contents("http://www.thebluealliance.com/api/v2/event/".$key."/teams?X-TBA-App-Id=justin_kleiber:team_scraper:2");
 	$teamlist = json_decode($teams,true);
 	usort($teamlist,function($a,$b) {return strnatcasecmp($a[team_number],$b[team_number]);});
 	

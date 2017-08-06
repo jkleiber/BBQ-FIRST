@@ -24,9 +24,9 @@ else
 	$yer = substr($code,0,4);
 	
 	// /api/v2/event/2010sc/teams
-	$string = file_get_contents("http://www.thebluealliance.com/api/v2/event/". $code ."?X-TBA-App-Id=justin_kleiber:event_scraper:1");
+	$string = file_get_contents("http://www.thebluealliance.com/api/v2/event/". $code ."?X-TBA-App-Id=justin_kleiber:event_scraper:2");
 	$n=json_decode($string,true);
-	$teams = file_get_contents("http://www.thebluealliance.com/api/v2/event/". $code ."/teams?X-TBA-App-Id=justin_kleiber:team_scraper:1");
+	$teams = file_get_contents("http://www.thebluealliance.com/api/v2/event/". $code ."/teams?X-TBA-App-Id=justin_kleiber:team_scraper:2");
 	$teamlist=json_decode($teams,true);
 	usort($teamlist,function($a,$b) {return strnatcasecmp($a['team_number'],$b['team_number']);});
 ?>
@@ -40,6 +40,8 @@ else
 <script type="text/javascript" src="jquery-1.11.1.min.js"></script> 
 <script type="text/javascript" src="jquery.tablesorter.js"></script> 
 </head>
+
+<body>
 <div id="container">
 <?php include "navheader.html"; ?>
 <script>
@@ -307,7 +309,8 @@ foreach($teamlist as $t)
 </tbody>
 </table>
  </div>
-<footer class="nav" class="site-footer">
+ </div>
+	<footer class="nav" class="site-footer">
 				<a href="admin/" class="fstd">Admin</a> - <a href="contact.php" class="fstd">Contact Us</a>
 		</footer>
 </body>

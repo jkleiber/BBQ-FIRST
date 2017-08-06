@@ -8,7 +8,7 @@
 	$year = date("Y");
 	$week = date("W");
 	
-	$query = "SELECT `reg_key`,`year` FROM `regional_info` WHERE `year`='$year' AND `week`>='$week'";
+	$query = "SELECT `reg_key`,`year` FROM `regional_info` WHERE `year`='$year'"; //this might have excluded events incorrectly --> // AND `week`>='$week'";
 	$result = $mysqli->query($query);
 	
 	$keys = "";
