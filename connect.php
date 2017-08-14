@@ -15,4 +15,16 @@
 		exit();
 	}
 	
+	//Set the max year to this year, or the next year depending on the current date
+	$month = date('n');
+	$day = date('j');
+	$current_year = date('Y');
+	
+	$max_year = $current_year;
+	
+	if($month > 9 || $month == 9 && $day >= 20)
+	{
+		$max_year = $current_year + 1;
+	}
+	
 ?>

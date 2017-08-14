@@ -199,6 +199,24 @@ function subform(){
 <form method="get" id="yrs">
 <select name="year" onchange="subform()">
 	<option value="1" <?php if($year == 1){echo 'selected="selected"';}else{echo "";}?>>All-Time</option>
+	<?php
+		for($y = $max_year; $y >= 2005; $y--)
+		{
+			$option_txt = "<option value=" . $y;
+			if($year == $y)
+			{
+				$option_txt .= ' selected="selected"';
+			}
+			else
+			{
+				$option_txt .= " ";
+			}
+			
+			$option_txt .= ">" . $y . "</option>";
+			echo  $option_txt;
+		}
+	?>
+<!--	
 	<option value="2017" <?php if($year == 2017){echo 'selected="selected"';}else{echo "";}?>>2017</option>
 	<option value="2016" <?php if($year == 2016){echo 'selected="selected"';}else{echo "";}?>>2016</option>
 	<option value="2015" <?php if($year == 2015){echo 'selected="selected"';}else{echo "";}?>>2015</option>
@@ -212,6 +230,7 @@ function subform(){
 	<option value="2007" <?php if($year == 2007){echo 'selected="selected"';}else{echo "";}?>>2007</option>
 	<option value="2006" <?php if($year == 2006){echo 'selected="selected"';}else{echo "";}?>>2006</option>
 	<option value="2005" <?php if($year == 2005){echo 'selected="selected"';}else{echo "";}?>>2005</option>
+!-->
 </select>
 <form>
 <ul>

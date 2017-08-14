@@ -61,19 +61,23 @@ else
 <div><h1>FRC Event List 
 <form method="get" id="yrs">
 <select name="year" onchange="subform()">
-	<option value="2017" <?php if($year == 2017){echo 'selected="selected"';}else{echo "";}?>>2017</option>
-	<option value="2016" <?php if($year == 2016){echo 'selected="selected"';}else{echo "";}?>>2016</option>
-	<option value="2015" <?php if($year == 2015){echo 'selected="selected"';}else{echo "";}?>>2015</option>
-	<option value="2014" <?php if($year == 2014){echo 'selected="selected"';}else{echo "";}?>>2014</option>
-	<option value="2013" <?php if($year == 2013){echo 'selected="selected"';}else{echo "";}?>>2013</option>
-	<option value="2012" <?php if($year == 2012){echo 'selected="selected"';}else{echo "";}?>>2012</option>
-	<option value="2011" <?php if($year == 2011){echo 'selected="selected"';}else{echo "";}?>>2011</option>
-	<option value="2010" <?php if($year == 2010){echo 'selected="selected"';}else{echo "";}?>>2010</option>
-	<option value="2009" <?php if($year == 2009){echo 'selected="selected"';}else{echo "";}?>>2009</option>
-	<option value="2008" <?php if($year == 2008){echo 'selected="selected"';}else{echo "";}?>>2008</option>
-	<option value="2007" <?php if($year == 2007){echo 'selected="selected"';}else{echo "";}?>>2007</option>
-	<option value="2006" <?php if($year == 2006){echo 'selected="selected"';}else{echo "";}?>>2006</option>
-	<option value="2005" <?php if($year == 2005){echo 'selected="selected"';}else{echo "";}?>>2005</option>
+	<?php
+		for($y = $max_year; $y >= 2005; $y--)
+		{
+			$option_txt = "<option value=" . $y;
+			if($year == $y)
+			{
+				$option_txt .= ' selected="selected"';
+			}
+			else
+			{
+				$option_txt .= " ";
+			}
+			
+			$option_txt .= ">" . $y . "</option>";
+			echo  $option_txt;
+		}
+	?>
 </select>
 	<input type="hidden" name="sw" value="<?php echo $sw; ?>" />
 <form>

@@ -44,6 +44,13 @@ if($_SESSION['user']=='bbqadmin')
 		<tr>
 			<td>
 				<div>
+					<a href="new_year/index.php" class="fade">Setup Next Year</a>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div>
 					<a href="update_complete.php" class="fade">Refresh Last Updated Indicator</a>
 				</div>
 			</td>
