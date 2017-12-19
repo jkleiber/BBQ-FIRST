@@ -6,7 +6,7 @@ $sqli=$mysqli->query($query);
 
 $row=mysqli_fetch_assoc($sqli);
 $fleg=$row['flag'];
-if($fleg=="on_minutes" || $fleg=="on_hours")
+if($fleg=="minutes" || $fleg=="hours")
 {
 include 'downtime.php';
 }
