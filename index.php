@@ -69,7 +69,8 @@ else
 
 		$row=mysqli_fetch_assoc($sqli);
 		$note=$row['flag'];
-			if($note=="ndisplay")
+		$msg = $row['message'];
+			if($note=="ndisplay" && $msg != "")
 			{
 		?>
 		<div style="padding: 10px;border-radius: 5px;border: 1px solid orange;background-color: rgba(240, 178, 15, 0.62);width: 80%;">

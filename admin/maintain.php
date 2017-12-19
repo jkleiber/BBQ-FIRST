@@ -92,17 +92,20 @@ var myVar=setInterval(function () {myTimer()}, 1000);
 	{
 		if(isset($_POST['flag']))
 		{
-		$query = "TRUNCATE TABLE `maintenance`";
-		$mysqli->query($query);
-		
-		date_default_timezone_set('America/Chicago');
-		$start=date('D M d Y H:i:s \G\M\TO');
-		
-		$flag=$_POST['flag'];
-		$time=$_POST['time'];
-		$mess=$_POST['message'];
-		$set = "INSERT INTO `maintenance` (`flag`, `duration`, `start`, `message`) VALUES ('$flag', '$time', '$start', '$mess')";
-		$mysqli->query($set);
+			$query = "TRUNCATE TABLE `maintenance`";
+			$mysqli->query($query);
+			
+			date_default_timezone_set('America/Chicago');
+			$start=date('D M d Y H:i:s \G\M\TO');
+			
+			$flag=$_POST['flag'];
+			$time=$_POST['time'];
+			$mess=$_POST['message'];
+			$set = "INSERT INTO `maintenance` (`flag`, `duration`, `start`, `message`) VALUES ('$flag', '$time', '$start', '$mess')";
+			$mysqli->query($set);
+			
+			$set2 = "INSERT INTO `maintenance` (`flag`, `duration`, `start`, `message`) VALUES ('ndisplay', '0', '0', '')";
+			$mysqli->query($set2);
 		}
 	
 

@@ -144,9 +144,11 @@ $(document).ready(function()
 			$ribs="N/A";
 			$bans += $rowz[$yw];
 			$yrs += $rowz["years"];
-			$bbq = $bans/$yrs;
+			
 			$temcom++;
 		}
+		
+		$bbq = $bans / $temcom;
 	}
 	
 	
