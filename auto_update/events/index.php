@@ -52,6 +52,13 @@ if($_SESSION['user']=='bbqadmin')
 				</div>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<div>
+					<a href="event_week_update.php" class="fade">Event Week Setup</a>
+				</div>
+			</td>
+		</tr>
 	</table>
 
 <?php
