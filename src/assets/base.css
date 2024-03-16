@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined");
+
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --vt-c-white: #ffffff;
+  --vt-c-white-soft: #f8f8f8;
+  --vt-c-white-mute: #f2f2f2;
+
+  --vt-c-black: #181818;
+  --vt-c-black-soft: #222222;
+  --vt-c-black-mute: #282828;
+
+  --vt-c-indigo: #2c3e50;
+
+  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
+  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
+  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+
+  --vt-c-text-light-1: var(--vt-c-indigo);
+  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
+  --vt-c-text-dark-1: var(--vt-c-white);
+  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+}
+
+/* Color variables (light mode, default) */
+:root {
+  /* Material design theming. */
+  --md-sys-color-primary: tomato;
+  --md-sys-color-secondary: white;
+  --md-sys-color-surface-container-high: white;
+  --md-sys-color-on-surface: #fff;
+
+
+  --md-ref-typeface-brand: 'Open Sans';
+  --md-ref-typeface-plain: system-ui;
+
+  /* Outlined text field colors */
+  --md-sys-color-primary: #006a6a;
+  --md-outlined-text-field-label-text-color: #3f4948;
+  --md-outlined-text-field-input-text-color: #161d1d;
+
+  /* List colors */
+  --md-list-container-color: #ffffff;
+
+  /* Outlined text field dimensions */
+  --md-outlined-text-field-container-shape: 0px;
+  --md-sys-typescale-body-large: 400 1rem system-ui;
+
+  /* FAB dimensions */
+  /* --md-fab-container-shape: 0px; */
+  --md-fab-icon-size: 28px;
+}
+
+/* TODO: Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Material design theming. */
+    --md-sys-color-primary: tomato;
+    --md-sys-color-secondary: rgb(93, 93, 93);
+    --md-sys-color-surface-container-high: white;
+    --md-sys-color-on-surface: #535353;
+
+    --md-ref-typeface-brand: 'Open Sans';
+    --md-ref-typeface-plain: system-ui;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  line-height: 1.6;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

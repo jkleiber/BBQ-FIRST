@@ -1,0 +1,25 @@
+{
+    "name": "bbq-first",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "preview": "vite preview"
+    },
+    "dependencies": {
+      "@material/web": "^1.2.0",
+      "@rollup/plugin-node-resolve": "^15.2.3",
+      "@supabase/supabase-js": "^2.39.3",
+      "pinia": "^2.1.7",
+      "rollup": "^4.12.0",
+      "vue": "^3.4.15",
+      "vue-router": "^4.2.5"
+    },
+    "devDependencies": {
+      "@vitejs/plugin-vue": "^5.0.3",
+      "vite": "^5.0.11"
+    }
+  }
+  

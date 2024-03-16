@@ -1,1 +1,0 @@
-CRON Job successfully ran!
