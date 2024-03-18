@@ -2,6 +2,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import HomeView from '@/views/HomeView.vue';
+import TeamView from '@/views/TeamView.vue';
+import PageNotFound from '@/views/PageNotFound.vue'
+
+// Admin pages
 import LoginView from '@/views/LoginView.vue';
 import LogoutView from '@/views/LogoutView.vue';
 import DashboardView from '@/views/DashboardView.vue';
@@ -28,6 +32,24 @@ const routes = [
         }
     },
     {
+        path: '/team',
+        name: 'Team Search',
+        component: TeamView,
+        meta: {
+            requireAuth: false,
+            skipIfAuth: false
+        }
+    },
+    {
+        path: '/team/:team_number',
+        name: 'Team',
+        component: TeamView,
+        meta: {
+            requireAuth: false,
+            skipIfAuth: false
+        }
+    },
+    {
         path: '/logout',
         name: 'Logout',
         component: LogoutView,
@@ -44,7 +66,12 @@ const routes = [
             requireAuth: true,
             skipIfAuth: false
         }
-    }
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: PageNotFound
+    },
 ];
 
 const router = createRouter({

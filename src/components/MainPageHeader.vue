@@ -10,14 +10,16 @@ import { RouterLink } from 'vue-router';
         <!--Right Aligned Elements-->
         <!-- <RouterLink to="/help" class="nav_txt">Help</RouterLink> -->
 
+        <RouterLink to="/team" class="nav_txt">Teams</RouterLink>
 
-        <div id="search_bar">
+
+        <!-- <div id="search_bar">
             <span class="search">
-                <!-- <input type="text" name="q" id="searcher" class="search" placeholder="Search" autocomplete="off"></input> -->
+                <input type="text" name="q" id="searcher" class="search" placeholder="Search" autocomplete="off"></input>
                 <div id="results">
                 </div>
             </span>
-        </div>
+        </div> -->
     </div>
 </template>
 
