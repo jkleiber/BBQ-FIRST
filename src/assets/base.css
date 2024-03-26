@@ -9,10 +9,13 @@
     /* COLORS */
     /* Primary/Secondary */
     --bbq-primary-color: tomato;
-    --bbq-accent-color: #efefef;
+    --bbq-accent-color: #646464;
 
-    /* Background */
+    --bbq-header-color: #313131;
+
+    /* Component colors */
     --bbq-background-color: #ffffff;
+    --bbq-foreground-component-color: #fef7ff;
 
     /* Primary text color */
     --bbq-primary-text-color: #313131;
@@ -27,12 +30,16 @@
     --bbq-primary-color: tomato;
     --bbq-accent-color: #efefef;
 
-    /* Background */
+
+    --bbq-header-color: #313131;
+
+    /* Component Colors */
     --bbq-background-color: #000;
+    --bbq-foreground-component-color: #555;
 
 
     /* Primary text color */
-    --bbq-primary-text-color: #EEE;
+    --bbq-primary-text-color: tomato;
   }
 }
 
@@ -56,6 +63,8 @@
   --md-sys-color-secondary: var(--bbq-accent-color);
   --md-sys-color-surface-container-high: var(--bbq-background-color);
   --md-sys-color-on-surface: var(--bbq-primary-text-color);
+  --md-sys-color-surface: var(--bbq-foreground-component-color);
+  --md-sys-color-on-surface-variant: var(--bbq-accent-color);
 
   /* Outlined text field colors */
   --md-outlined-text-field-label-text-color: var(--bbq-primary-text-color);
@@ -63,6 +72,9 @@
 
   /* List colors */
   --md-list-container-color: var(--bbq-background-color);
+
+  /* Tabs colors */
+  /* --md-primary-tab-label-text-color: var(--bbq-accent-color); */
 }
 
 *,
@@ -75,8 +87,8 @@
 
 body {
   min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
+  color: var(--bbq-primary-text-color);
+  background: var(--bbq-background-color);
   transition:
     color 0.5s,
     background-color 0.5s;
@@ -107,8 +119,8 @@ md-outlined-text-field {
 
 
 div.nav {
-  background-color: #313131;
-  color: #FFF;
+  background-color: var(--bbq-header-color);
+  color: var(--bbq-primary-text-color);
   top: 0;
   left: 0;
   right: 0;

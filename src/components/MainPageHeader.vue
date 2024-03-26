@@ -45,7 +45,7 @@ a.nav_txt {
 
 a.nav_txt:link,
 a.nav_txt:visited {
-
+    background-color: var(--md);
     -webkit-transition: border .5s ease;
     -moz-transition: border .5s ease;
     transition: border .5s ease;
@@ -66,7 +66,7 @@ a.nav_txt:visited {
 
 a.nav_txt:hover,
 a.nav_txt:active {
-    background-color: --md-sys-color-primary;
+    background-color: var(--md-sys-color-primary);
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;

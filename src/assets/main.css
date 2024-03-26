@@ -7,6 +7,7 @@
   font-weight: normal;
   position: fixed;
   background-color: var(--bbq-background-color);
+  color: var(--bbq-primary-text-color);
 }
 
 
