@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "bbq-first-util"
+version = "0.1.0"
+description = "Utilities for BBQ FIRST data"
+authors = ["Justin Kleiber <jkleiber8@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "bbq_first_util"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

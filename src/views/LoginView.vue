@@ -2,8 +2,6 @@
 import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/list/list.js';
 
-import '@/assets/bbq.css';
-
 // Import supabase
 // import { supabase } from '@/lib/supabase-client'
 

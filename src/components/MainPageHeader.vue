@@ -4,12 +4,12 @@ import { RouterLink } from 'vue-router';
 
 <template>
     <div class="nav">
-        <RouterLink to="/" class="nav"></RouterLink>
+        <RouterLink to="/" class="nav-home"></RouterLink>
 
         <!--Right Aligned Elements-->
-        <!-- <RouterLink to="/help" class="nav_txt">Help</RouterLink> -->
+        <!-- <RouterLink to="/help" class="nav-link">Help</RouterLink> -->
 
-        <RouterLink to="/team" class="nav_txt">Teams</RouterLink>
+        <RouterLink to="/team" class="nav-link">Teams</RouterLink>
 
 
         <!-- <div id="search_bar">
@@ -27,11 +27,31 @@ export default {}
 </script>
 
 <style scoped>
-a.nav {
-    background-image: url("/assets/navicon.png");
+div.nav {
+    background-color: var(--bbq-header-color);
+    color: var(--bbq-primary-text-color);
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 65px;
+    position: fixed;
 }
 
-a.nav_txt {
+a.nav-home {
+    /* Image */
+    background-image: url("/assets/navicon.png");
+
+    /* Positioning */
+    margin: 0 auto;
+    float: left;
+    height: 65px;
+    width: 265px;
+}
+
+a.nav-link {
+    /* Color transitions */
     transition: color .5s ease;
     transition: background-color .5s ease;
     -ms-transition: color .5s ease;
@@ -40,42 +60,44 @@ a.nav_txt {
     -moz-transition: background-color .5s ease;
     -webkit-transition: color .5s ease;
     -webkit-transition: background-color .5s ease;
-}
 
-
-a.nav_txt:link,
-a.nav_txt:visited {
-    background-color: var(--md);
-    -webkit-transition: border .5s ease;
+    /* Border transitions */
+    /* -webkit-transition: border .5s ease;
     -moz-transition: border .5s ease;
-    transition: border .5s ease;
+    transition: border .5s ease; */
+
+    /* Positioning */
     position: relative;
-    /* background-color: #FF7A00; */
-    text-decoration: none;
-    color: #FFF;
     margin: 0 auto;
     float: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Sizing */
     font-size: 16px;
-    padding: 14.5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    border-radius: 5px;
-    margin: 10;
+    height: 100%;
+    text-align: center;
+    margin: 0 auto;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    /* Text */
+    text-decoration: none;
 }
 
-a.nav_txt:hover,
-a.nav_txt:active {
-    background-color: var(--md-sys-color-primary);
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    text-decoration: none;
-    margin: 0 auto;
+
+a.nav-link:link,
+a.nav-link:visited {
+    background-color: var(--bbq-header-color);
     color: #FFF;
-    float: right;
-    font-size: 16px;
-    padding: 14.5px;
-    margin: 10;
+    border-bottom: var(--bbq-header-color) 5px solid;
+}
+
+a.nav-link:hover,
+a.nav-link:active {
+    background-color: var(--bbq-header-hover-color);
+    color: #FFF;
+    border-bottom: var(--bbq-primary-color) 5px solid;
 }
 </style>

@@ -1,7 +1,5 @@
 <script setup>
 import MainPageHeader from '@/components/MainPageHeader.vue';
-
-import '@/assets/bbq.css';
 </script>
 
 <template>

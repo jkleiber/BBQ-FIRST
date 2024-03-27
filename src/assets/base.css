@@ -11,7 +11,9 @@
     --bbq-primary-color: tomato;
     --bbq-accent-color: #646464;
 
+    /* Header */
     --bbq-header-color: #313131;
+    --bbq-header-hover-color: #404040;
 
     /* Component colors */
     --bbq-background-color: #ffffff;
@@ -30,12 +32,13 @@
     --bbq-primary-color: tomato;
     --bbq-accent-color: #efefef;
 
-
+    /* Header */
     --bbq-header-color: #313131;
+    --bbq-header-hover-color: #404040;
 
     /* Component Colors */
-    --bbq-background-color: #000;
-    --bbq-foreground-component-color: #555;
+    --bbq-background-color: #161616;
+    --bbq-foreground-component-color: #2c2c2c;
 
 
     /* Primary text color */
@@ -112,23 +115,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-md-outlined-text-field {
-  resize: none;
-  margin: 10px;
-}
 
 
-div.nav {
-  background-color: var(--bbq-header-color);
-  color: var(--bbq-primary-text-color);
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
+div {
   width: 100%;
-  height: 70px;
-  position: fixed;
+  text-align: center;
+  margin: 0 auto;
 }
+
 
 
 div.main-content {
@@ -138,6 +132,14 @@ div.main-content {
 }
 
 
+/* Third party components */
+
+md-outlined-text-field {
+  resize: none;
+  margin: 10px;
+}
+
+/* Custom classes */
 
 .v-centered-button {
   top: 50%;
