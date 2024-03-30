@@ -28,3 +28,9 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Python
+__pycache__
+
+# Ignore credentials
+credentials.json
