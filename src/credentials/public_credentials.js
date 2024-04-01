@@ -1,0 +1,4 @@
+
+// Supabase anon key.
+export const supabase_api_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eXRmdW50dWtvZ29kcHp1Y21vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA1NjAwMjEsImV4cCI6MjAyNjEzNjAyMX0.Im0ZAM6E0Wzzb3WpUpu18snvYe6qWJmGxDEoK6v9YOA"
+export const supabase_url = "https://dzytfuntukogodpzucmo.supabase.co"

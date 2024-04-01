@@ -1,4 +1,7 @@
 <script setup>
+
+import { supabase } from '@/lib/supabase-client';
+
 import MainPageHeader from '@/components/MainPageHeader.vue';
 
 import '@material/web/tabs/tabs';
@@ -31,11 +34,11 @@ import '@material/web/button/filled-button';
             </md-tabs>
 
             <div id="robot-panel" role="tabpanel" aria-labelledby="robot-tab" v-if="isActive(0)">
-                Robot Awards
+                {{ robotAwards }}
             </div>
 
             <div id="team-panel" role="tabpanel" aria-labelledby="team-tab" v-if="isActive(1)">
-                Team Awards
+                {{ teamAwards }}
             </div>
         </div>
     </div>
@@ -63,6 +66,26 @@ export default {
             }
 
             return this.teamString;
+        },
+        async teamAwards() {
+            const { data, error } = await supabase.from("BlueBanner")
+                .select()
+                .eq("team_number", this.teamNumber)
+                .eq("type", "Team");
+
+            console.log(data);
+
+            return data
+        },
+        async robotAwards() {
+            const { data, error } = await supabase.from("BlueBanner")
+                .select()
+                .eq("team_number", this.teamNumber)
+                .eq("type", "Robot");
+
+            console.log(data);
+
+            return data
         }
     },
     methods: {

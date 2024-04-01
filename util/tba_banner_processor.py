@@ -33,20 +33,31 @@ class TBABannerProcessor:
     def process_award_recipients(self, award_recipients: list, award_type: int, award_str: str, event_code: str, year: int):
         for recipient in award_recipients:
             team_key = recipient['team_key']
+
+            # Don't allow team key to be None when querying TBA.
+            if team_key is None:
+                continue
+
             team_data = self.tba_api.get_data(f"/team/{team_key}")
-            team_number = team_data.json()['team_number']
+
+            try:
+                team_number = team_data.json()['team_number']
+            except:
+                # Debugging information.
+                print(team_data)
+                print(f"FAIL FAIL FAIL {team_key}")
+                exit(-1)
+
+            banner_type = ""
+            if award_type in ROBOT_BLUE_BANNER_AWARD_TYPES:
+                banner_type = "Robot"
+            elif award_type in TEAM_BLUE_BANNER_AWARD_TYPES:
+                banner_type = "Team"
 
             # Create an ID string based on the award attributes.
             # This string will be unique for a given team winning an award at an event.
             # This is used to ensure awards are not duplicated in the database.
-            id_str = ""
-            banner_type = ""
-            if award_type in ROBOT_BLUE_BANNER_AWARD_TYPES:
-                id_str = f"{award_str} (ROBOT) @ {event_code}: {team_number}"
-                banner_type = "Robot"
-            elif award_type in TEAM_BLUE_BANNER_AWARD_TYPES:
-                id_str = f"{award_str} (TEAM) @ {event_code}: {team_number}"
-                banner_type = "Team"
+            id_str = f"{award_str} ({award_type}, {banner_type}) @ {event_code}: {team_number}"
 
             # Create the award dictionary and add it to the queue of banners to send to the database later.
             # This is done because the supabase client cannot be pickled. Since it cannot be pickled, it 
