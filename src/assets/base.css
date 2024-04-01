@@ -129,6 +129,8 @@ div.main-content {
   display: grid;
   margin-top: 70px;
   padding: 2rem;
+  max-height: 100%;
+  overflow: scroll;
 }
 
 

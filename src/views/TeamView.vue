@@ -3,12 +3,15 @@
 import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
+import AwardItem from '@/components/AwardItem.vue';
 
 import '@material/web/tabs/tabs';
 import '@material/web/tabs/primary-tab';
 import '@material/web/icon/icon';
 import '@material/web/textfield/outlined-text-field';
 import '@material/web/button/filled-button';
+import '@material/web/list/list';
+import '@material/web/list/list-item';
 
 </script>
 
@@ -23,7 +26,7 @@ import '@material/web/button/filled-button';
         </form>
 
         <!-- Show team information if it exists -->
-        <div v-if="doesTeamExist()">
+        <div class="team-container" v-if="doesTeamExist()">
             <h1> {{ teamTitleText }} </h1>
 
             <md-tabs>
@@ -33,12 +36,20 @@ import '@material/web/button/filled-button';
                 </md-primary-tab>
             </md-tabs>
 
-            <div id="robot-panel" role="tabpanel" aria-labelledby="robot-tab" v-if="isActive(0)">
-                {{ robotAwards }}
+            <div id="robot-panel" class="award-tab" role="tabpanel" aria-labelledby="robot-tab" v-if="isActive(0)">
+                <md-list>
+                    <AwardItem v-for="award in robotAwardsList" :name="award.name" :season="award.season"
+                        :event="award.event">
+                    </AwardItem>
+                </md-list>
             </div>
 
-            <div id="team-panel" role="tabpanel" aria-labelledby="team-tab" v-if="isActive(1)">
-                {{ teamAwards }}
+            <div id="team-panel" class="award-tab" role="tabpanel" aria-labelledby="team-tab" v-if="isActive(1)">
+                <md-list>
+                    <AwardItem v-for="award in teamAwardsList" :name="award.name" :season="award.season"
+                        :event="award.event">
+                    </AwardItem>
+                </md-list>
             </div>
         </div>
     </div>
@@ -55,8 +66,13 @@ export default {
                 { id: 0, name: "Robot Performance", icon: "smart_toy" },
                 { id: 1, name: "Team Attribute", icon: "diversity_3" }
             ],
-            activeTab: 0
+            activeTab: 0,
+            robotAwardsList: [],
+            teamAwardsList: []
         }
+    },
+    created() {
+        this.teamChange();
     },
     computed: {
         teamTitleText() {
@@ -67,26 +83,6 @@ export default {
 
             return this.teamString;
         },
-        async teamAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("team_number", this.teamNumber)
-                .eq("type", "Team");
-
-            console.log(data);
-
-            return data
-        },
-        async robotAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("team_number", this.teamNumber)
-                .eq("type", "Robot");
-
-            console.log(data);
-
-            return data
-        }
     },
     methods: {
         submit() {
@@ -105,6 +101,9 @@ export default {
 
             // Go to the team page.
             this.$router.push("/team/" + routeString);
+
+            // Update the team information.
+            this.teamChange();
         },
         changeTab(tab) {
             this.activeTab = tab.id;
@@ -114,7 +113,60 @@ export default {
         },
         doesTeamExist() {
             return this.$route.params.team_number != null && this.$route.params.team_number > 0;
+        },
+        getAwardList(data) {
+            var awardList = [];
+            for (let i = 0; i < data.length; i++) {
+                let a = data[i];
+                var award = {
+                    "name": a['name'],
+                    "season": a.season,
+                    "event": a.event_id
+                }
+                awardList.push(award);
+            }
+
+            return awardList;
+        },
+        async getTeamAwards() {
+            const { data, error } = await supabase.from("BlueBanner")
+                .select()
+                .eq("team_number", this.teamNumber)
+                .eq("type", "Team");
+            var awardList = this.getAwardList(data);
+
+            console.log(awardList)
+
+            this.teamAwardsList = awardList
+        },
+        async getRobotAwards() {
+            const { data, error } = await supabase.from("BlueBanner")
+                .select()
+                .eq("team_number", this.teamNumber)
+                .eq("type", "Robot");
+            var awardList = this.getAwardList(data);
+
+            this.robotAwardsList = awardList
+        },
+        teamChange() {
+            this.getRobotAwards();
+            this.getTeamAwards();
         }
     },
 }
 </script>
+
+<style scoped>
+.team-container {
+    display: flex;
+    flex-flow: column;
+    flex: 1;
+    height: 70vh;
+}
+
+.award-tab {
+    /* position: absolute; */
+    flex: 1;
+    overflow: scroll;
+}
+</style>
