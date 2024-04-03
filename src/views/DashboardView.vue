@@ -5,8 +5,6 @@ import MainPageHeader from '@/components/MainPageHeader.vue'
 import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/list/list.js';
 
-import '@/assets/bbq.css';
-
 // import { useAuthStore } from '@/stores/auth-store';
 </script>
 

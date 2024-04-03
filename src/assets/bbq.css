@@ -1,16 +1,3 @@
-md-outlined-text-field {
-    resize: none;
-    margin: 10px;
-}
-
-
-.main-content {
-    display: grid;
-    margin-top: 60px;
-    margin-left: 150px;
-    padding: 2rem;
-}
-
 html {
     font-family: Helvetica, Calibri, Arial, sans-serif;
     font-size: 18px;
@@ -438,48 +425,6 @@ a.nav:active {
     background-color: #EF3802;
 }
 
-a.nav_txt:link,
-a.nav_txt:visited {
-
-    -webkit-transition: border .5s ease;
-    -moz-transition: border .5s ease;
-    transition: border .5s ease;
-    position: relative;
-    background-color: #FF7A00;
-    /*background-color: transparent;*/
-    text-decoration: none;
-    color: #FFF;
-    margin: 0 auto;
-    float: right;
-    font-size: 16px;
-    padding: 14.5px;
-    /*height: 41px;*/
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    border-radius: 5px;
-    margin: 10;
-}
-
-a.nav_txt:hover,
-a.nav_txt:active {
-    background-color: #474747;
-    /*background-color: #EF3802;
-background-color: #FF9F47;*/
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    /*border-bottom:#FF0000 5px solid;*/
-    text-decoration: none;
-    margin: 0 auto;
-    color: #FFF;
-    float: right;
-    font-size: 16px;
-    padding: 14.5px;
-    margin: 10;
-    /*height: 41px;*/
-
-}
 
 a.official:link,
 a.official:visited {
@@ -509,16 +454,6 @@ a.official:active {
     width: 40px;
 }
 
-a.nav_txt {
-    transition: color .5s ease;
-    transition: background-color .5s ease;
-    -ms-transition: color .5s ease;
-    -ms-transition: background-color .5s ease;
-    -moz-transition: color .5s ease;
-    -moz-transition: background-color .5s ease;
-    -webkit-transition: color .5s ease;
-    -webkit-transition: background-color .5s ease;
-}
 
 a.fade,
 a.reg,
@@ -903,18 +838,6 @@ div.tops {
 }
 
 
-div.nav {
-    background-color: #313131;
-    color: #FFF;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9999;
-    width: 100%;
-    height: 70px;
-    position: fixed;
-}
-
 div.the {
     background-color: #FFF;
     border: 1px solid #FF7A00;
@@ -996,9 +919,7 @@ span.nav {
     vertical-align: middle;
 }
 
-a.nav {
-    background-image: url("navicon.png");
-}
+
 
 span.search {
     position: relative;
