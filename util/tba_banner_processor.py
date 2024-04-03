@@ -30,7 +30,7 @@ class TBABannerProcessor:
         # Other flags.
         self.verbose = verbose
 
-    def process_award_recipients(self, award_recipients: list, award_type: int, award_str: str, event_code: str, year: int):
+    def process_award_recipients(self, award_recipients: list, award_type: int, award_str: str, event_code: str, event_date: str, year: int):
         for recipient in award_recipients:
             team_key = recipient['team_key']
 
@@ -57,7 +57,7 @@ class TBABannerProcessor:
             # Create an ID string based on the award attributes.
             # This string will be unique for a given team winning an award at an event.
             # This is used to ensure awards are not duplicated in the database.
-            id_str = f"{award_str} ({award_type}, {banner_type}) @ {event_code}: {team_number}"
+            id_str = f"{award_str} ({award_type}, {banner_type}) @ {event_code} {event_date}: {team_number}"
 
             # Create the award dictionary and add it to the queue of banners to send to the database later.
             # This is done because the supabase client cannot be pickled. Since it cannot be pickled, it 
@@ -69,7 +69,8 @@ class TBABannerProcessor:
                 "type": banner_type,
                 "event_id": event_code,
                 "team_number": team_number,
-                "season": year
+                "season": year,
+                "date": event_date
             }
             self.banner_queue.append(banner_dict)
 
@@ -89,7 +90,7 @@ class TBABannerProcessor:
             for award_info in event_award_data.json():
                 if award_info['award_type'] in TEAM_BLUE_BANNER_AWARD_TYPES or award_info['award_type'] in ROBOT_BLUE_BANNER_AWARD_TYPES:
                     self.process_award_recipients(
-                        award_info['recipient_list'], award_info['award_type'], award_info['name'], award_info['event_key'], year)
+                        award_info['recipient_list'], award_info['award_type'], award_info['name'], award_info['event_key'], event_info['end_date'], year)
 
     def pull_year_awards(self, year: int):
         # Request all event keys for the given year. This will be used to collect all relevant awards.

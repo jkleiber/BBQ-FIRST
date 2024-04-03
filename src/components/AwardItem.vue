@@ -20,8 +20,6 @@ export default {
 <style scoped>
 .award {
     background-color: var(--bbq-foreground-component-color);
-    /* height: 100px; */
-    /* margin-top: 5px; */
     margin-bottom: 5px;
 }
 </style>

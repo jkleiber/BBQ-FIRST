@@ -18,17 +18,26 @@ import '@material/web/list/list-item';
 <template>
     <MainPageHeader></MainPageHeader>
     <div class="main-content">
-        <form>
-            <md-outlined-text-field type="number" label="Team Number" v-model="teamNumber"
-                @keydown.enter="submit()"></md-outlined-text-field>
-            <md-filled-button class="v-centered-button" type="submit"
-                @click.stop.prevent="submit()">Submit</md-filled-button>
-        </form>
+
+        <div class="team-header-container">
+            <div class="team-info-container" v-if="doesTeamExist()">
+                <h1 class="team-number-header"> {{ teamTitleText }} </h1>
+
+                <h3>Robot Performance Banners: {{ numRobotAwards }}</h3>
+                <h3>Team Attribute Banners: {{ numTeamAwards }}</h3>
+            </div>
+
+            <form class="team-search-form">
+                <md-outlined-text-field class="team-text-field" type="number" label="Team Number" v-model="teamNumber"
+                    @keydown.enter="submit()"></md-outlined-text-field>
+                <md-filled-button class="v-centered-button" type="submit"
+                    @click.stop.prevent="submit()">Submit</md-filled-button>
+            </form>
+        </div>
+
 
         <!-- Show team information if it exists -->
         <div class="team-container" v-if="doesTeamExist()">
-            <h1> {{ teamTitleText }} </h1>
-
             <md-tabs>
                 <md-primary-tab v-for="tab in tabs" @click="changeTab(tab)" :key="tab.name">
                     <md-icon slot="icon">{{ tab.icon }}</md-icon>
@@ -83,6 +92,12 @@ export default {
 
             return this.teamString;
         },
+        numTeamAwards() {
+            return this.teamAwardsList.length;
+        },
+        numRobotAwards() {
+            return this.robotAwardsList.length;
+        }
     },
     methods: {
         submit() {
@@ -157,16 +172,36 @@ export default {
 </script>
 
 <style scoped>
+div.team-header-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+div.team-info-container {
+    width: 50%;
+    border: var(--bbq-primary-color) 2px solid;
+    border-radius: 5px;
+}
+
 .team-container {
     display: flex;
     flex-flow: column;
     flex: 1;
-    height: 70vh;
+    height: 60vh;
 }
 
 .award-tab {
     /* position: absolute; */
     flex: 1;
     overflow: scroll;
+}
+
+.team-text-field {
+    align-items: center;
+}
+
+form.team-search-form {
+    display: flex;
+    height: 100px;
 }
 </style>
