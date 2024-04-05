@@ -10,6 +10,7 @@ import { RouterLink } from 'vue-router';
         <!-- <RouterLink to="/help" class="nav-link">Help</RouterLink> -->
 
         <RouterLink to="/team" class="nav-link">Teams</RouterLink>
+        <RouterLink to="/event" class="nav-link">Events</RouterLink>
 
 
         <!-- <div id="search_bar">

@@ -20,16 +20,13 @@ import '@material/web/list/list-item';
     <div class="main-content">
 
         <div class="event-header-container">
-            <div class="event-info-container" v-if="doeseventExist()">
+            <div class="event-info-container" v-if="doesEventExist()">
                 <h1 class="event-number-header"> {{ eventTitleText }} </h1>
-
-                <h3>Robot Performance Banners: {{ numRobotAwards }}</h3>
-                <h3>event Attribute Banners: {{ numeventAwards }}</h3>
             </div>
 
             <form class="event-search-form">
-                <md-outlined-text-field class="event-text-field" type="text" label="Event Name/Code" v-model="eventNumber"
-                    @keydown.enter="submit()"></md-outlined-text-field>
+                <md-outlined-text-field class="event-text-field" type="text" label="Event Name/Code"
+                    v-model="eventCodeModel" @keydown.enter="submit()"></md-outlined-text-field>
                 <md-filled-button class="v-centered-button" type="submit"
                     @click.stop.prevent="submit()">Submit</md-filled-button>
             </form>
@@ -37,29 +34,11 @@ import '@material/web/list/list-item';
 
 
         <!-- Show event information if it exists -->
-        <div class="event-container" v-if="doeseventExist()">
-            <md-tabs>
-                <md-primary-tab v-for="tab in tabs" @click="changeTab(tab)" :key="tab.name">
-                    <md-icon slot="icon">{{ tab.icon }}</md-icon>
-                    {{ tab.name }}
-                </md-primary-tab>
-            </md-tabs>
-
-            <div id="robot-panel" class="award-tab" role="tabpanel" aria-labelledby="robot-tab" v-if="isActive(0)">
-                <md-list>
-                    <AwardItem v-for="award in robotAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event">
-                    </AwardItem>
-                </md-list>
-            </div>
-
-            <div id="event-panel" class="award-tab" role="tabpanel" aria-labelledby="event-tab" v-if="isActive(1)">
-                <md-list>
-                    <AwardItem v-for="award in eventAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event">
-                    </AwardItem>
-                </md-list>
-            </div>
+        <div class="event-container" v-if="doesEventExist()">
+            <md-list>
+                <AwardItem v-for="award in robotAwardsList" :name="award.name" :season="award.season" :event="award.event">
+                </AwardItem>
+            </md-list>
         </div>
     </div>
 </template>
@@ -69,12 +48,9 @@ import '@material/web/list/list-item';
 export default {
     data() {
         return {
-            eventNumber: this.$route.params.event_number,
+            eventCodeModel: this.$route.params.event_code,
+            eventCode: this.$route.params.event_code,
             eventString: "",
-            tabs: [
-                { id: 0, name: "Robot Performance", icon: "smart_toy" },
-                { id: 1, name: "event Attribute", icon: "diversity_3" }
-            ],
             activeTab: 0,
             robotAwardsList: [],
             eventAwardsList: []
@@ -86,36 +62,30 @@ export default {
     computed: {
         eventTitleText() {
             this.eventString = "";
-            if (this.$route.params.event_number != null) {
-                this.eventString = "event " + this.$route.params.event_number;
+            if (this.$route.params.event_code != null) {
+                this.eventString = "Event " + this.$route.params.event_code;
             }
 
             return this.eventString;
         },
-        numeventAwards() {
-            return this.eventAwardsList.length;
-        },
-        numRobotAwards() {
-            return this.robotAwardsList.length;
-        }
     },
     methods: {
         submit() {
             // Process the event number into a string for the URL and route.
-            let routeString = this.eventNumber;
-            if (routeString == null) {
-                routeString = "";
+            this.eventCode = this.eventCodeModel;
+            if (this.eventCode == null) {
+                this.eventCode = "";
             }
 
             // Update the URL to match the event number.
             history.pushState(
                 {},
                 null,
-                "/event/" + routeString
+                "/event/" + this.eventCode
             );
 
             // Go to the event page.
-            this.$router.push("/event/" + routeString);
+            this.$router.push("/event/" + this.eventCode);
 
             // Update the event information.
             this.eventChange();
@@ -126,46 +96,28 @@ export default {
         isActive(id) {
             return id == this.activeTab;
         },
-        doeseventExist() {
-            return this.$route.params.event_number != null && this.$route.params.event_number > 0;
-        },
-        getAwardList(data) {
-            var awardList = [];
-            for (let i = 0; i < data.length; i++) {
-                let a = data[i];
-                var award = {
-                    "name": a['name'],
-                    "season": a.season,
-                    "event": a.event_id
-                }
-                awardList.push(award);
+        doesEventExist() {
+            if (this.eventCode == null || this.eventCode == undefined || this.eventCode == "") {
+                return false;
             }
 
-            return awardList;
+            return true;
         },
-        async geteventAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("event_number", this.eventNumber)
-                .eq("type", "event");
-            var awardList = this.getAwardList(data);
+        async getEventInfo() {
+            // const { data, error } = await supabase.from("Event")
+            //     .select()
+            //     .eq("event_code", this.eventNumber)
+            //     .eq("type", "event");
+            // var awardList = this.getAwardList(data);
 
-            console.log(awardList)
+            // console.log(awardList)
 
-            this.eventAwardsList = awardList
-        },
-        async getRobotAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("event_number", this.eventNumber)
-                .eq("type", "Robot");
-            var awardList = this.getAwardList(data);
-
-            this.robotAwardsList = awardList
+            // this.eventAwardsList = awardList
         },
         eventChange() {
-            this.getRobotAwards();
-            this.geteventAwards();
+            if (this.doesEventExist()) {
+                this.getEventInfo();
+            }
         }
     },
 }
@@ -193,7 +145,7 @@ div.event-info-container {
 .award-tab {
     /* position: absolute; */
     flex: 1;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .event-text-field {

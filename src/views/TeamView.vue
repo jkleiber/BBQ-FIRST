@@ -28,7 +28,7 @@ import '@material/web/list/list-item';
             </div>
 
             <form class="team-search-form">
-                <md-outlined-text-field class="team-text-field" type="number" label="Team Number" v-model="teamNumber"
+                <md-outlined-text-field class="team-text-field" type="number" label="Team Number" v-model="teamNumberModel"
                     @keydown.enter="submit()"></md-outlined-text-field>
                 <md-filled-button class="v-centered-button" type="submit"
                     @click.stop.prevent="submit()">Submit</md-filled-button>
@@ -69,6 +69,7 @@ import '@material/web/list/list-item';
 export default {
     data() {
         return {
+            teamNumberModel: this.$route.params.team_number,
             teamNumber: this.$route.params.team_number,
             teamString: "",
             tabs: [
@@ -102,20 +103,20 @@ export default {
     methods: {
         submit() {
             // Process the team number into a string for the URL and route.
-            let routeString = this.teamNumber;
-            if (routeString == null) {
-                routeString = "";
+            this.teamNumber = this.teamNumberModel;
+            if (this.teamNumber == null) {
+                this.teamNumber = "";
             }
 
             // Update the URL to match the team number.
             history.pushState(
                 {},
                 null,
-                "/team/" + routeString
+                "/team/" + this.teamNumber
             );
 
             // Go to the team page.
-            this.$router.push("/team/" + routeString);
+            this.$router.push("/team/" + this.teamNumber);
 
             // Update the team information.
             this.teamChange();
@@ -127,10 +128,16 @@ export default {
             return id == this.activeTab;
         },
         doesTeamExist() {
-            return this.$route.params.team_number != null && this.$route.params.team_number > 0;
+            return this.teamNumber != null && this.teamNumber > 0;
         },
         getAwardList(data) {
             var awardList = [];
+
+            // If the data is null, return the empty list. 
+            if (!data) {
+                return awardList;
+            }
+
             for (let i = 0; i < data.length; i++) {
                 let a = data[i];
                 var award = {
@@ -150,8 +157,6 @@ export default {
                 .eq("type", "Team");
             var awardList = this.getAwardList(data);
 
-            console.log(awardList)
-
             this.teamAwardsList = awardList
         },
         async getRobotAwards() {
@@ -164,8 +169,10 @@ export default {
             this.robotAwardsList = awardList
         },
         teamChange() {
-            this.getRobotAwards();
-            this.getTeamAwards();
+            if (this.doesTeamExist()) {
+                this.getRobotAwards();
+                this.getTeamAwards();
+            }
         }
     },
 }

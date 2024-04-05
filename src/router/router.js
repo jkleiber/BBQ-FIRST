@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import HomeView from '@/views/HomeView.vue';
 import TeamView from '@/views/TeamView.vue';
+import EventView from '@/views/EventView.vue';
 import PageNotFound from '@/views/PageNotFound.vue'
 
 // Admin pages
@@ -44,6 +45,24 @@ const routes = [
         path: '/team/:team_number',
         name: 'Team',
         component: TeamView,
+        meta: {
+            requireAuth: false,
+            skipIfAuth: false
+        }
+    },
+    {
+        path: '/event',
+        name: 'Event Search',
+        component: EventView,
+        meta: {
+            requireAuth: false,
+            skipIfAuth: false
+        }
+    },
+    {
+        path: '/event/:event_code',
+        name: 'Event',
+        component: EventView,
         meta: {
             requireAuth: false,
             skipIfAuth: false
