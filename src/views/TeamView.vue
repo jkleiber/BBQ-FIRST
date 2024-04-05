@@ -193,7 +193,7 @@ div.team-info-container {
 .award-tab {
     /* position: absolute; */
     flex: 1;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .team-text-field {
