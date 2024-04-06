@@ -3,6 +3,7 @@ import datetime
 
 from credentials import CredentialManager
 from supabase_api import SupabaseAPI
+from event_processor import EventProcessor
 from tba_api import TheBlueAllianceAPI
 from tba_banner_processor import TBABannerProcessor
 from tba_team_processor import TBATeamProcessor
@@ -23,6 +24,11 @@ class DataLoader:
         # The banner processor pulls all the relevant banners from TBA.
         self.banner_processor = TBABannerProcessor(self.tba_api, n_jobs=8, verbose=True)
         self.team_processor = TBATeamProcessor(self.tba_api)
+        self.event_processor = EventProcessor(self.tba_api, self.supabase_api)
+
+        # Get the current year for determining the maximum year for awards/events that have been awarded/completed.
+        today = datetime.date.today()
+        self.cur_year = today.year
 
     def __del__(self):
         # Close the supabase connection if this gets destructed. Done to prevent process from hanging the terminal.
@@ -32,14 +38,10 @@ class DataLoader:
         return self.load_banners_since(1992)
 
     def load_banners_since(self, start_year: int):
-        # Get the current year
-        today = datetime.date.today()
-        cur_year = today.year
-
         # Load all banners for all time up to the current year.
         # Submit data to the database each year and report success/failure.
         report = {}
-        for year in range(start_year, cur_year+1):
+        for year in range(start_year, self.cur_year+1):
             banner_batch = self.banner_processor.pull_year_banners(year)
 
             # Submit the results to supabase.
@@ -60,9 +62,24 @@ class DataLoader:
         res = self.supabase_api.insert_batch(banner_batch, "BlueBanner")
         return res
 
-    def load_all_teams(self):
+    def load_year_events(self, year: int):
+        res = self.event_processor.load_year_events(year)
+        return res
+    
+    def load_events_since(self, start_year: int):
+        report = []
+        for year in range(start_year, self.cur_year+1):
+            year_report = self.load_year_events(year)
+            report.append(year_report)
+
+        return report
+    
+    def load_all_events(self):
+        self.load_events_since(1992)
+
+    def load_team_info(self):
         """
-        Function to load all the teams. The reason we typically load all the teams is 
+        Function to load all the team information. The reason we typically load all the teams is 
         because veteran-rookie teams can sometimes claim numbers that are earlier than 
         the most recent page pulled from TBA. 
         """
@@ -81,7 +98,7 @@ class DataLoader:
                 break
 
             # Push the batch to supabase.
-            res = self.supabase_api.insert_batch(team_batch, "Team")
+            res = self.supabase_api.upsert_batch(team_batch, "Team")
 
             # Track information for the report.
             report[str(page_idx)] = res
@@ -93,8 +110,6 @@ class DataLoader:
 
         print(f"Last team: {most_recent_team}")
         print(report)
-
-
 
     def close(self):
         # Log out of supabase. If we don't do this, then the program will never end.

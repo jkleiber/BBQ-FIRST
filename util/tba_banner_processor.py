@@ -18,7 +18,7 @@ class TBABannerProcessor:
 
     def __init__(self, tba_api: TheBlueAllianceAPI, n_jobs=4, verbose=False):
         self.tba_api = tba_api
-        
+
         # Create a queue of banners to submit. This is done in order to allow parallel processing of all the events.
         # While the events are processed in parallel, joblib fails to pickle supabase calls. So the calls to the database are done in series.
         self.banner_queue = []
@@ -88,7 +88,7 @@ class TBABannerProcessor:
 
             for award_info in event_award_data.json():
                 if award_info['award_type'] in TEAM_BLUE_BANNER_AWARD_TYPES or award_info['award_type'] in ROBOT_BLUE_BANNER_AWARD_TYPES:
-                    self.process_award_recipients(
+                    self.process_banner_recipients(
                         award_info['recipient_list'], award_info['award_type'], award_info['name'], award_info['event_key'], event_info['end_date'], year)
 
     def pull_year_banners(self, year: int):
