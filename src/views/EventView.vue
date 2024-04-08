@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import AwardItem from '@/components/AwardItem.vue';
+import SearchForm from '@/components/SearchForm.vue';
+import StatSummary from '@/components/StatSummary.vue';
 
 import '@material/web/tabs/tabs';
 import '@material/web/tabs/primary-tab';
@@ -21,23 +23,20 @@ import '@material/web/list/list-item';
 
         <div class="event-header-container">
             <div class="event-info-container" v-if="doesEventExist()">
-                <h1 class="event-number-header"> {{ eventTitleText }} </h1>
+                <h2 class="event-number-header"> {{ eventTitleText }} </h2>
+                <h3> {{ eventTimeText }}</h3>
             </div>
 
-            <form class="event-search-form">
-                <md-outlined-text-field class="event-text-field" type="text" label="Event Name/Code"
-                    v-model="eventCodeModel" @keydown.enter="submit()"></md-outlined-text-field>
-                <md-filled-button class="v-centered-button" type="submit"
-                    @click.stop.prevent="submit()">Submit</md-filled-button>
-            </form>
+            <SearchForm label="Event Code/Name" type="text" v-model="eventCodeModel" @submit="submit()">
+            </SearchForm>
         </div>
 
 
         <!-- Show event information if it exists -->
         <div class="event-container" v-if="doesEventExist()">
+            <StatSummary :stats="eventStats"></StatSummary>
             <md-list>
-                <AwardItem v-for="award in robotAwardsList" :name="award.name" :season="award.season" :event="award.event">
-                </AwardItem>
+
             </md-list>
         </div>
     </div>
@@ -52,8 +51,13 @@ export default {
             eventCode: this.$route.params.event_code,
             eventString: "",
             activeTab: 0,
-            robotAwardsList: [],
-            eventAwardsList: []
+            eventName: "",
+            eventYear: 0,
+            eventSeasonWeek: -1,
+            loadingEvent: false,
+            eventExists: false,
+            teamList: [],
+            eventData: []
         }
     },
     created() {
@@ -63,11 +67,24 @@ export default {
         eventTitleText() {
             this.eventString = "";
             if (this.$route.params.event_code != null) {
-                this.eventString = "Event " + this.$route.params.event_code;
+                this.eventString = this.eventName;
             }
 
             return this.eventString;
         },
+        eventTimeText() {
+            let eventTimeString = "";
+            eventTimeString += this.eventYear;
+
+            if (this.eventSeasonWeek !== null && this.eventSeasonWeek !== undefined) {
+                eventTimeString += " - Week " + this.eventSeasonWeek;
+            }
+
+            return eventTimeString;
+        },
+        eventStats() {
+            return this.eventData;
+        }
     },
     methods: {
         submit() {
@@ -97,27 +114,75 @@ export default {
             return id == this.activeTab;
         },
         doesEventExist() {
+            // If there is no user input, the event doesn't exist.
             if (this.eventCode == null || this.eventCode == undefined || this.eventCode == "") {
+                return false;
+            }
+
+            // If the event does not exist in the database and the database call has completed, it doesn't exist.
+            if (!this.loadingEvent && !this.eventExists) {
+                return false;
+            } else if (this.loadingEvent &&
+                (this.eventName == ""
+                    || this.eventName == null
+                    || this.eventName == undefined
+                    || this.eventYear == 0
+                    || this.eventSeasonWeek == -1)) {
+                // If there is missing stale event data during a load, then don't change the view until data is refreshed.
                 return false;
             }
 
             return true;
         },
         async getEventInfo() {
-            // const { data, error } = await supabase.from("Event")
-            //     .select()
-            //     .eq("event_code", this.eventNumber)
-            //     .eq("type", "event");
-            // var awardList = this.getAwardList(data);
+            this.loadingEvent = true;
+            const { data, error } = await supabase.from("Event").select().eq("event_id", this.eventCode);
 
-            // console.log(awardList)
+            if (error) {
+                this.resetEventInfo();
+                console.log(error);
+            } else if (data.length == 0) {
+                this.resetEventInfo();
+            } else {
+                this.eventExists = true;
 
-            // this.eventAwardsList = awardList
+                // Populate the data based on the first event pulled.
+                this.eventName = data[0].name;
+                this.eventYear = data[0].year;
+                this.eventSeasonWeek = data[0].week;
+            }
+
+            // Mark the event as loaded to allow the doesEventExist function to determine existence of a loaded event.
+            this.loadingEvent = false;
+        },
+        async getEventData() {
+            const { data, error } = await supabase.from("EventData").select().eq("event_id", this.eventCode);
+
+            if (error) {
+                console.log(error);
+                this.eventData = [];
+            } else {
+                this.eventData = [
+                    {
+                        "name": "Robot BBQ",
+                        "value": data[0].robot_bbq
+                    },
+                    {
+                        "name": "Team Attribute BBQ",
+                        "value": data[0].team_bbq
+                    },
+                ]
+            }
+        },
+        resetEventInfo() {
+            this.eventExists = false;
+            this.eventName = "";
+            this.eventSeasonWeek = -1;
+            this.eventYear = 0;
         },
         eventChange() {
-            if (this.doesEventExist()) {
-                this.getEventInfo();
-            }
+            this.getEventInfo();
+            this.getEventData();
         }
     },
 }
@@ -150,10 +215,5 @@ div.event-info-container {
 
 .event-text-field {
     align-items: center;
-}
-
-form.event-search-form {
-    display: flex;
-    height: 100px;
 }
 </style>

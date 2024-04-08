@@ -19,12 +19,13 @@ class EventProcessor:
         year_events_data = self.tba_api.get_data(f"/events/{year}")
 
         for event in year_events_data.json():
+            # Note: Event week is zero-indexed for some reason, so add 1.
             event_info = {
                 "event_id": event['key'],
                 "name": event['name'],
                 "start_date": event['start_date'],
                 "year": event['year'],
-                "week": event['week']
+                "week": event['week'] + 1
             }
             self.event_queue.append(event_info)
 

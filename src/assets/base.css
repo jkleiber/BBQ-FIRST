@@ -132,20 +132,3 @@ div.main-content {
   max-height: 100%;
   overflow: auto;
 }
-
-
-/* Third party components */
-
-md-outlined-text-field {
-  resize: none;
-  margin: 10px;
-}
-
-/* Custom classes */
-
-.v-centered-button {
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-  height: fit-content;
-}

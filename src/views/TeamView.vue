@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import AwardItem from '@/components/AwardItem.vue';
+import SearchForm from '@/components/SearchForm.vue';
 
 import '@material/web/tabs/tabs';
 import '@material/web/tabs/primary-tab';
@@ -27,12 +28,8 @@ import '@material/web/list/list-item';
                 <h3>Team Attribute Banners: {{ numTeamAwards }}</h3>
             </div>
 
-            <form class="team-search-form">
-                <md-outlined-text-field class="team-text-field" type="number" label="Team Number" v-model="teamNumberModel"
-                    @keydown.enter="submit()"></md-outlined-text-field>
-                <md-filled-button class="v-centered-button" type="submit"
-                    @click.stop.prevent="submit()">Submit</md-filled-button>
-            </form>
+            <SearchForm label="Team Number" type="number" v-model="teamNumberModel" @submit="submit()">
+            </SearchForm>
         </div>
 
 
