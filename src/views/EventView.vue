@@ -3,7 +3,7 @@
 import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
-import AwardItem from '@/components/AwardItem.vue';
+import TeamItem from '@/components/TeamItem.vue';
 import SearchForm from '@/components/SearchForm.vue';
 import StatSummary from '@/components/StatSummary.vue';
 
@@ -31,12 +31,15 @@ import '@material/web/list/list-item';
             </SearchForm>
         </div>
 
+        <md-list>
 
+        </md-list>
         <!-- Show event information if it exists -->
         <div class="event-container" v-if="doesEventExist()">
             <StatSummary :stats="eventStats"></StatSummary>
             <md-list>
-
+                <TeamItem v-for="team in teamList" :number="team.number" :name="team.name" :country="team.country">
+                </TeamItem>
             </md-list>
         </div>
     </div>
@@ -54,6 +57,7 @@ export default {
             eventName: "",
             eventYear: 0,
             eventSeasonWeek: -1,
+            eventDate: null,
             loadingEvent: false,
             eventExists: false,
             teamList: [],
@@ -150,6 +154,7 @@ export default {
                 this.eventName = data[0].name;
                 this.eventYear = data[0].year;
                 this.eventSeasonWeek = data[0].week;
+                this.eventDate = data[0].start_date;
             }
 
             // Mark the event as loaded to allow the doesEventExist function to determine existence of a loaded event.
@@ -174,15 +179,42 @@ export default {
                 ]
             }
         },
+        async getEventTeams() {
+            const { data, error } = await supabase.from("Appearance")
+                .select('event_id, team_number, Team (team_number, nickname, country)')
+                .eq("event_id", this.eventCode)
+                .order('team_number', { ascending: true });
+
+            this.teamList = [];
+            if (error) {
+                console.log(error);
+            } else {
+                for (var i = 0; i < data.length; i++) {
+                    // console.log(data[i])
+                    this.teamList.push({
+                        "number": data[i].Team.team_number,
+                        "name": data[i].Team.nickname,
+                        "country": data[i].Team.country
+                    });
+                }
+            }
+
+            console.log(this.teamList)
+        },
         resetEventInfo() {
             this.eventExists = false;
             this.eventName = "";
             this.eventSeasonWeek = -1;
             this.eventYear = 0;
+            this.eventDate = null;
         },
-        eventChange() {
-            this.getEventInfo();
-            this.getEventData();
+        async eventChange() {
+            await this.getEventInfo();
+
+            if (this.eventExists) {
+                this.getEventData();
+                this.getEventTeams();
+            }
         }
     },
 }

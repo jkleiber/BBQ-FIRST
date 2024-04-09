@@ -28,7 +28,7 @@ class SupabaseAPI:
 
         return {"num_success": success_cases, "num_fail": fail_cases}
     
-    def upsert_batch(self, batch: list, table: str):
+    def upsert_batch_iterative(self, batch: list, table: str):
         """
         Upsert (UPDATE or INSERT if no row exists) data into a table.
         """
@@ -43,6 +43,23 @@ class SupabaseAPI:
             except Exception as e:
                 print(f"FAIL: {item}")
                 fail_cases += 1
+
+        return {"num_success": success_cases, "num_fail": fail_cases}
+    
+    def upsert_batch(self, batch: list, table: str):
+        """
+        Upsert (UPDATE or INSERT if no row exists) data into a table.
+        """
+        # Keep track if this failed or succeeded.
+        success_cases = 0
+        fail_cases = 0
+
+        try:
+            self.supabase_client.table(table).upsert(batch).execute()
+            success_cases += 1
+        except Exception as e:
+            print(f"Batch Upsert Failed!")
+            fail_cases += 1
 
         return {"num_success": success_cases, "num_fail": fail_cases}
     

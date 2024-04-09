@@ -14,18 +14,23 @@ class EventProcessor:
 
         self.event_queue = []
         self.event_data_queue = []
+        self.appearance_queue = []
 
     def load_year_event_info(self, year: int):
         year_events_data = self.tba_api.get_data(f"/events/{year}")
 
         for event in year_events_data.json():
-            # Note: Event week is zero-indexed for some reason, so add 1.
+            week = 1
+            if 'week' in event and event['week'] is not None:
+                # Note: Event week is zero-indexed for some reason, so add 1.
+                week = event['week'] + 1
+
             event_info = {
                 "event_id": event['key'],
                 "name": event['name'],
                 "start_date": event['start_date'],
                 "year": event['year'],
-                "week": event['week'] + 1
+                "week": week
             }
             self.event_queue.append(event_info)
 
@@ -59,7 +64,8 @@ class EventProcessor:
         
 
     def compute_event_statistics(self, event_info: dict):
-        event_teams_data = self.tba_api.get_data(f"/event/{event_info['event_id']}/teams")
+        event_id = event_info['event_id']
+        event_teams_data = self.tba_api.get_data(f"/event/{event_id}/teams")
 
         if event_teams_data is None:
             return
@@ -76,6 +82,14 @@ class EventProcessor:
             for team in event_teams_data.json():
                 n_teams += 1
                 team_number = team['team_number']
+
+                # Register that the team appeared at the event.
+                appearance = {
+                    'id_str': f"{team_number} @ {event_id}",
+                    'team_number': team_number,
+                    'event_id': event_id
+                }
+                self.appearance_queue.append(appearance)
 
                 # Get the blue banners won by this particular team prior to this event's start date.
                 n_banners_robot_bbq += self.compute_bbq_contribution(event_info['start_date'], team_number, "Robot")
@@ -104,24 +118,27 @@ class EventProcessor:
         Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_event_statistics)(event)
                                                           for event in self.event_queue)
 
-        return self.event_queue
-
-    def load_year_events(self, year):
+    def load_year_events(self, year, update_data=True):
         # First load the event info.
         self.load_year_event_info(year)
 
-        # Compute event statistics for the items in the event queue.
-        self.compute_event_queue_statistics()
-
         # Submit the results to supabase.
         res_info = self.supabase_api.upsert_batch(self.event_queue, "Event")
-        res_data = self.supabase_api.upsert_batch(self.event_data_queue, "EventData")
+
+        # Compute event statistics for the items in the event queue.
+        res_data = {}
+        res_appearance = {}
+        if update_data:
+            self.compute_event_queue_statistics()
+            res_data = self.supabase_api.upsert_batch(self.event_data_queue, "EventData")
+            res_appearance = self.supabase_api.upsert_batch(self.appearance_queue, "Appearance")
 
         # Clear the event queue to avoid spamming the same events repeatedly.
         self.clear_queues()
 
-        return {"year": year, "info": res_info, "data": res_data}
+        return {"year": year, "info": res_info, "data": res_data, "appear": res_appearance}
 
     def clear_queues(self):
+        self.appearance_queue.clear()
         self.event_queue.clear()
         self.event_data_queue.clear()

@@ -62,20 +62,20 @@ class DataLoader:
         res = self.supabase_api.insert_batch(banner_batch, "BlueBanner")
         return res
 
-    def load_year_events(self, year: int):
-        res = self.event_processor.load_year_events(year)
+    def load_year_events(self, year: int, update_event_data=True):
+        res = self.event_processor.load_year_events(year, update_data=update_event_data)
         return res
     
-    def load_events_since(self, start_year: int):
+    def load_events_since(self, start_year: int, update_event_data=True):
         report = []
         for year in range(start_year, self.cur_year+1):
-            year_report = self.load_year_events(year)
+            year_report = self.load_year_events(year, update_event_data)
             report.append(year_report)
 
         return report
     
-    def load_all_events(self):
-        self.load_events_since(1992)
+    def load_all_events(self, update_event_data=True):
+        self.load_events_since(1992, update_event_data)
 
     def load_team_info(self):
         """

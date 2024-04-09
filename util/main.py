@@ -28,13 +28,13 @@ def load_teams(team_mode):
 
     print(report)
 
-def load_events(event_mode: str, year: int):
+def load_events(event_mode: str, year: int, update_event_data: bool):
     if event_mode == "since":
-        report = data_loader.load_events_since(year)
+        report = data_loader.load_events_since(year, update_event_data)
     elif event_mode == "year":
-        report = data_loader.load_year_events(year)
+        report = data_loader.load_year_events(year, update_event_data)
     elif event_mode == "full":
-        report = data_loader.load_all_events()
+        report = data_loader.load_all_events(update_event_data)
 
     print(report)
 
@@ -46,6 +46,7 @@ if __name__ == "__main__":
     parser.add_argument("--team_mode", default="full", choices=["info", "data", "full"])
     parser.add_argument("--event_mode", default="since", choices=["since", "year", "full"])
     parser.add_argument("--year", default=2024, type=int)
+    parser.add_argument("--info_only", default=False, type=bool)
     args = parser.parse_args()
 
     # Set up the banner loader
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     elif args.mode == "team":
         load_teams(args.team_mode)
     elif args.mode == "event":
-        load_events(args.event_mode, args.year)
+        load_events(args.event_mode, args.year, not args.info_only)
 
     # The banner factory must be closed or else the supabase process will continue to run and hang the terminal.
     data_loader.close()
