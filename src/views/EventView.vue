@@ -190,7 +190,6 @@ export default {
                 console.log(error);
             } else {
                 for (var i = 0; i < data.length; i++) {
-                    // console.log(data[i])
                     this.teamList.push({
                         "number": data[i].Team.team_number,
                         "name": data[i].Team.nickname,
@@ -198,8 +197,6 @@ export default {
                     });
                 }
             }
-
-            console.log(this.teamList)
         },
         resetEventInfo() {
             this.eventExists = false;
