@@ -1,7 +1,7 @@
 name: 'Nightly Data Update'
 on: 
   pull_request:
-    branches: * 
+    branches: [ '**' ] 
   workflow_dispatch:
   schedule:
     - cron: '00 9 * * *' # once a day at 9:00 AM UTC / 4:00 AM EST
