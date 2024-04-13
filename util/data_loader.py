@@ -10,8 +10,8 @@ from tba_team_processor import TBATeamProcessor
 
 
 class DataLoader:
-    def __init__(self):
-        cred_manager = CredentialManager()
+    def __init__(self, credentials=None):
+        cred_manager = CredentialManager(credentials=credentials)
         tba_api_info = cred_manager.get_credential("tba")
 
         # Initialize the supabase API, used later to submit data to the database.
@@ -36,12 +36,15 @@ class DataLoader:
 
     def load_all_banners(self):
         return self.load_banners_since(1992)
+    
+    def load_banners_since_current_year(self):
+        return self.load_banners_since(self.cur_year)
 
     def load_banners_since(self, start_year: int):
-        # Load all banners for all time up to the current year.
+        # Load all banners for all time up to the current year + 1.
         # Submit data to the database each year and report success/failure.
         report = {}
-        for year in range(start_year, self.cur_year+1):
+        for year in range(start_year, self.cur_year+2):
             banner_batch = self.banner_processor.pull_year_banners(year)
 
             # Submit the results to supabase.
@@ -68,7 +71,8 @@ class DataLoader:
     
     def load_events_since(self, start_year: int, update_event_data=True):
         report = []
-        for year in range(start_year, self.cur_year+1):
+        # Use cur_year + 2 to be able to capture 1 year in the future (useful in the fall).
+        for year in range(start_year, self.cur_year+2):
             year_report = self.load_year_events(year, update_event_data)
             report.append(year_report)
 
@@ -76,6 +80,9 @@ class DataLoader:
     
     def load_all_events(self, update_event_data=True):
         self.load_events_since(1992, update_event_data)
+
+    def load_events_since_current_year(self, update_event_data=True):
+        self.load_events_since(self.cur_year, update_event_data)
 
     def load_team_info(self):
         """
