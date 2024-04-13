@@ -28,7 +28,10 @@ jobs:
 
       # Install Poetry and pin the version to 1.5.1.
       # Setting `virtualenvs-in-project: true` allows the next step to easily cache it.
-      - uses: snok/install-poetry@v1
+      # snok/install-poetry is version pinned to v1.3.4 because it works, and setting to v1 
+      # would result in always pulling the latest. Upgrading this version number manually is 
+      # preferred in case of regressions introduced in this dependency.
+      - uses: snok/install-poetry@v1.3.4
         with:
           version: 1.5.1
           virtualenvs-create: true
@@ -76,7 +79,7 @@ jobs:
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
 
       - name: Update blue banner data
-        run: poetry run python main.py banner --banner_mode=since_current_year --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}""
+        run: poetry run python main.py banner --banner_mode=since_current_year --credentials=${{ secrets.DATA_UPDATE_CREDENTIALS }}
 
   # Load all the events and update their data.
   load_event_data:

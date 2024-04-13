@@ -8,10 +8,11 @@ from tba_api import TheBlueAllianceAPI
 from tba_banner_processor import TBABannerProcessor
 from tba_team_processor import TBATeamProcessor
 
-
+import json
 class DataLoader:
     def __init__(self, credentials=None):
-        cred_manager = CredentialManager(credentials=credentials)
+        # We store the credentials in a tuple in order to prevent the keys from being unpacked.
+        cred_manager = CredentialManager(credentials=credentials[0])
         tba_api_info = cred_manager.get_credential("tba")
 
         # Initialize the supabase API, used later to submit data to the database.

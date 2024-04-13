@@ -52,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("--event_mode", default="since", choices=["since", "year", "full", "since_current_year"])
     parser.add_argument("--year", default=2024, type=int)
     parser.add_argument("--info_only", default=False, type=bool)
-    parser.add_argument("--credentials", default=None)
+    parser.add_argument("--credentials", default=None, type=str)
     args = parser.parse_args()
 
     # If there are credentials provided via the command line, use those instead.
@@ -60,8 +60,8 @@ if __name__ == "__main__":
     if args.credentials is not None:
         creds = json.loads(args.credentials)
 
-    # Set up the banner loader
-    data_loader = DataLoader(creds)
+    # Set up the banner loader.
+    data_loader = DataLoader(credentials=(creds,))
 
     # Run the appropriate mode.
     if args.mode == "banner":
