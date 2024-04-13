@@ -17,7 +17,9 @@
 
     /* Component colors */
     --bbq-background-color: #ffffff;
-    --bbq-foreground-component-color: #fef7ff;
+    --bbq-foreground-component-color: #eee;
+    --bbq-secondary-foreground-component-color: #f8f8f8;
+    --bbq-secondary-foreground-component-link-hover-color: #d1d1d1;
 
     /* Primary text color */
     --bbq-primary-text-color: #313131;
@@ -39,6 +41,8 @@
     /* Component Colors */
     --bbq-background-color: #161616;
     --bbq-foreground-component-color: #2c2c2c;
+    --bbq-secondary-foreground-component-color: #424242;
+    --bbq-secondary-foreground-component-link-hover-color: #515151;
 
 
     /* Primary text color */
@@ -109,12 +113,17 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+a {
+  text-decoration: underline;
+  color: var(--bbq-primary-text-color);
+}
 
 
 div {
@@ -131,21 +140,4 @@ div.main-content {
   padding: 2rem;
   max-height: 100%;
   overflow: auto;
-}
-
-
-/* Third party components */
-
-md-outlined-text-field {
-  resize: none;
-  margin: 10px;
-}
-
-/* Custom classes */
-
-.v-centered-button {
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-  height: fit-content;
 }

@@ -1,0 +1,7 @@
+
+# Supabase environment variables for edge functions should be included in git-ignored env file.
+# An access token will be created in the supabase org when configuring things from the supabase CLI.
+# The edge functions themselves are defined in supabase/functions
+
+# The following keys are needed:
+TBA_API_KEY=put-your-key-in-dot-env-file

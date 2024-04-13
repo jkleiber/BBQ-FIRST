@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import AwardItem from '@/components/AwardItem.vue';
+import SearchForm from '@/components/SearchForm.vue';
 
 import '@material/web/tabs/tabs';
 import '@material/web/tabs/primary-tab';
@@ -27,12 +28,8 @@ import '@material/web/list/list-item';
                 <h3>Team Attribute Banners: {{ numTeamAwards }}</h3>
             </div>
 
-            <form class="team-search-form">
-                <md-outlined-text-field class="team-text-field" type="number" label="Team Number" v-model="teamNumber"
-                    @keydown.enter="submit()"></md-outlined-text-field>
-                <md-filled-button class="v-centered-button" type="submit"
-                    @click.stop.prevent="submit()">Submit</md-filled-button>
-            </form>
+            <SearchForm label="Team Number" type="number" v-model="teamNumberModel" @submit="submit()">
+            </SearchForm>
         </div>
 
 
@@ -48,7 +45,7 @@ import '@material/web/list/list-item';
             <div id="robot-panel" class="award-tab" role="tabpanel" aria-labelledby="robot-tab" v-if="isActive(0)">
                 <md-list>
                     <AwardItem v-for="award in robotAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event">
+                        :event="award.event" :event_id="award.event_id">
                     </AwardItem>
                 </md-list>
             </div>
@@ -56,7 +53,7 @@ import '@material/web/list/list-item';
             <div id="team-panel" class="award-tab" role="tabpanel" aria-labelledby="team-tab" v-if="isActive(1)">
                 <md-list>
                     <AwardItem v-for="award in teamAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event">
+                        :event="award.event" :event_id="award.event_id">
                     </AwardItem>
                 </md-list>
             </div>
@@ -69,6 +66,7 @@ import '@material/web/list/list-item';
 export default {
     data() {
         return {
+            teamNumberModel: this.$route.params.team_number,
             teamNumber: this.$route.params.team_number,
             teamString: "",
             tabs: [
@@ -102,20 +100,20 @@ export default {
     methods: {
         submit() {
             // Process the team number into a string for the URL and route.
-            let routeString = this.teamNumber;
-            if (routeString == null) {
-                routeString = "";
+            this.teamNumber = this.teamNumberModel;
+            if (this.teamNumber == null) {
+                this.teamNumber = "";
             }
 
             // Update the URL to match the team number.
             history.pushState(
                 {},
                 null,
-                "/team/" + routeString
+                "/team/" + this.teamNumber
             );
 
             // Go to the team page.
-            this.$router.push("/team/" + routeString);
+            this.$router.push("/team/" + this.teamNumber);
 
             // Update the team information.
             this.teamChange();
@@ -127,45 +125,41 @@ export default {
             return id == this.activeTab;
         },
         doesTeamExist() {
-            return this.$route.params.team_number != null && this.$route.params.team_number > 0;
+            return this.teamNumber != null && this.teamNumber > 0;
         },
-        getAwardList(data) {
-            var awardList = [];
-            for (let i = 0; i < data.length; i++) {
-                let a = data[i];
-                var award = {
-                    "name": a['name'],
-                    "season": a.season,
-                    "event": a.event_id
+        async getAwards() {
+            let teamAwards = [];
+            let robotAwards = [];
+            const { data, error } = await supabase.from("BlueBanner")
+                .select("name, team_number, type, Event( event_id, name, year )")
+                .eq("team_number", this.teamNumber);
+
+            // If the data is not null, populate the award lists.
+            // If the data is null, the award lists will be set to empty. 
+            if (data) {
+                for (let i = 0; i < data.length; i++) {
+                    let a = data[i];
+                    var award = {
+                        "name": a.name,
+                        "season": a.Event.year,
+                        "event": a.Event.name,
+                        "event_id": a.Event.event_id
+                    }
+
+                    if (data[i].type == "Robot") {
+                        robotAwards.push(award);
+                    } else if (data[i].type == "Team") {
+                        teamAwards.push(award);
+                    }
                 }
-                awardList.push(award);
             }
-
-            return awardList;
-        },
-        async getTeamAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("team_number", this.teamNumber)
-                .eq("type", "Team");
-            var awardList = this.getAwardList(data);
-
-            console.log(awardList)
-
-            this.teamAwardsList = awardList
-        },
-        async getRobotAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("team_number", this.teamNumber)
-                .eq("type", "Robot");
-            var awardList = this.getAwardList(data);
-
-            this.robotAwardsList = awardList
+            this.teamAwardsList = teamAwards;
+            this.robotAwardsList = robotAwards;
         },
         teamChange() {
-            this.getRobotAwards();
-            this.getTeamAwards();
+            if (this.doesTeamExist()) {
+                this.getAwards();
+            }
         }
     },
 }
