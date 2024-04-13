@@ -127,48 +127,37 @@ export default {
         doesTeamExist() {
             return this.teamNumber != null && this.teamNumber > 0;
         },
-        getAwardList(data) {
-            var awardList = [];
+        async getAwards() {
+            let teamAwards = [];
+            let robotAwards = [];
+            const { data, error } = await supabase.from("BlueBanner")
+                .select("name, team_number, type, Event( event_id, name, year )")
+                .eq("team_number", this.teamNumber);
 
-            // If the data is null, return the empty list. 
-            if (!data) {
-                return awardList;
-            }
+            // If the data is not null, populate the award lists.
+            // If the data is null, the award lists will be set to empty. 
+            if (data) {
+                for (let i = 0; i < data.length; i++) {
+                    let a = data[i];
+                    var award = {
+                        "name": a.name,
+                        "season": a.Event.year,
+                        "event": a.Event.name
+                    }
 
-            for (let i = 0; i < data.length; i++) {
-                let a = data[i];
-                var award = {
-                    "name": a['name'],
-                    "season": a.season,
-                    "event": a.event_id
+                    if (data[i].type == "Robot") {
+                        robotAwards.push(award);
+                    } else if (data[i].type == "Team") {
+                        teamAwards.push(award);
+                    }
                 }
-                awardList.push(award);
             }
-
-            return awardList;
-        },
-        async getTeamAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("team_number", this.teamNumber)
-                .eq("type", "Team");
-            var awardList = this.getAwardList(data);
-
-            this.teamAwardsList = awardList
-        },
-        async getRobotAwards() {
-            const { data, error } = await supabase.from("BlueBanner")
-                .select()
-                .eq("team_number", this.teamNumber)
-                .eq("type", "Robot");
-            var awardList = this.getAwardList(data);
-
-            this.robotAwardsList = awardList
+            this.teamAwardsList = teamAwards;
+            this.robotAwardsList = robotAwards;
         },
         teamChange() {
             if (this.doesTeamExist()) {
-                this.getRobotAwards();
-                this.getTeamAwards();
+                this.getAwards();
             }
         }
     },

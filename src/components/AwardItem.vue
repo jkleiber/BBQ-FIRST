@@ -7,7 +7,7 @@ const props = defineProps(['name', 'season', 'event'])
 
 <template>
     <div class="award">
-        {{ props.season }} - {{ props.event }} - {{ props.name }}
+        {{ props.name }} @ {{ props.season }} {{ props.event }}
     </div>
 </template>
 

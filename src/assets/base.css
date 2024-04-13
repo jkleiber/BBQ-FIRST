@@ -17,7 +17,8 @@
 
     /* Component colors */
     --bbq-background-color: #ffffff;
-    --bbq-foreground-component-color: #fef7ff;
+    --bbq-foreground-component-color: #eee;
+    --bbq-secondary-foreground-component-color: #f8f8f8;
 
     /* Primary text color */
     --bbq-primary-text-color: #313131;
@@ -39,6 +40,7 @@
     /* Component Colors */
     --bbq-background-color: #161616;
     --bbq-foreground-component-color: #2c2c2c;
+    --bbq-secondary-foreground-component-color: #424242;
 
 
     /* Primary text color */

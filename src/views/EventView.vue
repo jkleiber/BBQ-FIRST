@@ -38,7 +38,8 @@ import '@material/web/list/list-item';
         <div class="event-container" v-if="doesEventExist()">
             <StatSummary :stats="eventStats"></StatSummary>
             <md-list>
-                <TeamItem v-for="team in teamList" :number="team.number" :name="team.name" :country="team.country">
+                <TeamItem v-for="team in teamDict" :number="team.number" :name="team.name" :country="team.country"
+                    :robot-awards="team.robot_awards" :team-awards="team.team_awards">
                 </TeamItem>
             </md-list>
         </div>
@@ -60,8 +61,15 @@ export default {
             eventDate: null,
             loadingEvent: false,
             eventExists: false,
-            teamList: [],
-            eventData: []
+            teamDict: {},
+            eventData: [],
+            trip: {
+                name: '',
+                location: null,
+                start: null,
+                end: null,
+            },
+            locations: ['Australia', 'Barbados', 'Chile', 'Denmark', 'Ecuador', 'France'],
         }
     },
     created() {
@@ -179,24 +187,71 @@ export default {
                 ]
             }
         },
+        async populateAwards() {
+            console.log("AWARD POP " + this.teamDict.length)
+            // Get all awards earned by teams prior to the event.
+            const { data, error } = await supabase.from("BlueBanner")
+                .select("team_number, type, date, event_id, name, Event (event_id, name, year)")
+                .in("team_number", Object.keys(this.teamDict))
+                .lt("date", this.eventDate);
+
+            if (error) {
+                console.log(error);
+                return;
+            }
+
+            // Go through each award and assign it to the appropriate team.
+            for (var i = 0; i < data.length; i++) {
+                const team_number = data[i].team_number;
+
+                let award_name = data[i].name;
+                let event_name = data[i].Event.name;
+                let event_year = data[i].Event.year;
+
+                console.log(award_name)
+
+                // Add the awards to the applicable teams based on their type.
+                if (data[i].type == "Robot") {
+                    this.teamDict[team_number].robot_awards.push({
+                        "award_name": award_name,
+                        "event_name": event_name,
+                        "event_year": event_year
+                    });
+                } else if (data[i].type == "Team") {
+                    this.teamDict[team_number].team_awards.push({
+                        "award_name": award_name,
+                        "event_name": event_name,
+                        "event_year": event_year
+                    });
+                }
+            }
+
+            console.log(this.teamDict);
+        },
         async getEventTeams() {
             const { data, error } = await supabase.from("Appearance")
                 .select('event_id, team_number, Team (team_number, nickname, country)')
                 .eq("event_id", this.eventCode)
                 .order('team_number', { ascending: true });
 
-            this.teamList = [];
+            this.teamDict = {};
             if (error) {
                 console.log(error);
+                return;
             } else {
                 for (var i = 0; i < data.length; i++) {
-                    this.teamList.push({
-                        "number": data[i].Team.team_number,
+                    let team_number = data[i].team_number;
+                    this.teamDict[team_number] = {
+                        "number": team_number,
                         "name": data[i].Team.nickname,
-                        "country": data[i].Team.country
-                    });
+                        "country": data[i].Team.country,
+                        "robot_awards": [],
+                        "team_awards": []
+                    };
                 }
             }
+
+            await this.populateAwards();
         },
         resetEventInfo() {
             this.eventExists = false;
