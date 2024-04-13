@@ -21,7 +21,7 @@ jobs:
 
       # Cache the poetry installation so it doesn't need to be installed every run.
       - name: cache poetry install
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.local
           key: poetry-1.5.1
@@ -39,7 +39,7 @@ jobs:
       # effective and correct
       - name: cache deps
         id: cache-deps
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: .venv
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
@@ -62,8 +62,21 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      # Load the cached poetry install from the environment set up step.
+      - name: cache poetry install
+        uses: actions/cache@v4
+        with:
+          path: ~/.local
+          key: poetry-1.5.1
+
+      # Load the cached dependencies from the environment set up step.
+      - uses: actions/cache@v4
+        with:
+          path: .venv
+          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+
       - name: Update blue banner data
-        run: poetry run python main.py banner --banner_mode=since_current_year --credentials=${{ env.DATA_UPDATE_CREDENTIALS }}
+        run: poetry run python main.py banner --banner_mode=since_current_year --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}""
 
   # Load all the events and update their data.
   load_event_data:
@@ -77,8 +90,21 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      # Load the cached poetry install from the environment set up step.
+      - name: cache poetry install
+        uses: actions/cache@v4
+        with:
+          path: ~/.local
+          key: poetry-1.5.1
+
+      # Load the cached dependencies from the environment set up step.
+      - uses: actions/cache@v4
+        with:
+          path: .venv
+          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+
       - name: Update event data
-        run: poetry run python main.py event --event_mode=since_current_year --credentials=${{ env.DATA_UPDATE_CREDENTIALS }}
+        run: poetry run python main.py event --event_mode=since_current_year --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}"
 
   # Refresh the team information in case it has changed. Also update the team data.
   load_team_data:
@@ -92,5 +118,18 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      # Load the cached poetry install from the environment set up step.
+      - name: cache poetry install
+        uses: actions/cache@v4
+        with:
+          path: ~/.local
+          key: poetry-1.5.1
+
+      # Load the cached dependencies from the environment set up step.
+      - uses: actions/cache@v4
+        with:
+          path: .venv
+          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+
       - name: Update team data
-        run: poetry run python main.py team --team_mode=full --credentials=${{ env.DATA_UPDATE_CREDENTIALS }}
+        run: poetry run python main.py team --team_mode=full --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}"
