@@ -37,16 +37,6 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
 
-      # Cache dependencies based on the poetry.lock hash. If other versions of python or operating
-      # systems are used, they would need to be included in this key in order for caching to be 
-      # effective and correct
-      - name: cache deps
-        id: cache-deps
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: pydeps-${{ hashFiles('**/poetry.lock') }}
-
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
       # ensures this only runs on a cache miss.
@@ -72,11 +62,11 @@ jobs:
           path: ~/.local
           key: poetry-1.5.1
 
-      # Load the cached dependencies from the environment set up step.
-      - uses: actions/cache@v4
-        with:
-          path: .venv
-          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+      # Install dependencies. `--no-root` means "install all dependencies but not the project
+      # itself", which is what you want to avoid caching _your_ code. The `if` statement
+      # ensures this only runs on a cache miss.
+      - run: poetry install --no-interaction --no-root
+        if: steps.cache-deps.outputs.cache-hit != 'true'
 
       - name: Update blue banner data
         run: poetry run python main.py banner --banner_mode=since_current_year --credentials=${{ secrets.DATA_UPDATE_CREDENTIALS }}
@@ -100,11 +90,11 @@ jobs:
           path: ~/.local
           key: poetry-1.5.1
 
-      # Load the cached dependencies from the environment set up step.
-      - uses: actions/cache@v4
-        with:
-          path: .venv
-          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+      # Install dependencies. `--no-root` means "install all dependencies but not the project
+      # itself", which is what you want to avoid caching _your_ code. The `if` statement
+      # ensures this only runs on a cache miss.
+      - run: poetry install --no-interaction --no-root
+        if: steps.cache-deps.outputs.cache-hit != 'true'
 
       - name: Update event data
         run: poetry run python main.py event --event_mode=since_current_year --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}"
@@ -128,11 +118,11 @@ jobs:
           path: ~/.local
           key: poetry-1.5.1
 
-      # Load the cached dependencies from the environment set up step.
-      - uses: actions/cache@v4
-        with:
-          path: .venv
-          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+      # Install dependencies. `--no-root` means "install all dependencies but not the project
+      # itself", which is what you want to avoid caching _your_ code. The `if` statement
+      # ensures this only runs on a cache miss.
+      - run: poetry install --no-interaction --no-root
+        if: steps.cache-deps.outputs.cache-hit != 'true'
 
       - name: Update team data
         run: poetry run python main.py team --team_mode=full --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}"
