@@ -188,7 +188,6 @@ export default {
             }
         },
         async populateAwards() {
-            console.log("AWARD POP " + this.teamDict.length)
             // Get all awards earned by teams prior to the event.
             const { data, error } = await supabase.from("BlueBanner")
                 .select("team_number, type, date, event_id, name, Event (event_id, name, year)")
@@ -208,8 +207,6 @@ export default {
                 let event_name = data[i].Event.name;
                 let event_year = data[i].Event.year;
 
-                console.log(award_name)
-
                 // Add the awards to the applicable teams based on their type.
                 if (data[i].type == "Robot") {
                     this.teamDict[team_number].robot_awards.push({
@@ -225,8 +222,6 @@ export default {
                     });
                 }
             }
-
-            console.log(this.teamDict);
         },
         async getEventTeams() {
             const { data, error } = await supabase.from("Appearance")

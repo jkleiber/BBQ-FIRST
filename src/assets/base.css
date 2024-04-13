@@ -19,6 +19,7 @@
     --bbq-background-color: #ffffff;
     --bbq-foreground-component-color: #eee;
     --bbq-secondary-foreground-component-color: #f8f8f8;
+    --bbq-secondary-foreground-component-link-hover-color: #d1d1d1;
 
     /* Primary text color */
     --bbq-primary-text-color: #313131;
@@ -41,6 +42,7 @@
     --bbq-background-color: #161616;
     --bbq-foreground-component-color: #2c2c2c;
     --bbq-secondary-foreground-component-color: #424242;
+    --bbq-secondary-foreground-component-link-hover-color: #515151;
 
 
     /* Primary text color */
@@ -111,12 +113,17 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+a {
+  text-decoration: underline;
+  color: var(--bbq-primary-text-color);
+}
 
 
 div {

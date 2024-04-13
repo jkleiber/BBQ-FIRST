@@ -45,7 +45,7 @@ import '@material/web/list/list-item';
             <div id="robot-panel" class="award-tab" role="tabpanel" aria-labelledby="robot-tab" v-if="isActive(0)">
                 <md-list>
                     <AwardItem v-for="award in robotAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event">
+                        :event="award.event" :event_id="award.event_id">
                     </AwardItem>
                 </md-list>
             </div>
@@ -53,7 +53,7 @@ import '@material/web/list/list-item';
             <div id="team-panel" class="award-tab" role="tabpanel" aria-labelledby="team-tab" v-if="isActive(1)">
                 <md-list>
                     <AwardItem v-for="award in teamAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event">
+                        :event="award.event" :event_id="award.event_id">
                     </AwardItem>
                 </md-list>
             </div>
@@ -142,7 +142,8 @@ export default {
                     var award = {
                         "name": a.name,
                         "season": a.Event.year,
-                        "event": a.Event.name
+                        "event": a.Event.name,
+                        "event_id": a.Event.event_id
                     }
 
                     if (data[i].type == "Robot") {
