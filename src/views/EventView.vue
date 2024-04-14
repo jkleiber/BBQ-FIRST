@@ -58,18 +58,18 @@ export default {
             eventName: "",
             eventYear: 0,
             eventSeasonWeek: -1,
+            eventType: -1,
+            eventTypeString: "",
             eventDate: null,
             loadingEvent: false,
             eventExists: false,
             teamDict: {},
             eventData: [],
-            trip: {
-                name: '',
-                location: null,
-                start: null,
-                end: null,
-            },
-            locations: ['Australia', 'Barbados', 'Chile', 'Denmark', 'Ecuador', 'France'],
+            // Codes that indicate if we should use the event type string instead of the week.
+            // 3: Championship Division
+            // 4: Championship Finals
+            // 99: Offseason event
+            specialEventTypes: [3, 4, 99]
         }
     },
     created() {
@@ -88,7 +88,13 @@ export default {
             let eventTimeString = "";
             eventTimeString += this.eventYear;
 
-            if (this.eventSeasonWeek !== null && this.eventSeasonWeek !== undefined) {
+            // If this is a special type of event, add the event type string rather than the week.
+            // This is used for offseason and championship events that don't correspond to competition weeks.
+            if (this.specialEventTypes.includes(this.eventType) && this.eventTypeString) {
+                eventTimeString += " - " + this.eventTypeString;
+            }
+            else if (this.eventSeasonWeek !== null && this.eventSeasonWeek !== undefined && this.eventTypeString) {
+                // If the event type is not special, and the event type string exists, show the week.
                 eventTimeString += " - Week " + this.eventSeasonWeek;
             }
 
@@ -163,6 +169,8 @@ export default {
                 this.eventYear = data[0].year;
                 this.eventSeasonWeek = data[0].week;
                 this.eventDate = data[0].start_date;
+                this.eventType = data[0].type;
+                this.eventTypeString = data[0].type_string;
             }
 
             // Mark the event as loaded to allow the doesEventExist function to determine existence of a loaded event.
