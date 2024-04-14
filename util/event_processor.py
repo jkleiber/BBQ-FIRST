@@ -27,6 +27,8 @@ class EventProcessor:
 
             event_info = {
                 "event_id": event['key'],
+                "type": event['event_type'],
+                "type_string": event['event_type_string'],
                 "name": event['name'],
                 "start_date": event['start_date'],
                 "year": event['year'],
