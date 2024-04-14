@@ -23,7 +23,7 @@ class DataLoader:
         self.tba_api = TheBlueAllianceAPI(tba_api_info['base_url'], tba_api_info['api_key'])
 
         # The banner processor pulls all the relevant banners from TBA.
-        self.banner_processor = TBABannerProcessor(self.tba_api, n_jobs=8, verbose=True)
+        self.banner_processor = TBABannerProcessor(self.tba_api, n_jobs=8)
         self.team_processor = TBATeamProcessor(self.tba_api)
         self.event_processor = EventProcessor(self.tba_api, self.supabase_api)
 

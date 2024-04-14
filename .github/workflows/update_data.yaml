@@ -97,7 +97,7 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true'
 
       - name: Update event data
-        run: poetry run python main.py event --event_mode=since_current_year --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}"
+        run: poetry run python main.py event --event_mode=since_current_year --credentials=${{ secrets.DATA_UPDATE_CREDENTIALS }}
 
   # Refresh the team information in case it has changed. Also update the team data.
   load_team_data:
@@ -125,4 +125,4 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true'
 
       - name: Update team data
-        run: poetry run python main.py team --team_mode=full --credentials="${{ secrets.DATA_UPDATE_CREDENTIALS }}"
+        run: poetry run python main.py team --team_mode=full --credentials=${{ secrets.DATA_UPDATE_CREDENTIALS }}
