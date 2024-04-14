@@ -47,16 +47,16 @@ class TBABannerProcessor:
                 print(f"FAIL FAIL FAIL {team_key}")
                 exit(-1)
 
-            banner_type = ""
+            banner_type_str = ""
             if banner_type in ROBOT_BLUE_BANNER_AWARD_TYPES:
-                banner_type = "Robot"
+                banner_type_str = "Robot"
             elif banner_type in TEAM_BLUE_BANNER_AWARD_TYPES:
-                banner_type = "Team"
+                banner_type_str = "Team"
 
             # Create an ID string based on the banner attributes.
             # This string will be unique for a given team winning a banner at an event.
             # This is used to ensure banners are not duplicated in the database.
-            id_str = f"{banner_str} ({banner_type}, {banner_type}) @ {event_code} {event_date}: {team_number}"
+            id_str = f"{banner_str} ({banner_type}, {banner_type_str}) @ {event_code} {event_date}: {team_number}"
 
             # Create the banner dictionary and add it to the queue of banners to send to the database later.
             # This is done because the supabase client cannot be pickled. Since it cannot be pickled, it 
@@ -65,7 +65,7 @@ class TBABannerProcessor:
             banner_dict = {
                 "id_string": id_str,
                 "name": banner_str,
-                "type": banner_type,
+                "type": banner_type_str,
                 "event_id": event_code,
                 "team_number": team_number,
                 "season": year,

@@ -1,6 +1,7 @@
 
 
 import argparse
+import json
 
 from data_loader import DataLoader
 
@@ -8,7 +9,9 @@ data_loader: DataLoader = None
 
 
 def load_banners(banner_mode: str, year: int):
-    if banner_mode == "since":
+    if banner_mode == "since_current_year":
+        result = data_loader.load_banners_since_current_year()
+    elif banner_mode == "since":
         result = data_loader.load_banners_since(year)
     elif banner_mode == "year":
         result = data_loader.load_year_banners(year)
@@ -29,7 +32,9 @@ def load_teams(team_mode):
     print(report)
 
 def load_events(event_mode: str, year: int, update_event_data: bool):
-    if event_mode == "since":
+    if event_mode == "since_current_year":
+        report = data_loader.load_events_since_current_year(update_event_data)
+    elif event_mode == "since":
         report = data_loader.load_events_since(year, update_event_data)
     elif event_mode == "year":
         report = data_loader.load_year_events(year, update_event_data)
@@ -42,15 +47,21 @@ if __name__ == "__main__":
     # Allow the user to configure the mode and year for this script.
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", default="banner", choices=["banner", "team", "event"])
-    parser.add_argument("--banner_mode", default="since", choices=["since", "year", "full"])
+    parser.add_argument("--banner_mode", default="since", choices=["since", "year", "full", "since_current_year"])
     parser.add_argument("--team_mode", default="full", choices=["info", "data", "full"])
-    parser.add_argument("--event_mode", default="since", choices=["since", "year", "full"])
+    parser.add_argument("--event_mode", default="since", choices=["since", "year", "full", "since_current_year"])
     parser.add_argument("--year", default=2024, type=int)
     parser.add_argument("--info_only", default=False, type=bool)
+    parser.add_argument("--credentials", default=None, type=str)
     args = parser.parse_args()
 
-    # Set up the banner loader
-    data_loader = DataLoader()
+    # If there are credentials provided via the command line, use those instead.
+    creds = None
+    if args.credentials is not None:
+        creds = json.loads(args.credentials)
+
+    # Set up the banner loader.
+    data_loader = DataLoader(credentials=(creds,))
 
     # Run the appropriate mode.
     if args.mode == "banner":

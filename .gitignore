@@ -33,5 +33,5 @@ coverage
 __pycache__
 
 # Ignore credentials
-credentials.json
+private_credentials.json
 .env

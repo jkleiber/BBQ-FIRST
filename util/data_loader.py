@@ -8,10 +8,11 @@ from tba_api import TheBlueAllianceAPI
 from tba_banner_processor import TBABannerProcessor
 from tba_team_processor import TBATeamProcessor
 
-
+import json
 class DataLoader:
-    def __init__(self):
-        cred_manager = CredentialManager()
+    def __init__(self, credentials=None):
+        # We store the credentials in a tuple in order to prevent the keys from being unpacked.
+        cred_manager = CredentialManager(credentials=credentials[0])
         tba_api_info = cred_manager.get_credential("tba")
 
         # Initialize the supabase API, used later to submit data to the database.
@@ -22,7 +23,7 @@ class DataLoader:
         self.tba_api = TheBlueAllianceAPI(tba_api_info['base_url'], tba_api_info['api_key'])
 
         # The banner processor pulls all the relevant banners from TBA.
-        self.banner_processor = TBABannerProcessor(self.tba_api, n_jobs=8, verbose=True)
+        self.banner_processor = TBABannerProcessor(self.tba_api, n_jobs=8)
         self.team_processor = TBATeamProcessor(self.tba_api)
         self.event_processor = EventProcessor(self.tba_api, self.supabase_api)
 
@@ -36,12 +37,15 @@ class DataLoader:
 
     def load_all_banners(self):
         return self.load_banners_since(1992)
+    
+    def load_banners_since_current_year(self):
+        return self.load_banners_since(self.cur_year)
 
     def load_banners_since(self, start_year: int):
-        # Load all banners for all time up to the current year.
+        # Load all banners for all time up to the current year + 1.
         # Submit data to the database each year and report success/failure.
         report = {}
-        for year in range(start_year, self.cur_year+1):
+        for year in range(start_year, self.cur_year+2):
             banner_batch = self.banner_processor.pull_year_banners(year)
 
             # Submit the results to supabase.
@@ -68,14 +72,18 @@ class DataLoader:
     
     def load_events_since(self, start_year: int, update_event_data=True):
         report = []
-        for year in range(start_year, self.cur_year+1):
+        # Use cur_year + 2 to be able to capture 1 year in the future (useful in the fall).
+        for year in range(start_year, self.cur_year+2):
             year_report = self.load_year_events(year, update_event_data)
             report.append(year_report)
 
         return report
     
     def load_all_events(self, update_event_data=True):
-        self.load_events_since(1992, update_event_data)
+        return self.load_events_since(1992, update_event_data)
+
+    def load_events_since_current_year(self, update_event_data=True):
+        return self.load_events_since(self.cur_year, update_event_data)
 
     def load_team_info(self):
         """
