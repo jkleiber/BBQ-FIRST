@@ -80,10 +80,10 @@ class DataLoader:
         return report
     
     def load_all_events(self, update_event_data=True):
-        self.load_events_since(1992, update_event_data)
+        return self.load_events_since(1992, update_event_data)
 
     def load_events_since_current_year(self, update_event_data=True):
-        self.load_events_since(self.cur_year, update_event_data)
+        return self.load_events_since(self.cur_year, update_event_data)
 
     def load_team_info(self):
         """

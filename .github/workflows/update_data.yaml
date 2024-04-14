@@ -1,7 +1,5 @@
 name: 'Nightly Data Update'
-on: 
-  pull_request:
-    branches: [ '**' ] 
+on:
   workflow_dispatch:
   schedule:
     - cron: '00 9 * * *' # once a day at 9:00 AM UTC / 4:00 AM EST
@@ -101,7 +99,7 @@ jobs:
 
   # Refresh the team information in case it has changed. Also update the team data.
   load_team_data:
-    name: Load Event Data
+    name: Load Team Data
     needs: [set_up_environment, load_blue_banners]
     runs-on: ubuntu-latest
     defaults:
