@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import TeamView from '@/views/TeamView.vue';
 import EventView from '@/views/EventView.vue';
+import EventRankingsView from '@/views/EventRankingsView.vue';
 import PageNotFound from '@/views/PageNotFound.vue'
 
 // Admin pages
@@ -63,6 +64,15 @@ const routes = [
         path: '/event/:event_code',
         name: 'Event',
         component: EventView,
+        meta: {
+            requireAuth: false,
+            skipIfAuth: false
+        }
+    },
+    {
+        path: '/event-rankings',
+        name: 'Event Rankings',
+        component: EventRankingsView,
         meta: {
             requireAuth: false,
             skipIfAuth: false

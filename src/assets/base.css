@@ -117,6 +117,8 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
 }
 
 
@@ -133,11 +135,11 @@ div {
 }
 
 
-
 div.main-content {
   display: grid;
   margin-top: 70px;
   padding: 2rem;
   max-height: 100%;
   overflow: auto;
+  flex: 1 1 auto;
 }

@@ -31,9 +31,6 @@ import '@material/web/list/list-item';
             </SearchForm>
         </div>
 
-        <md-list>
-
-        </md-list>
         <!-- Show event information if it exists -->
         <div class="event-container" v-if="doesEventExist()">
             <StatSummary :stats="eventStats"></StatSummary>
@@ -292,12 +289,6 @@ div.event-info-container {
     flex-flow: column;
     flex: 1;
     height: 60vh;
-}
-
-.award-tab {
-    /* position: absolute; */
-    flex: 1;
-    overflow: auto;
 }
 
 .event-text-field {
