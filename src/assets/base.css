@@ -23,6 +23,7 @@
 
     /* Primary text color */
     --bbq-primary-text-color: #313131;
+    --bbq-secondary-text-color: var(--bbq-primary-text-color);
   }
 }
 
@@ -47,6 +48,7 @@
 
     /* Primary text color */
     --bbq-primary-text-color: tomato;
+    --bbq-secondary-text-color: var(--bbq-accent-color);
   }
 }
 
@@ -72,10 +74,16 @@
   --md-sys-color-on-surface: var(--bbq-primary-text-color);
   --md-sys-color-surface: var(--bbq-foreground-component-color);
   --md-sys-color-on-surface-variant: var(--bbq-accent-color);
+  --md-sys-color-secondary-container: var(--bbq-foreground-component-color);
+  --md-sys-color-surface-container: var(--bbq-secondary-foreground-component-color);
 
   /* Outlined text field colors */
   --md-outlined-text-field-label-text-color: var(--bbq-primary-text-color);
   --md-outlined-text-field-input-text-color: var(--bbq-primary-text-color);
+
+  /* Menu item colors */
+  --md-menu-item-label-text-color: var(--bbq-secondary-text-color);
+  --md-menu-item-selected-label-text-color: var(--bbq-primary-color);
 
   /* List colors */
   --md-list-container-color: var(--bbq-background-color);
@@ -129,6 +137,12 @@ a {
 
 
 div {
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+table {
   width: 100%;
   text-align: center;
   margin: 0 auto;

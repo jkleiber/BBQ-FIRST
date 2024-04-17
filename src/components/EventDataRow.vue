@@ -6,7 +6,7 @@
         <td>
             {{ rankNumberString }}
         </td>
-        <td>
+        <td class="event-name-data">
             <a v-bind:href="eventLink">{{ year }} {{ name }}</a>
         </td>
         <td v-for="stat in eventData">
@@ -46,4 +46,8 @@ export default {
     background-color: var(--bbq-foreground-component-color);
     margin-bottom: 5px;
 }
+
+/* .event-name-data {
+    max-width: 50%;
+} */
 </style>
