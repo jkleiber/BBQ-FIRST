@@ -195,9 +195,10 @@ export default {
         async populateAwards() {
             // Get all awards earned by teams prior to the event.
             const { data, error } = await supabase.from("BlueBanner")
-                .select("team_number, type, date, event_id, name, Event (event_id, name, year)")
+                .select("team_number, type, date, event_id, name, Event!inner(event_id, start_date, name, year)")
                 .in("team_number", Object.keys(this.teamDict))
-                .lt("date", this.eventDate);
+                .lt("Event.start_date", this.eventDate)
+                .neq("Event.event_id", this.eventCode);
 
             if (error) {
                 console.log(error);

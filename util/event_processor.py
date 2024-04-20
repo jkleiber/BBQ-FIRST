@@ -36,7 +36,11 @@ class EventProcessor:
             }
             self.event_queue.append(event_info)
 
-    def compute_bbq_contribution(self, start_date, team_number: int, banner_type: str):
+    def compute_bbq_contribution(self, start_date, event_id: str, team_number: int, banner_type: str):
+        # Only consider blue banners won by this team at earlier events to this one.
+        # Some events feed into other events, and give awards on the same day (i.e. Championship divisions
+        # award blue banners the same day that Einstein does). To handle these scenarios, we must check
+        # that an event associated with a blue banner has an earlier start date than the current event.
         bb_filter = [
             {
                 "column": "team_number",
@@ -49,21 +53,30 @@ class EventProcessor:
                 "operation": "eq"
             },
             {
-                "column": "date",
+                "column": "Event.start_date",
                 "value": start_date,
                 "operation": "lt"
+            },
+            {
+                "column": "event_id",
+                "value": event_id,
+                "operation": "neq"
             }
         ]
 
-        banners = self.supabase_api.get_data('BlueBanner', '*', bb_filter)
+        # In order to filter out the BlueBanner rows based on the foreign key constraints
+        # (Event.start_date < event start date), the "!inner" hint is needed. Without this
+        # hint, the query will return all BlueBanners won by a team with "Event: None"
+        # rather than applying the correct filter.
+        banners = self.supabase_api.get_data('BlueBanner',
+                                             'event_id, type, team_number, id_string, Event!inner(event_id, start_date)',
+                                             bb_filter)
         banners_dict = banners.model_dump()
         num_banners = 0
         if 'data' in banners_dict:
             num_banners = len(banners_dict['data'])
 
         return num_banners
-
-        
 
     def compute_event_statistics(self, event_info: dict):
         event_id = event_info['event_id']
@@ -93,9 +106,11 @@ class EventProcessor:
                 }
                 self.appearance_queue.append(appearance)
 
-                # Get the blue banners won by this particular team prior to this event's start date.
-                n_banners_robot_bbq += self.compute_bbq_contribution(event_info['start_date'], team_number, "Robot")
-                n_banners_team_bbq += self.compute_bbq_contribution(event_info['start_date'], team_number, "Team")
+                # Get the blue banners won by this particular team prior to this event's start.
+                n_banners_robot_bbq += self.compute_bbq_contribution(
+                    event_info['start_date'], event_id, team_number, "Robot")
+                n_banners_team_bbq += self.compute_bbq_contribution(
+                    event_info['start_date'], event_id, team_number, "Team")
 
             # Compute BBQ (n_banners / n_teams)
             if n_teams > 0:
@@ -105,7 +120,7 @@ class EventProcessor:
             # If there is an error, just keep going.
             # We will set the event data to 0.
             pass
-        
+
         # Create an EventData item.
         event_data = {
             "event_id": event_info['event_id'],

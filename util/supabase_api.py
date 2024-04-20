@@ -70,13 +70,17 @@ class SupabaseAPI:
         The filter list contains dictionaries set up with the following keys:
         - column: the column to filter on
         - value: the value to use in the filter
-        - operation: the type of filter operation (eq)
+        - operation: the type of filter operation (eq, neq, lt, lte)
         """
         for f in filter:
             if f['operation'] == 'eq':
                 request_builder = request_builder.eq(f['column'], f['value'])
+            elif f['operation'] == 'neq':
+                request_builder = request_builder.neq(f['column'], f['value'])
             elif f['operation'] == 'lt':
                 request_builder = request_builder.lt(f['column'], f['value'])
+            elif f['operation'] == 'lte':
+                request_builder = request_builder.lte(f['column'], f['value'])
 
         # Execute request
         data = request_builder.execute()
