@@ -14,7 +14,6 @@ class EventProcessor:
 
         self.event_queue = []
         self.event_data_queue = []
-        self.appearance_queue = []
 
     def load_year_event_info(self, year: int):
         year_events_data = self.tba_api.get_data(f"/events/{year}")
@@ -93,6 +92,7 @@ class EventProcessor:
         # Aggregated data.
         robot_bbq = 0
         team_bbq = 0
+        appearances = []
         try:
             for team in event_teams_data.json():
                 n_teams += 1
@@ -104,7 +104,7 @@ class EventProcessor:
                     'team_number': team_number,
                     'event_id': event_id
                 }
-                self.appearance_queue.append(appearance)
+                appearances.append(appearance)
 
                 # Get the blue banners won by this particular team prior to this event's start.
                 n_banners_robot_bbq += self.compute_bbq_contribution(
@@ -126,6 +126,9 @@ class EventProcessor:
                     "operation": "eq"
                 }]
                 self.supabase_api.delete_rows("Appearance", appearance_filter)
+                
+                # Update appearances for each event in order to avoid events being momentarily blank.
+                _ = self.supabase_api.upsert_batch(appearances, "Appearance")
         except Exception as e:
             # If there is an error, just keep going.
             # We will set the event data to 0.
@@ -154,18 +157,15 @@ class EventProcessor:
 
         # Compute event statistics for the items in the event queue.
         res_data = {}
-        res_appearance = {}
         if update_data:
             self.compute_event_queue_statistics()
             res_data = self.supabase_api.upsert_batch(self.event_data_queue, "EventData")
-            res_appearance = self.supabase_api.upsert_batch(self.appearance_queue, "Appearance")
 
         # Clear the event queue to avoid spamming the same events repeatedly.
         self.clear_queues()
 
-        return {"year": year, "info": res_info, "data": res_data, "appear": res_appearance}
+        return {"year": year, "info": res_info, "data": res_data}
 
     def clear_queues(self):
-        self.appearance_queue.clear()
         self.event_queue.clear()
         self.event_data_queue.clear()
