@@ -1,7 +1,9 @@
 
 
 from supabase import create_client, Client
-from postgrest import SyncSelectRequestBuilder
+from postgrest import SyncSelectRequestBuilder, SyncFilterRequestBuilder
+from postgrest.base_request_builder import BaseFilterRequestBuilder
+from typing import Union
 
 class SupabaseAPI:
 
@@ -63,15 +65,7 @@ class SupabaseAPI:
 
         return {"num_success": success_cases, "num_fail": fail_cases}
     
-    def get_data(self, table: str, columns: str, filter: list):
-        request_builder: SyncSelectRequestBuilder = self.supabase_client.table(table).select(columns)
-        
-        """ Build a request based on the filter values and operators.
-        The filter list contains dictionaries set up with the following keys:
-        - column: the column to filter on
-        - value: the value to use in the filter
-        - operation: the type of filter operation (eq, neq, lt, lte)
-        """
+    def _filter_process(self, request_builder: BaseFilterRequestBuilder, filter: list):
         for f in filter:
             if f['operation'] == 'eq':
                 request_builder = request_builder.eq(f['column'], f['value'])
@@ -81,6 +75,33 @@ class SupabaseAPI:
                 request_builder = request_builder.lt(f['column'], f['value'])
             elif f['operation'] == 'lte':
                 request_builder = request_builder.lte(f['column'], f['value'])
+
+    def get_data(self, table: str, columns: str, filter: list):
+        request_builder: SyncSelectRequestBuilder = self.supabase_client.table(table).select(columns)
+        
+        """ Build a request based on the filter values and operators.
+        The filter list contains dictionaries set up with the following keys:
+        - column: the column to filter on
+        - value: the value to use in the filter
+        - operation: the type of filter operation (eq, neq, lt, lte)
+        """
+        self._filter_process(request_builder, filter)
+
+        # Execute request
+        data = request_builder.execute()
+
+        return data
+    
+    def delete_rows(self, table: str, filter: list):
+        request_builder: SyncFilterRequestBuilder = self.supabase_client.table(table).delete()
+        
+        """ Build a request based on the filter values and operators.
+        The filter list contains dictionaries set up with the following keys:
+        - column: the column to filter on
+        - value: the value to use in the filter
+        - operation: the type of filter operation (eq, neq, lt, lte)
+        """
+        self._filter_process(request_builder, filter)
 
         # Execute request
         data = request_builder.execute()

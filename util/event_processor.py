@@ -116,6 +116,16 @@ class EventProcessor:
             if n_teams > 0:
                 robot_bbq = n_banners_robot_bbq / n_teams
                 team_bbq = n_banners_team_bbq / n_teams
+
+                # Delete all teams from the attendance list. This allows event 
+                # appearances to be completely refreshed later when the appearance 
+                # queue is upserted.
+                appearance_filter = [{
+                    "column": "event_id",
+                    "value": event_id,
+                    "operation": "eq"
+                }]
+                self.supabase_api.delete_rows("Appearance", appearance_filter)
         except Exception as e:
             # If there is an error, just keep going.
             # We will set the event data to 0.
