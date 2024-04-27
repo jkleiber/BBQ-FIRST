@@ -9,6 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@algolia/autocomplete-js": "^1.17.0",
         "@material/web": "^1.2.0",
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@supabase/supabase-js": "^2.39.3",

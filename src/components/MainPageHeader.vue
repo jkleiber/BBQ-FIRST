@@ -1,5 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router';
+
+import SearchBar from '@/components/SearchBar.vue';
 </script>
 
 <template>
@@ -13,13 +15,7 @@ import { RouterLink } from 'vue-router';
         <RouterLink to="/event" class="nav-link">Events</RouterLink>
 
 
-        <!-- <div id="search_bar">
-            <span class="search">
-                <input type="text" name="q" id="searcher" class="search" placeholder="Search" autocomplete="off"></input>
-                <div id="results">
-                </div>
-            </span>
-        </div> -->
+        <SearchBar class="nav-search"></SearchBar>
     </div>
 </template>
 
@@ -70,7 +66,7 @@ a.nav-link {
     /* Positioning */
     position: relative;
     margin: 0 auto;
-    float: right;
+    float: left;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -100,5 +96,12 @@ a.nav-link:active {
     background-color: var(--bbq-header-hover-color);
     color: #FFF;
     border-bottom: var(--bbq-primary-color) 5px solid;
+}
+
+.nav-search {
+    height: 100%;
+    float: right;
+    position: relative;
+    margin-right: 20px;
 }
 </style>
