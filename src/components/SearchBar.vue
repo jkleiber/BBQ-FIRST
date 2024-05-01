@@ -11,12 +11,12 @@ import '@material/web/icon/icon';
     <span class="search-container">
         <form class="search-form">
             <input class="search-text-field nav-input" type="text" v-model="searchQuery"
-                @keydown.enter.prevent="emitSubmit()" placeholder="Search teams or events"></input>
+                @keydown.enter.prevent="emitSubmit()" v-bind:placeholder="placeholder"></input>
         </form>
         <div class="autocomplete-dropdown" v-if="searchQuery.length > 0 && searchableData()">
             <div v-for="category in searchData.categories">
-                <div v-if="autoCompleteOptions(category).length > 0">
-                    afaf
+                <div v-for="item in autoCompleteOptions(category.id)">
+                    {{ item.label }}
                 </div>
             </div>
         </div>
@@ -30,11 +30,12 @@ export default {
      {
         "categories": [
             {
+                "id": 0,
                 "label": "Teams",
                 "autocomplete_max": 5,
                 "items": [
                     {
-                        "label": "Team 401",
+                        "label": "401 - Copperhead Robotics",
                         "route": "/team/401"
                     },
                     ...
@@ -52,6 +53,10 @@ export default {
         searchData: {
             default: {},
             type: Object
+        },
+        placeholder: {
+            default: "Search teams or events",
+            type: String
         }
     },
     data() {
@@ -65,6 +70,11 @@ export default {
         },
         inputType() {
             return this.type;
+        }
+    },
+    methods: {
+        emitSubmit() {
+            this.$emit('submit');
         },
         searchableData() {
             let searchable = true;
@@ -74,21 +84,20 @@ export default {
         },
         autoCompleteOptions(category) {
             let options = [];
+            let numOptions = 0;
 
             if ("categories" in this.searchData) {
                 let searchCategory = this.searchData.categories[category];
                 let searchItems = searchCategory.items;
-                let num_options = searchCategory.autocomplete_max;
+                numOptions = searchCategory.autocomplete_max;
 
                 options = searchItems.filter(({ label }) => label.toLowerCase().includes(this.searchQuery.toLowerCase()));
             }
 
-            return options.slice(0, num_options);
-        }
-    },
-    methods: {
-        emitSubmit() {
-            this.$emit('submit');
+            console.log(category);
+            console.log(options.slice(0, numOptions));
+
+            return options.slice(0, numOptions);
         }
     }
 }
