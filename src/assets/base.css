@@ -24,9 +24,11 @@
   --bbq-primary-text-color: #313131;
   --bbq-secondary-text-color: var(--bbq-primary-text-color);
 
-  /* Primary text color */
-  --bbq-primary-text-color: #313131;
-  --bbq-secondary-text-color: var(--bbq-primary-text-color);
+  /* Component colors in the nav bar */
+  --bbq-nav-foreground-component-color: var(--bbq-foreground-component-color);
+  --bbq-nav-component-text-color: var(--bbq-primary-text-color);
+  --bbq-autocomplete-default-color: #eee;
+  --bbq-autocomplete-hover-color: #aaa;
 
   /* Component colors in the nav bar */
   --bbq-nav-foreground-component-color: var(--bbq-foreground-component-color);
@@ -138,7 +140,7 @@ table {
 
 
 div.main-content {
-  display: grid;
+  display: block;
   margin-top: 70px;
   padding: 2rem;
   max-height: 100%;

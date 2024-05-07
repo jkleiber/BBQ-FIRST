@@ -2,7 +2,7 @@
 import { RouterLink } from 'vue-router';
 
 import SearchBar from '@/components/SearchBar.vue';
-import { supabase } from '@/lib/supabase-client';
+import { loadSearchData } from '@/lib/search/load_autocomplete.js';
 </script>
 
 <template>
@@ -12,20 +12,27 @@ import { supabase } from '@/lib/supabase-client';
         <!--Right Aligned Elements-->
         <!-- <RouterLink to="/help" class="nav-link">Help</RouterLink> -->
 
-        <RouterLink to="/team" class="nav-link">Teams</RouterLink>
-        <RouterLink to="/event" class="nav-link">Events</RouterLink>
+        <RouterLink to="/teams" class="nav-link">Teams</RouterLink>
+        <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
 
 
-        <SearchBar class="nav-search" :search-data="searchData"></SearchBar>
+        <SearchBar class="nav-search" :search-data="searchData" v-if="searchVisible"></SearchBar>
     </div>
 </template>
 
 <script>
 export default {
+    props: {
+        searchVisible: {
+            default: true,
+            type: Boolean
+        }
+    },
     data() {
         return {
             searchCategories: {
-                "teams": 0
+                "teams": 0,
+                "events": 1
             },
             searchData: {
                 "categories": [
@@ -34,59 +41,19 @@ export default {
                         "label": "Teams",
                         "autocomplete_max": 5,
                         "items": []
+                    },
+                    {
+                        "id": 1,
+                        "label": "Events",
+                        "autocomplete_max": 5,
+                        "items": []
                     }
                 ]
             }
         }
     },
     mounted() {
-        this.loadSearchData()
-    },
-    methods: {
-        async loadSearchData() {
-            await this.loadTeams()
-        },
-        async loadTableData(table, columnString) {
-            // Get the number of teams in the database.
-            const { data, count } = await supabase.from(table).select(columnString, { count: 'exact', head: true });
-
-            // Supabase paginates requests at 1000 rows, so we will make multiple calls in order to collect all the team data.
-            const rowsPerRequest = 1000;
-            let numTotalRows = count;
-            let numPages = Math.ceil(numTotalRows / rowsPerRequest);
-            let queryResult = [];
-
-            for (let i = 0; i < numPages; i++) {
-                let startIndex = i * rowsPerRequest;
-                const { data, error } = await supabase.from(table).select(columnString).range(startIndex, startIndex + rowsPerRequest);
-
-                if (error) {
-                    console.log(error);
-                    break;
-                }
-
-                for (let j = 0; j < data.length; j++) {
-                    queryResult.push(data[j]);
-                }
-            }
-
-            return queryResult;
-        },
-        async loadTeams() {
-            let allTeams = await this.loadTableData("Team", "*");
-
-            let categoryIndex = this.searchCategories.teams;
-
-            for (let i = 0; i < allTeams.length; i++) {
-                let teamItem = {
-                    "label": allTeams[i].team_number + " - " + allTeams[i].nickname,
-                    "route": "team/" + allTeams[i].team_number
-                }
-                this.searchData.categories[categoryIndex].items.push(teamItem);
-            }
-
-            console.log(this.searchData)
-        }
+        loadSearchData(false, this.searchData, this.searchCategories);
     }
 }
 </script>

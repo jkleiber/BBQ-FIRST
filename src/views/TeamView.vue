@@ -4,7 +4,6 @@ import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import AwardItem from '@/components/AwardItem.vue';
-import SearchForm from '@/components/SearchForm.vue';
 
 import '@material/web/tabs/tabs';
 import '@material/web/tabs/primary-tab';
@@ -18,23 +17,21 @@ import '@material/web/list/list-item';
 
 <template>
     <MainPageHeader></MainPageHeader>
-    <div class="main-content">
+
+
+    <!-- Show team information if it exists -->
+    <div class="main-content" v-if="doesTeamExist()">
 
         <div class="team-header-container">
-            <div class="team-info-container" v-if="doesTeamExist()">
+            <div class="team-info-container">
                 <h1 class="team-number-header"> {{ teamTitleText }} </h1>
 
                 <h3>Robot Performance Banners: {{ numRobotAwards }}</h3>
                 <h3>Team Attribute Banners: {{ numTeamAwards }}</h3>
             </div>
-
-            <SearchForm label="Team Number" type="number" v-model="teamNumberModel" @submit="submit()">
-            </SearchForm>
         </div>
 
-
-        <!-- Show team information if it exists -->
-        <div class="team-container" v-if="doesTeamExist()">
+        <div class="team-container">
             <md-tabs>
                 <md-primary-tab v-for="tab in tabs" @click="changeTab(tab)" :key="tab.name">
                     <md-icon slot="icon">{{ tab.icon }}</md-icon>
@@ -66,8 +63,6 @@ import '@material/web/list/list-item';
 export default {
     data() {
         return {
-            teamNumberModel: this.$route.params.team_number,
-            teamNumber: this.$route.params.team_number,
             teamString: "",
             tabs: [
                 { id: 0, name: "Robot Performance", icon: "smart_toy" },
@@ -98,26 +93,6 @@ export default {
         }
     },
     methods: {
-        submit() {
-            // Process the team number into a string for the URL and route.
-            this.teamNumber = this.teamNumberModel;
-            if (this.teamNumber == null) {
-                this.teamNumber = "";
-            }
-
-            // Update the URL to match the team number.
-            history.pushState(
-                {},
-                null,
-                "/team/" + this.teamNumber
-            );
-
-            // Go to the team page.
-            this.$router.push("/team/" + this.teamNumber);
-
-            // Update the team information.
-            this.teamChange();
-        },
         changeTab(tab) {
             this.activeTab = tab.id;
         },
@@ -125,14 +100,15 @@ export default {
             return id == this.activeTab;
         },
         doesTeamExist() {
-            return this.teamNumber != null && this.teamNumber > 0;
+            return this.$route.params.team_number != null && this.$route.params.team_number > 0;
         },
         async getAwards() {
+            let teamNumber = this.$route.params.team_number;
             let teamAwards = [];
             let robotAwards = [];
             const { data, error } = await supabase.from("BlueBanner")
                 .select("name, team_number, type, Event( event_id, name, year )")
-                .eq("team_number", this.teamNumber);
+                .eq("team_number", teamNumber);
 
             // If the data is not null, populate the award lists.
             // If the data is null, the award lists will be set to empty. 
