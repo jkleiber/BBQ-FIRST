@@ -21,10 +21,10 @@ import '@material/web/icon/icon';
                     <div v-for="item, itemIndex in category.options">
                         <div v-if="itemIndex == selectedOption && categoryIndex == selectedCategory"
                             class="autocomplete-option-selected">
-                            <RouterLink v-bind:to="item.route">{{ item.label }}</RouterLink>
+                            <RouterLink v-bind:to="item.route" class="autocomplete-link">{{ item.label }}</RouterLink>
                         </div>
                         <div v-else class="autocomplete-option">
-                            <RouterLink v-bind:to="item.route">{{ item.label }}</RouterLink>
+                            <RouterLink v-bind:to="item.route" class="autocomplete-link">{{ item.label }}</RouterLink>
                         </div>
                     </div>
                 </div>
@@ -329,6 +329,13 @@ md-filled-text-field {
 /* Set links to inherit color so they can be set by the autocomplete option classes */
 a {
     color: inherit;
+}
+
+a.autocomplete-link {
+    width: 100%;
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
 }
 
 .autocomplete-header {

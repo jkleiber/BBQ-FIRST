@@ -6,6 +6,9 @@ export async function loadSearchData(online, searchData, searchCategories) {
     if (online) {
         loadTeams(searchCategories.teams, searchData);
     } else {
+        // Offline mode is for debugging only. This is especially useful when you 
+        // are on an airplane and don't have WiFi, or if you want to carry out your 
+        // own specific tests without the database connection.
         loadTeamsOffline(searchCategories.teams, searchData);
         loadEventsOffline(searchCategories.events, searchData);
     }

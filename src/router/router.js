@@ -72,6 +72,15 @@ const routes = [
     },
     {
         path: '/search/',
+        name: 'BBQ Search',
+        component: SearchView,
+        meta: {
+            requireAuth: false,
+            skipIfAuth: false
+        }
+    },
+    {
+        path: '/search/:query',
         name: 'Search',
         component: SearchView,
         meta: {

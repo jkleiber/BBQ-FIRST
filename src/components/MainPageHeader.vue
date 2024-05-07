@@ -15,8 +15,9 @@ import { loadSearchData } from '@/lib/search/load_autocomplete.js';
         <RouterLink to="/teams" class="nav-link">Teams</RouterLink>
         <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
 
-
-        <SearchBar class="nav-search" :search-data="searchData" v-if="searchVisible"></SearchBar>
+        <span class="nav-search" v-if="searchVisible">
+            <SearchBar :search-data="searchData"></SearchBar>
+        </span>
     </div>
 </template>
 
@@ -53,7 +54,7 @@ export default {
         }
     },
     mounted() {
-        loadSearchData(false, this.searchData, this.searchCategories);
+        loadSearchData(true, this.searchData, this.searchCategories);
     }
 }
 </script>
@@ -69,6 +70,7 @@ div.nav {
     width: 100%;
     height: 65px;
     position: fixed;
+    display: block;
 }
 
 a.nav-home {
@@ -134,9 +136,12 @@ a.nav-link:active {
 }
 
 .nav-search {
-    height: 100%;
     float: right;
     position: relative;
     margin-right: 20px;
+    /* This is a total hack to get the search bar to 
+    stay in a fixed position when text is entered into it. */
+    height: 50px;
+    margin-top: 7px;
 }
 </style>

@@ -8,13 +8,13 @@ import { loadSearchData } from '@/lib/search/load_autocomplete.js';
 </script>
 
 <template>
-    <MainPageHeader :search-visible="false"></MainPageHeader>
+    <MainPageHeader :search-visible="true"></MainPageHeader>
 
     <div class="main-content">
         <div class="search-title-container">
-            <img src="@/assets/bbqcode.gif" width="32" />
+            <img src="@/assets/bbqcode.gif" width="32" height="32" />
             <h1>BBQ Search</h1>
-            <img src="@/assets/bbqcode.gif" width="32" />
+            <img src="@/assets/bbqcode.gif" width="32" height="32" />
         </div>
         <SearchBar :search-data="searchData" class="full-search"></SearchBar>
     </div>
@@ -47,7 +47,7 @@ export default {
         }
     },
     mounted() {
-        loadSearchData(false, this.searchData, this.searchCategories);
+        loadSearchData(true, this.searchData, this.searchCategories);
     }
 }
 </script>
@@ -59,6 +59,8 @@ export default {
 
 .search-title-container {
     height: fit-content;
-    display: inline;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>
