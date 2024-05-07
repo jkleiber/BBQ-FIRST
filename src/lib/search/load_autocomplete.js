@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase-client';
 
 export async function loadSearchData(online, searchData, searchCategories) {
     if (online) {
-        loadTeams(searchCategories.teams, searchData);
+        await loadTeams(searchCategories.teams, searchData);
     } else {
         // Offline mode is for debugging only. This is especially useful when you 
         // are on an airplane and don't have WiFi, or if you want to carry out your 
@@ -42,7 +42,7 @@ export async function loadTableData(table, columnString) {
 }
 
 export async function loadTeams(categoryIndex, searchData) {
-    let allTeams = await this.loadTableData("Team", "*");
+    let allTeams = await loadTableData("Team", "*");
 
     for (let i = 0; i < allTeams.length; i++) {
         let teamItem = {
