@@ -2,9 +2,30 @@
 
 import { supabase } from '@/lib/supabase-client';
 
+export function initSearchDataStructure() {
+    return {
+        "categories": [
+            {
+                "id": 0,
+                "label": "Teams",
+                "autocomplete_max": 5,
+                "items": []
+            },
+            {
+                "id": 1,
+                "label": "Events",
+                "autocomplete_max": 5,
+                "items": [],
+                "sort_direction": "descending"
+            }
+        ]
+    }
+}
+
 export async function loadSearchData(online, searchData, searchCategories) {
     if (online) {
         await loadTeams(searchCategories.teams, searchData);
+        await loadEvents(searchCategories.events, searchData);
     } else {
         // Offline mode is for debugging only. This is especially useful when you 
         // are on an airplane and don't have WiFi, or if you want to carry out your 
@@ -50,6 +71,18 @@ export async function loadTeams(categoryIndex, searchData) {
             "route": "/team/" + allTeams[i].team_number
         }
         searchData.categories[categoryIndex].items.push(teamItem);
+    }
+}
+
+export async function loadEvents(categoryIndex, searchData) {
+    let allEvents = await loadTableData("Event", "*");
+
+    for (let i = 0; i < allEvents.length; i++) {
+        let eventItem = {
+            "label": allEvents[i].event_id + " - " + allEvents[i].year + " " + allEvents[i].name,
+            "route": "/event/" + allEvents[i].event_id
+        }
+        searchData.categories[categoryIndex].items.push(eventItem);
     }
 }
 

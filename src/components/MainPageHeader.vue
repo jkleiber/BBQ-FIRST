@@ -2,7 +2,7 @@
 import { RouterLink } from 'vue-router';
 
 import SearchBar from '@/components/SearchBar.vue';
-import { loadSearchData } from '@/lib/search/load_autocomplete.js';
+import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autocomplete.js';
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import { loadSearchData } from '@/lib/search/load_autocomplete.js';
         <!--Right Aligned Elements-->
         <!-- <RouterLink to="/help" class="nav-link">Help</RouterLink> -->
 
-        <RouterLink to="/teams" class="nav-link">Teams</RouterLink>
+        <!-- <RouterLink to="/teams" class="nav-link">Teams</RouterLink> -->
         <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
 
         <span class="nav-search" v-if="searchVisible">
@@ -35,22 +35,7 @@ export default {
                 "teams": 0,
                 "events": 1
             },
-            searchData: {
-                "categories": [
-                    {
-                        "id": 0,
-                        "label": "Teams",
-                        "autocomplete_max": 5,
-                        "items": []
-                    },
-                    {
-                        "id": 1,
-                        "label": "Events",
-                        "autocomplete_max": 5,
-                        "items": []
-                    }
-                ]
-            }
+            searchData: initSearchDataStructure()
         }
     },
     mounted() {
@@ -143,5 +128,6 @@ a.nav-link:active {
     stay in a fixed position when text is entered into it. */
     height: 50px;
     margin-top: 7px;
+    width: 200px;
 }
 </style>
