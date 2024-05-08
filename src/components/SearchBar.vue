@@ -276,18 +276,21 @@ export default {
                             let tokenMatchCounter = 0;
                             for (const j in queryTokens) {
                                 let token = queryTokens[j];
+                                if (token == "") {
+                                    continue;
+                                }
+
                                 if (lowercaseSearchItem.includes(token)) {
                                     tokenMatchCounter += 1;
                                 }
+                            }
 
-                                // If multiple words match, put this item in.
-                                if (tokenMatchCounter >= 2) {
-                                    options.push({
-                                        "priority": 4 - tokenMatchCounter,
-                                        "item": searchItems[i]
-                                    });
-                                    break;
-                                }
+                            // If multiple words match, put this item in.
+                            if (tokenMatchCounter >= 2) {
+                                options.push({
+                                    "priority": 4 - tokenMatchCounter,
+                                    "item": searchItems[i]
+                                });
                             }
                         }
 
