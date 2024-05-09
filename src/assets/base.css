@@ -23,6 +23,19 @@
   /* Primary text color */
   --bbq-primary-text-color: #313131;
   --bbq-secondary-text-color: var(--bbq-primary-text-color);
+
+  /* Component colors in the nav bar */
+  --bbq-nav-foreground-component-color: var(--bbq-foreground-component-color);
+  --bbq-nav-component-text-color: var(--bbq-primary-text-color);
+  --bbq-autocomplete-default-color: #eee;
+  --bbq-autocomplete-hover-color: #aaa;
+
+  /* Component colors in the nav bar */
+  --bbq-nav-foreground-component-color: var(--bbq-foreground-component-color);
+  --bbq-nav-component-text-color: var(--bbq-primary-text-color);
+
+  /* Border colors */
+  --bbq-border-color: transparent;
 }
 
 
@@ -125,9 +138,8 @@ table {
   margin: 0 auto;
 }
 
-
 div.main-content {
-  display: grid;
+  display: block;
   margin-top: 70px;
   padding: 2rem;
   max-height: 100%;
@@ -138,4 +150,21 @@ div.main-content {
 md-divider {
   flex: none;
   margin: 10px;
+}
+
+input {
+  /* border-color: none; */
+  height: 50px;
+  border-radius: 5px;
+  border-style: solid;
+  border-color: var(--bbq-border-color);
+  color: var(--bbq-nav-component-text-color);
+  background-color: var(--bbq-nav-foreground-component-color);
+}
+
+input:focus,
+input:focus-visible {
+  border-color: var(--bbq-primary-color);
+  border-width: 2px;
+  outline: none;
 }

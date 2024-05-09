@@ -89,7 +89,6 @@ export default {
         },
         async getEvents() {
             // Get the active column.
-            console.log(this.sortedColumnIdx)
             let activeDbColumn = this.tableColumns[this.sortedColumnIdx].db_col;
 
             this.loadingEvents = true;

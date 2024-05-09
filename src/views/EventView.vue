@@ -4,7 +4,6 @@ import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import TeamItem from '@/components/TeamItem.vue';
-import SearchForm from '@/components/SearchForm.vue';
 import StatSummary from '@/components/StatSummary.vue';
 
 import '@material/web/tabs/tabs';
@@ -26,9 +25,6 @@ import '@material/web/list/list-item';
                 <h2 class="event-number-header"> {{ eventTitleText }} </h2>
                 <h3> {{ eventTimeText }}</h3>
             </div>
-
-            <SearchForm label="Event Code/Name" type="text" v-model="eventCodeModel" @submit="submit()">
-            </SearchForm>
         </div>
 
         <!-- Show event information if it exists -->

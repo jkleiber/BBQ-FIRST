@@ -5,6 +5,7 @@ import HomeView from '@/views/HomeView.vue';
 import TeamView from '@/views/TeamView.vue';
 import EventView from '@/views/EventView.vue';
 import EventRankingsView from '@/views/EventRankingsView.vue';
+import SearchView from '@/views/SearchView.vue';
 import PageNotFound from '@/views/PageNotFound.vue'
 
 // Admin pages
@@ -34,8 +35,8 @@ const routes = [
         }
     },
     {
-        path: '/team',
-        name: 'Team Search',
+        path: '/teams',
+        name: 'Team Rankings',
         component: TeamView,
         meta: {
             requireAuth: false,
@@ -52,9 +53,9 @@ const routes = [
         }
     },
     {
-        path: '/event',
-        name: 'Event Search',
-        component: EventView,
+        path: '/events',
+        name: 'Event Rankings',
+        component: EventRankingsView,
         meta: {
             requireAuth: false,
             skipIfAuth: false
@@ -70,9 +71,18 @@ const routes = [
         }
     },
     {
-        path: '/event-rankings',
-        name: 'Event Rankings',
-        component: EventRankingsView,
+        path: '/search/',
+        name: 'BBQ Search',
+        component: SearchView,
+        meta: {
+            requireAuth: false,
+            skipIfAuth: false
+        }
+    },
+    {
+        path: '/search/:query',
+        name: 'Search',
+        component: SearchView,
         meta: {
             requireAuth: false,
             skipIfAuth: false

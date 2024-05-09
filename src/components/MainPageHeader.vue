@@ -1,5 +1,8 @@
 <script setup>
 import { RouterLink } from 'vue-router';
+
+import SearchBar from '@/components/SearchBar.vue';
+import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autocomplete.js';
 </script>
 
 <template>
@@ -9,22 +12,36 @@ import { RouterLink } from 'vue-router';
         <!--Right Aligned Elements-->
         <!-- <RouterLink to="/help" class="nav-link">Help</RouterLink> -->
 
-        <RouterLink to="/team" class="nav-link">Teams</RouterLink>
-        <RouterLink to="/event" class="nav-link">Events</RouterLink>
+        <!-- <RouterLink to="/teams" class="nav-link">Teams</RouterLink> -->
+        <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
 
-
-        <!-- <div id="search_bar">
-            <span class="search">
-                <input type="text" name="q" id="searcher" class="search" placeholder="Search" autocomplete="off"></input>
-                <div id="results">
-                </div>
-            </span>
-        </div> -->
+        <span class="nav-search" v-if="searchVisible">
+            <SearchBar :search-data="searchData"></SearchBar>
+        </span>
     </div>
 </template>
 
 <script>
-export default {}
+export default {
+    props: {
+        searchVisible: {
+            default: true,
+            type: Boolean
+        }
+    },
+    data() {
+        return {
+            searchCategories: {
+                "teams": 0,
+                "events": 1
+            },
+            searchData: initSearchDataStructure()
+        }
+    },
+    mounted() {
+        loadSearchData(true, this.searchData, this.searchCategories);
+    }
+}
 </script>
 
 <style scoped>
@@ -38,6 +55,7 @@ div.nav {
     width: 100%;
     height: 65px;
     position: fixed;
+    display: block;
 }
 
 a.nav-home {
@@ -70,7 +88,7 @@ a.nav-link {
     /* Positioning */
     position: relative;
     margin: 0 auto;
-    float: right;
+    float: left;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -100,5 +118,16 @@ a.nav-link:active {
     background-color: var(--bbq-header-hover-color);
     color: #FFF;
     border-bottom: var(--bbq-primary-color) 5px solid;
+}
+
+.nav-search {
+    float: right;
+    position: relative;
+    margin-right: 20px;
+    /* This is a total hack to get the search bar to 
+    stay in a fixed position when text is entered into it. */
+    height: 50px;
+    margin-top: 7px;
+    width: 200px;
 }
 </style>

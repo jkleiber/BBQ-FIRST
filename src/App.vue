@@ -1,54 +1,14 @@
 <script setup>
-import { RouterView, useRouter } from 'vue-router';
+import { RouterView } from 'vue-router';
 
-// import { supabase } from '@/lib/supabase-client';
-// import { useAuthStore } from '@/stores/auth-store';
-
-const router = useRouter();
-// const authStore = useAuthStore();
-
-// authStore.loadUser();
-//
-// supabase.auth.onAuthStateChange((event, session) => {
-//     console.log("Auth state changed: " + event)
-//     // console.log(session)
-
-//     // If there is no user session, do the SIGNED_OUT action.
-//     if (!session) {
-//         authStore.clearUser();
-//         return;
-//     }
-
-//     // Get the user session info.
-//     const user = session.user;
-
-//     // Do different actions based on the state change.
-//     if (event === 'SIGNED_IN') {
-//         authStore.loadUser(user);
-//         authStore.loadRedirectRoute();
-//     } else if (event === 'SIGNED_OUT') {
-//         authStore.clearUser();
-//     } else {
-//         authStore.loadUser(user);
-//     }
-// });
-
-// authStore.$onAction(({ name, store, after }) => {
-//     if (name === 'loadRedirectRoute') {
-//         after(async () => {
-//             const redirectRoute = store.redirectRoute;
-
-//             if (redirectRoute) {
-//                 await router.isReady();
-//                 await router.replace(redirectRoute);
-//                 authStore.clearRedirectRoute();
-//             }
-//         });
-//     }
-// });
 </script>
 
 <template>
+    <!-- 
+        Using route.fullPath results in the pages updating when 
+        the route params change, which is critical for search to 
+        work when searching consecutive events/teams.
+    -->
     <RouterView :key="$route.fullPath" />
 </template>
 
