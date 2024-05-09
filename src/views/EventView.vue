@@ -33,7 +33,9 @@ import '@material/web/list/list-item';
 
         <!-- Show event information if it exists -->
         <div class="event-container" v-if="doesEventExist()">
-            <StatSummary :stats="eventStats"></StatSummary>
+            <StatSummary :stats="eventStats" :team-data="teamDataComputed"></StatSummary>
+
+            <h2>Team Details</h2>
             <md-list>
                 <TeamItem v-for="team in teamDict" :number="team.number" :name="team.name" :country="team.country"
                     :robot-awards="team.robot_awards" :team-awards="team.team_awards">
@@ -99,6 +101,9 @@ export default {
         },
         eventStats() {
             return this.eventData;
+        },
+        teamDataComputed() {
+            return this.teamDict;
         }
     },
     methods: {

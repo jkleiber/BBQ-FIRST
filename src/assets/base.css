@@ -3,53 +3,26 @@
 
 
 
-/* Color variables - light mode*/
-@media (prefers-color-scheme: light) {
-  :root {
-    /* COLORS */
-    /* Primary/Secondary */
-    --bbq-primary-color: tomato;
-    --bbq-accent-color: #646464;
+/* Color variables - light mode is default*/
+:root {
+  /* COLORS */
+  /* Primary/Secondary */
+  --bbq-primary-color: tomato;
+  --bbq-accent-color: #646464;
 
-    /* Header */
-    --bbq-header-color: #313131;
-    --bbq-header-hover-color: #404040;
+  /* Header */
+  --bbq-header-color: #313131;
+  --bbq-header-hover-color: #404040;
 
-    /* Component colors */
-    --bbq-background-color: #ffffff;
-    --bbq-foreground-component-color: #eee;
-    --bbq-secondary-foreground-component-color: #f8f8f8;
-    --bbq-secondary-foreground-component-link-hover-color: #d1d1d1;
+  /* Component colors */
+  --bbq-background-color: #ffffff;
+  --bbq-foreground-component-color: #eee;
+  --bbq-secondary-foreground-component-color: #f8f8f8;
+  --bbq-secondary-foreground-component-link-hover-color: #d1d1d1;
 
-    /* Primary text color */
-    --bbq-primary-text-color: #313131;
-    --bbq-secondary-text-color: var(--bbq-primary-text-color);
-  }
-}
-
-/* Color variables - dark mode*/
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* COLORS */
-    /* Primary/Secondary */
-    --bbq-primary-color: tomato;
-    --bbq-accent-color: #efefef;
-
-    /* Header */
-    --bbq-header-color: #313131;
-    --bbq-header-hover-color: #404040;
-
-    /* Component Colors */
-    --bbq-background-color: #161616;
-    --bbq-foreground-component-color: #2c2c2c;
-    --bbq-secondary-foreground-component-color: #424242;
-    --bbq-secondary-foreground-component-link-hover-color: #515151;
-
-
-    /* Primary text color */
-    --bbq-primary-text-color: tomato;
-    --bbq-secondary-text-color: var(--bbq-accent-color);
-  }
+  /* Primary text color */
+  --bbq-primary-text-color: #313131;
+  --bbq-secondary-text-color: var(--bbq-primary-text-color);
 }
 
 
@@ -76,6 +49,7 @@
   --md-sys-color-on-surface-variant: var(--bbq-accent-color);
   --md-sys-color-secondary-container: var(--bbq-foreground-component-color);
   --md-sys-color-surface-container: var(--bbq-secondary-foreground-component-color);
+  --md-sys-color-outline-variant: var(--bbq-foreground-component-color);
 
   /* Outlined text field colors */
   --md-outlined-text-field-label-text-color: var(--bbq-primary-text-color);
@@ -87,6 +61,9 @@
 
   /* List colors */
   --md-list-container-color: var(--bbq-background-color);
+
+  /* Divider */
+  --md-divider-thickness: 2px;
 
   /* Tabs colors */
   /* --md-primary-tab-label-text-color: var(--bbq-accent-color); */
@@ -156,4 +133,9 @@ div.main-content {
   max-height: 100%;
   overflow: auto;
   flex: 1 1 auto;
+}
+
+md-divider {
+  flex: none;
+  margin: 10px;
 }
