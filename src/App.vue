@@ -8,7 +8,7 @@ const router = useRouter();
 // const authStore = useAuthStore();
 
 // authStore.loadUser();
-// 
+//
 // supabase.auth.onAuthStateChange((event, session) => {
 //     console.log("Auth state changed: " + event)
 //     // console.log(session)
@@ -49,7 +49,7 @@ const router = useRouter();
 </script>
 
 <template>
-    <RouterView />
+    <RouterView :key="$route.fullPath" />
 </template>
 
 <style scoped>
