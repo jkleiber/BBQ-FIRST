@@ -2,6 +2,8 @@
 import { RouterLink } from 'vue-router';
 
 import SearchBar from '@/components/SearchBar.vue';
+import HamburgerMenu from './HamburgerMenu.vue';
+
 import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autocomplete.js';
 </script>
 
@@ -15,9 +17,20 @@ import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autoc
         <!-- <RouterLink to="/teams" class="nav-link">Teams</RouterLink> -->
         <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
 
-        <span class="nav-search" v-if="searchVisible">
-            <SearchBar :search-data="searchData"></SearchBar>
-        </span>
+        <div v-if="isMobile">
+            <HamburgerMenu>
+                <template v-slot:menu-content>
+                    <span v-if="searchVisible">
+                        <SearchBar :search-data="searchData"></SearchBar>
+                    </span>
+                </template>
+            </HamburgerMenu>
+        </div>
+        <div v-else>
+            <span class="nav-search" v-if="searchVisible">
+                <SearchBar :search-data="searchData"></SearchBar>
+            </span>
+        </div>
     </div>
 </template>
 
@@ -35,11 +48,22 @@ export default {
                 "teams": 0,
                 "events": 1
             },
-            searchData: initSearchDataStructure()
+            searchData: initSearchDataStructure(),
+            windowWidth: window.innerWidth
         }
     },
     mounted() {
+        // Detect 
+        window.addEventListener('resize', () => {
+            this.windowWidth = window.innerWidth
+        })
+
         loadSearchData(true, this.searchData, this.searchCategories);
+    },
+    computed: {
+        isMobile() {
+            return this.windowWidth <= 720;
+        }
     }
 }
 </script>
