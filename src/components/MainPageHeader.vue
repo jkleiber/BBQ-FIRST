@@ -2,7 +2,10 @@
 import { RouterLink } from 'vue-router';
 
 import SearchBar from '@/components/SearchBar.vue';
+import HamburgerMenu from '@/components/HamburgerMenu.vue';
+
 import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autocomplete.js';
+import { useViewModeStore } from '@/stores/view-mode-store';
 </script>
 
 <template>
@@ -15,9 +18,20 @@ import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autoc
         <!-- <RouterLink to="/teams" class="nav-link">Teams</RouterLink> -->
         <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
 
-        <span class="nav-search" v-if="searchVisible">
-            <SearchBar :search-data="searchData"></SearchBar>
-        </span>
+        <div v-if="viewMode?.isMobile">
+            <HamburgerMenu>
+                <template v-slot:menu-content>
+                    <span v-if="searchVisible">
+                        <SearchBar :search-data="searchData" :mobile="true"></SearchBar>
+                    </span>
+                </template>
+            </HamburgerMenu>
+        </div>
+        <div v-else>
+            <span class="nav-search" v-if="searchVisible">
+                <SearchBar :search-data="searchData" :mobile="false"></SearchBar>
+            </span>
+        </div>
     </div>
 </template>
 
@@ -35,10 +49,14 @@ export default {
                 "teams": 0,
                 "events": 1
             },
-            searchData: initSearchDataStructure()
+            searchData: initSearchDataStructure(),
+            windowWidth: window.innerWidth,
+            viewMode: null
         }
     },
     mounted() {
+        this.viewMode = useViewModeStore();
+
         loadSearchData(true, this.searchData, this.searchCategories);
     }
 }

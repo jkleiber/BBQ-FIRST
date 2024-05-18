@@ -1,5 +1,12 @@
 <script setup>
 import { RouterView } from 'vue-router';
+import { useViewModeStore } from '@/stores/view-mode-store';
+
+// Keep track of the view mode based on screen width.
+const viewMode = useViewModeStore();
+window.addEventListener('resize', () => {
+    viewMode.updateScreenWidth(window.innerWidth);
+})
 
 </script>
 

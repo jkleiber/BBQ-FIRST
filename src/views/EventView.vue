@@ -189,7 +189,7 @@ export default {
                     {
                         "name": "Team Attribute BBQ",
                         "value": data[0].team_bbq
-                    },
+                    }
                 ]
             }
         },
@@ -213,19 +213,22 @@ export default {
                 let award_name = data[i].name;
                 let event_name = data[i].Event.name;
                 let event_year = data[i].Event.year;
+                let event_id = data[i].Event.event_id;
 
                 // Add the awards to the applicable teams based on their type.
                 if (data[i].type == "Robot") {
                     this.teamDict[team_number].robot_awards.push({
                         "award_name": award_name,
                         "event_name": event_name,
-                        "event_year": event_year
+                        "event_year": event_year,
+                        "event_id": event_id
                     });
                 } else if (data[i].type == "Team") {
                     this.teamDict[team_number].team_awards.push({
                         "award_name": award_name,
                         "event_name": event_name,
-                        "event_year": event_year
+                        "event_year": event_year,
+                        "event_id": event_id
                     });
                 }
             }
@@ -281,7 +284,7 @@ div.event-header-container {
 }
 
 div.event-info-container {
-    width: 50%;
+    width: 100%;
     border: var(--bbq-primary-color) 2px solid;
     border-radius: 5px;
 }

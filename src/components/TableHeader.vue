@@ -4,7 +4,7 @@
 
 <template>
     <thead>
-        <th v-for="col, i in columnData" :class="headerClass(col)" @click="sortIfSortable(col, i)">
+        <th v-for="col, i in columnData" :class="headerClass(col, i)" @click="sortIfSortable(col, i)">
             {{ col.name }}
         </th>
     </thead>
@@ -13,14 +13,14 @@
 <script>
 export default {
     props: {
-        columnData: null
+        columnData: null,
+        sortedColumnIndex: -1
     },
     methods: {
-        headerClass(col) {
+        headerClass(col, idx) {
             if (Object.keys(col).includes('sortable')
                 && col.sortable == true
-                && Object.keys(col).includes('sorted')
-                && col.sorted == true) {
+                && idx == this.sortedColumnIndex) {
                 return "sorted-header"
             }
             else if (Object.keys(col).includes('sortable') && col.sortable == true) {
@@ -45,8 +45,7 @@ export default {
 
 .sorted-header {
     text-decoration: underline;
-    background-color: var(--bbq-primary-color);
-    color: var(--bbq-accent-color);
+    color: var(--bbq-primary-color);
 }
 
 .sortable-header {

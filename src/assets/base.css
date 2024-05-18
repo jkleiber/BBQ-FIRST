@@ -155,7 +155,7 @@ md-divider {
 input {
   /* border-color: none; */
   height: 50px;
-  border-radius: 5px;
+  /* border-radius: 5px; */
   border-style: solid;
   border-color: var(--bbq-border-color);
   color: var(--bbq-nav-component-text-color);

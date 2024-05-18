@@ -10,16 +10,21 @@ import Expandable from '@/components/Expandable.vue';
         </template>
         <template v-slot:content>
             <div class="award-view">
-                <div>
+                <div class="award-container" v-if="robotAwards.length > 0">
+
                     <h3>Robot Awards</h3>
                     <div v-for="award in robotAwards">
-                        {{ award.award_name }} @ {{ award.event_year }} {{ award.event_name }}
+                        {{ award.award_name }} @ <a v-bind:href="award.event_id">{{ award.event_year }} {{ award.event_name
+                        }}</a>
                     </div>
                 </div>
-                <div>
+                <div class="award-container" v-if="teamAwards.length > 0">
+
                     <h3>Team Attribute Awards</h3>
+
                     <div v-for="award in teamAwards">
-                        {{ award.award_name }} @ {{ award.event_year }} {{ award.event_name }}
+                        {{ award.award_name }} @ <a v-bind:href="award.event_id">{{ award.event_year }} {{ award.event_name
+                        }}</a>
                     </div>
                 </div>
             </div>
@@ -45,6 +50,10 @@ export default {
 </script>
 
 <style scoped>
+h3 {
+    font-weight: 600;
+}
+
 .team-container {
     margin-bottom: 5px;
 }
@@ -55,5 +64,10 @@ export default {
 
 .award-view {
     display: flex;
+    flex-wrap: wrap;
+}
+
+.award-container {
+    max-width: 700px;
 }
 </style>
