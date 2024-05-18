@@ -4,6 +4,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Colors, Title } from 'ch
 import { Doughnut } from 'vue-chartjs'
 
 import '@material/web/divider/divider'
+import { viewModeStore } from '@/stores/view-mode-store';
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title)
 </script>
@@ -15,17 +16,17 @@ ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title)
                 {{ stat.name }}
             </div>
             <div class="stat-value">
-                {{ stat.value }}
+                {{ stat.value.toFixed(4) }}
             </div>
         </div>
     </div>
     <md-divider inset></md-divider>
-    <div class="chart-view-container">
-        <div class="chart-container">
+    <div v-bind:class="chartViewContainerClass">
+        <div v-bind:class="chartContainerClass">
             <Doughnut v-if="teamDataReady" :data="getRobotBbqContributions()" :options="robotBbqChartOptions">
             </Doughnut>
         </div>
-        <div class="chart-container">
+        <div v-bind:class="chartContainerClass">
             <Doughnut v-if="teamDataReady" :data="getTeamAttributeBbqContributions()"
                 :options="teamAttributeBbqChartOptions">
             </Doughnut>
@@ -72,7 +73,8 @@ export default {
             // Making this a ref is very important for ensuring the data updates when it becomes available.
             teamAttributeBbqContributionData: ref({
                 datasets: []
-            })
+            }),
+            viewMode: null
         };
     },
     props: {
@@ -83,9 +85,26 @@ export default {
             default: null
         }
     },
+    mounted() {
+        this.viewMode = viewModeStore();
+    },
     computed: {
         teamDataReady() {
             return this.teamData !== null && Object.entries(this.teamData).length > 0;
+        },
+        chartViewContainerClass() {
+            let viewClass = "chart-view-container";
+            if (this.viewMode?.isMobile) {
+                viewClass = "mobile-chart-view-container";
+            }
+            return viewClass;
+        },
+        chartContainerClass() {
+            let containerClass = "chart-container";
+            if (this.viewMode?.isMobile) {
+                containerClass = "mobile-chart-container";
+            }
+            return containerClass;
         }
     },
     methods: {
@@ -179,6 +198,13 @@ export default {
 .stat-row {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.stat-cell {
+    max-width: 250px;
+    min-width: 100px;
+    margin: 0 auto;
 }
 
 .chart-view-container {
@@ -186,7 +212,16 @@ export default {
 }
 
 .chart-container {
-    max-width: 30%;
-    color: var(--bbq-primary-text-color);
+    max-width: 40%;
+}
+
+/* Mobile optimized elements */
+.mobile-chart-view-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-chart-container {
+    width: 100%;
 }
 </style>

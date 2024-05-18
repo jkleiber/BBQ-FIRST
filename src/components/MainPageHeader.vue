@@ -2,9 +2,10 @@
 import { RouterLink } from 'vue-router';
 
 import SearchBar from '@/components/SearchBar.vue';
-import HamburgerMenu from './HamburgerMenu.vue';
+import HamburgerMenu from '@/components/HamburgerMenu.vue';
 
 import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autocomplete.js';
+import { viewModeStore } from '@/stores/view-mode-store';
 </script>
 
 <template>
@@ -17,18 +18,18 @@ import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autoc
         <!-- <RouterLink to="/teams" class="nav-link">Teams</RouterLink> -->
         <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
 
-        <div v-if="isMobile">
+        <div v-if="viewMode?.isMobile">
             <HamburgerMenu>
                 <template v-slot:menu-content>
                     <span v-if="searchVisible">
-                        <SearchBar :search-data="searchData"></SearchBar>
+                        <SearchBar :search-data="searchData" :mobile="true"></SearchBar>
                     </span>
                 </template>
             </HamburgerMenu>
         </div>
         <div v-else>
             <span class="nav-search" v-if="searchVisible">
-                <SearchBar :search-data="searchData"></SearchBar>
+                <SearchBar :search-data="searchData" :mobile="false"></SearchBar>
             </span>
         </div>
     </div>
@@ -49,21 +50,14 @@ export default {
                 "events": 1
             },
             searchData: initSearchDataStructure(),
-            windowWidth: window.innerWidth
+            windowWidth: window.innerWidth,
+            viewMode: null
         }
     },
     mounted() {
-        // Detect 
-        window.addEventListener('resize', () => {
-            this.windowWidth = window.innerWidth
-        })
+        this.viewMode = viewModeStore();
 
         loadSearchData(true, this.searchData, this.searchCategories);
-    },
-    computed: {
-        isMobile() {
-            return this.windowWidth <= 720;
-        }
     }
 }
 </script>

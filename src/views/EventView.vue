@@ -13,6 +13,7 @@ import '@material/web/textfield/outlined-text-field';
 import '@material/web/button/filled-button';
 import '@material/web/list/list';
 import '@material/web/list/list-item';
+import { viewModeStore } from '@/stores/view-mode-store';
 
 </script>
 
@@ -21,7 +22,7 @@ import '@material/web/list/list-item';
     <div class="main-content">
 
         <div class="event-header-container">
-            <div class="event-info-container" v-if="doesEventExist()">
+            <div v-bind:class="headerClass" v-if="doesEventExist()">
                 <h2 class="event-number-header"> {{ eventTitleText }} </h2>
                 <h3> {{ eventTimeText }}</h3>
             </div>
@@ -64,13 +65,26 @@ export default {
             // 3: Championship Division
             // 4: Championship Finals
             // 99: Offseason event
-            specialEventTypes: [3, 4, 99]
+            specialEventTypes: [3, 4, 99],
+            viewMode: null
         }
     },
     created() {
         this.eventChange();
     },
+    mounted() {
+        this.viewMode = viewModeStore();
+    },
     computed: {
+        headerClass() {
+            let eventHeaderClass = "event-info-container";
+
+            console.log(this.viewMode?.isMobile);
+            if (this.viewMode?.isMobile) {
+                eventHeaderClass = "mobile-event-info-container";
+            }
+            return eventHeaderClass;
+        },
         eventTitleText() {
             this.eventString = "";
             if (this.$route.params.event_code != null) {
@@ -189,7 +203,7 @@ export default {
                     {
                         "name": "Team Attribute BBQ",
                         "value": data[0].team_bbq
-                    },
+                    }
                 ]
             }
         },
@@ -213,19 +227,22 @@ export default {
                 let award_name = data[i].name;
                 let event_name = data[i].Event.name;
                 let event_year = data[i].Event.year;
+                let event_id = data[i].Event.event_id;
 
                 // Add the awards to the applicable teams based on their type.
                 if (data[i].type == "Robot") {
                     this.teamDict[team_number].robot_awards.push({
                         "award_name": award_name,
                         "event_name": event_name,
-                        "event_year": event_year
+                        "event_year": event_year,
+                        "event_id": event_id
                     });
                 } else if (data[i].type == "Team") {
                     this.teamDict[team_number].team_awards.push({
                         "award_name": award_name,
                         "event_name": event_name,
-                        "event_year": event_year
+                        "event_year": event_year,
+                        "event_id": event_id
                     });
                 }
             }
@@ -295,5 +312,12 @@ div.event-info-container {
 
 .event-text-field {
     align-items: center;
+}
+
+/* Mobile optimized */
+div.mobile-event-info-container {
+    width: 100%;
+    border: var(--bbq-primary-color) 2px solid;
+    border-radius: 5px;
 }
 </style>

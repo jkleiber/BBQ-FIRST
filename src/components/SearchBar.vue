@@ -10,10 +10,10 @@ import '@material/web/icon/icon';
 <template>
     <span class="search-outer-container">
         <span class="search-container">
-            <form class="search-form">
+            <form v-bind:class="searchFormClass">
                 <input class="search-text-field" type="text" v-model="searchQuery" @keydown.enter.prevent="search()"
                     v-bind:placeholder="placeholder" @keydown.up.prevent="decrementOption()"
-                    @keydown.down.prevent="incrementOption()" @keyup="updateAutoComplete()"></input>
+                    @keydown.down.prevent="incrementOption()" @keyup="updateAutoComplete()" />
             </form>
             <div class="autocomplete-dropdown" v-if="searchQuery.length > 0 && searchableData()">
                 <div v-for="category, categoryIndex in autoCompleteData.categories">
@@ -67,6 +67,10 @@ export default {
         placeholder: {
             default: "Search teams or events",
             type: String
+        },
+        mobile: {
+            default: false,
+            type: Boolean
         }
     },
     data() {
@@ -86,6 +90,13 @@ export default {
         },
         inputType() {
             return this.type;
+        },
+        searchFormClass() {
+            let formClass = "search-form";
+            if (this.mobile == true) {
+                formClass = "mobile-search-form";
+            }
+            return formClass;
         }
     },
     methods: {
@@ -383,5 +394,11 @@ a.autocomplete-link {
 .autocomplete-option-selected {
     color: var(--bbq-nav-component-text-color);
     background-color: var(--bbq-autocomplete-hover-color);
+}
+
+form.mobile-search-form {
+    display: flex;
+    align-items: center;
+    margin: 5px;
 }
 </style>

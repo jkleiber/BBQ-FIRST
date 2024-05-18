@@ -12,6 +12,7 @@ import '@material/web/textfield/outlined-text-field';
 import '@material/web/button/filled-button';
 import '@material/web/list/list';
 import '@material/web/list/list-item';
+import { viewModeStore } from '@/stores/view-mode-store';
 
 </script>
 
@@ -23,9 +24,10 @@ import '@material/web/list/list-item';
     <div class="main-content" v-if="doesTeamExist()">
 
         <div class="team-header-container">
-            <div class="team-info-container">
+            <div v-bind:class="headerClass" v-if="doesTeamExist()">
                 <h1 class="team-number-header"> {{ teamTitleText }} </h1>
 
+                <h3>{{ teamDurationString }}</h3>
                 <h3>Robot Performance Banners: {{ numRobotAwards }}</h3>
                 <h3>Team Attribute Banners: {{ numTeamAwards }}</h3>
             </div>
@@ -70,17 +72,27 @@ export default {
             ],
             activeTab: 0,
             robotAwardsList: [],
-            teamAwardsList: []
+            teamAwardsList: [],
+            viewMode: null,
+            nickname: "",
+            rookieYear: null
         }
     },
     created() {
         this.teamChange();
+    },
+    mounted() {
+        this.viewMode = viewModeStore();
     },
     computed: {
         teamTitleText() {
             this.teamString = "";
             if (this.$route.params.team_number != null) {
                 this.teamString = "Team " + this.$route.params.team_number;
+
+                if (this.nickname != "") {
+                    this.teamString += " - " + this.nickname;
+                }
             }
 
             return this.teamString;
@@ -90,7 +102,22 @@ export default {
         },
         numRobotAwards() {
             return this.robotAwardsList.length;
-        }
+        },
+        teamDurationString() {
+            let rookieString = "";
+            if (this.rookieYear != null) {
+                rookieString = "First Season: " + this.rookieYear;
+            }
+            return rookieString;
+        },
+        headerClass() {
+            let teamHeaderClass = "team-info-container";
+            console.log(this.viewMode?.isMobile);
+            if (this.viewMode?.isMobile) {
+                teamHeaderClass = "mobile-team-info-container";
+            }
+            return teamHeaderClass;
+        },
     },
     methods: {
         changeTab(tab) {
@@ -132,8 +159,18 @@ export default {
             this.teamAwardsList = teamAwards;
             this.robotAwardsList = robotAwards;
         },
+        async getTeamInfo() {
+            let teamNumber = this.$route.params.team_number;
+            const { data, error } = await supabase.from("Team").select("*").eq("team_number", teamNumber);
+
+            if (data) {
+                this.nickname = data[0].nickname;
+                this.rookieYear = data[0].rookie_year;
+            }
+        },
         teamChange() {
             if (this.doesTeamExist()) {
+                this.getTeamInfo();
                 this.getAwards();
             }
         }
@@ -173,5 +210,11 @@ div.team-info-container {
 form.team-search-form {
     display: flex;
     height: 100px;
+}
+
+div.mobile-team-info-container {
+    width: 100%;
+    border: var(--bbq-primary-color) 2px solid;
+    border-radius: 5px;
 }
 </style>
