@@ -13,7 +13,6 @@ import '@material/web/textfield/outlined-text-field';
 import '@material/web/button/filled-button';
 import '@material/web/list/list';
 import '@material/web/list/list-item';
-import { viewModeStore } from '@/stores/view-mode-store';
 
 </script>
 
@@ -22,7 +21,7 @@ import { viewModeStore } from '@/stores/view-mode-store';
     <div class="main-content">
 
         <div class="event-header-container">
-            <div v-bind:class="headerClass" v-if="doesEventExist()">
+            <div class="event-info-container" v-if="doesEventExist()">
                 <h2 class="event-number-header"> {{ eventTitleText }} </h2>
                 <h3> {{ eventTimeText }}</h3>
             </div>
@@ -65,26 +64,13 @@ export default {
             // 3: Championship Division
             // 4: Championship Finals
             // 99: Offseason event
-            specialEventTypes: [3, 4, 99],
-            viewMode: null
+            specialEventTypes: [3, 4, 99]
         }
     },
     created() {
         this.eventChange();
     },
-    mounted() {
-        this.viewMode = viewModeStore();
-    },
     computed: {
-        headerClass() {
-            let eventHeaderClass = "event-info-container";
-
-            console.log(this.viewMode?.isMobile);
-            if (this.viewMode?.isMobile) {
-                eventHeaderClass = "mobile-event-info-container";
-            }
-            return eventHeaderClass;
-        },
         eventTitleText() {
             this.eventString = "";
             if (this.$route.params.event_code != null) {
@@ -298,7 +284,7 @@ div.event-header-container {
 }
 
 div.event-info-container {
-    width: 50%;
+    width: 100%;
     border: var(--bbq-primary-color) 2px solid;
     border-radius: 5px;
 }
@@ -312,12 +298,5 @@ div.event-info-container {
 
 .event-text-field {
     align-items: center;
-}
-
-/* Mobile optimized */
-div.mobile-event-info-container {
-    width: 100%;
-    border: var(--bbq-primary-color) 2px solid;
-    border-radius: 5px;
 }
 </style>

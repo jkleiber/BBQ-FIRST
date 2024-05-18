@@ -12,7 +12,6 @@ import '@material/web/textfield/outlined-text-field';
 import '@material/web/button/filled-button';
 import '@material/web/list/list';
 import '@material/web/list/list-item';
-import { viewModeStore } from '@/stores/view-mode-store';
 
 </script>
 
@@ -24,7 +23,7 @@ import { viewModeStore } from '@/stores/view-mode-store';
     <div class="main-content" v-if="doesTeamExist()">
 
         <div class="team-header-container">
-            <div v-bind:class="headerClass" v-if="doesTeamExist()">
+            <div class="team-info-container" v-if="doesTeamExist()">
                 <h1 class="team-number-header"> {{ teamTitleText }} </h1>
 
                 <h3>{{ teamDurationString }}</h3>
@@ -73,16 +72,12 @@ export default {
             activeTab: 0,
             robotAwardsList: [],
             teamAwardsList: [],
-            viewMode: null,
             nickname: "",
             rookieYear: null
         }
     },
     created() {
         this.teamChange();
-    },
-    mounted() {
-        this.viewMode = viewModeStore();
     },
     computed: {
         teamTitleText() {
@@ -109,14 +104,6 @@ export default {
                 rookieString = "First Season: " + this.rookieYear;
             }
             return rookieString;
-        },
-        headerClass() {
-            let teamHeaderClass = "team-info-container";
-            console.log(this.viewMode?.isMobile);
-            if (this.viewMode?.isMobile) {
-                teamHeaderClass = "mobile-team-info-container";
-            }
-            return teamHeaderClass;
         },
     },
     methods: {
@@ -185,7 +172,7 @@ div.team-header-container {
 }
 
 div.team-info-container {
-    width: 50%;
+    width: 100%;
     border: var(--bbq-primary-color) 2px solid;
     border-radius: 5px;
 }
@@ -194,7 +181,6 @@ div.team-info-container {
     display: flex;
     flex-flow: column;
     flex: 1;
-    height: 60vh;
 }
 
 .award-tab {
@@ -210,11 +196,5 @@ div.team-info-container {
 form.team-search-form {
     display: flex;
     height: 100px;
-}
-
-div.mobile-team-info-container {
-    width: 100%;
-    border: var(--bbq-primary-color) 2px solid;
-    border-radius: 5px;
 }
 </style>

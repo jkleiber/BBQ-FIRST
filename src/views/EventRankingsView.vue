@@ -27,7 +27,8 @@ import '@material/web/select/select-option';
         <!-- Rankings -->
         <div v-if="!loadingEvents || eventList.length > 0" class="ranking-container">
             <table>
-                <TableHeader :column-data="tableColumns" @sort="sortColumn"></TableHeader>
+                <TableHeader :column-data="tableColumns" :sorted-column-index="sortedColumnIdx" @sort="sortColumn">
+                </TableHeader>
                 <EventDataRow v-for="event, rank in eventList" :rank="rank + 1" :event-id="event.event_id"
                     :name="event.name" :year="event.year" :event-data="event.event_data"></EventDataRow>
             </table>

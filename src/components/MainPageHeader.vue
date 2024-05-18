@@ -5,7 +5,7 @@ import SearchBar from '@/components/SearchBar.vue';
 import HamburgerMenu from '@/components/HamburgerMenu.vue';
 
 import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autocomplete.js';
-import { viewModeStore } from '@/stores/view-mode-store';
+import { useViewModeStore } from '@/stores/view-mode-store';
 </script>
 
 <template>
@@ -55,7 +55,7 @@ export default {
         }
     },
     mounted() {
-        this.viewMode = viewModeStore();
+        this.viewMode = useViewModeStore();
 
         loadSearchData(true, this.searchData, this.searchCategories);
     }

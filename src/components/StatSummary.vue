@@ -4,7 +4,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Colors, Title } from 'ch
 import { Doughnut } from 'vue-chartjs'
 
 import '@material/web/divider/divider'
-import { viewModeStore } from '@/stores/view-mode-store';
+import { useViewModeStore } from '@/stores/view-mode-store';
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title)
 </script>
@@ -86,7 +86,7 @@ export default {
         }
     },
     mounted() {
-        this.viewMode = viewModeStore();
+        this.viewMode = useViewModeStore();
     },
     computed: {
         teamDataReady() {

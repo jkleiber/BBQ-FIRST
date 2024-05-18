@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const viewModeStore = defineStore('viewMode', {
+export const useViewModeStore = defineStore('viewMode', {
     state() {
         return {
             screenWidth: window.innerWidth
