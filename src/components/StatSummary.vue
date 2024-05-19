@@ -16,7 +16,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title)
                 {{ stat.name }}
             </div>
             <div class="stat-value">
-                {{ stat.value.toFixed(4) }}
+                {{ valueDisplay(stat) }}
             </div>
         </div>
     </div>
@@ -108,6 +108,12 @@ export default {
         }
     },
     methods: {
+        valueDisplay(stat) {
+            if (stat && stat.value) {
+                return stat.value.toFixed(4);
+            }
+            return "N/A";
+        },
         convertDictToSortedValueArray(dict) {
             var items = Object.keys(dict).map(function (key) {
                 return [key, dict[key]];

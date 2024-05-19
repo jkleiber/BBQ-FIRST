@@ -75,6 +75,10 @@ class SupabaseAPI:
                 request_builder = request_builder.lt(f['column'], f['value'])
             elif f['operation'] == 'lte':
                 request_builder = request_builder.lte(f['column'], f['value'])
+            elif f['operation'] == 'gt':
+                request_builder = request_builder.gt(f['column'], f['value'])
+            elif f['operation'] == 'gte':
+                request_builder = request_builder.gte(f['column'], f['value'])
 
     def get_data(self, table: str, columns: str, filter: list):
         request_builder: SyncSelectRequestBuilder = self.supabase_client.table(table).select(columns)

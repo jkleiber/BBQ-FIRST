@@ -10,7 +10,7 @@
             <a v-bind:href="eventLink">{{ year }} {{ name }}</a>
         </td>
         <td v-for="stat in eventData">
-            {{ stat.value.toFixed(4) }}
+            {{ valueDisplay(stat) }}
         </td>
     </tr>
 </template>
@@ -36,6 +36,14 @@ export default {
         },
         eventAvailable() {
             return this.eventId != null && this.eventData != null;
+        }
+    },
+    methods: {
+        valueDisplay(stat) {
+            if (stat && stat.value) {
+                return stat.value.toFixed(4);
+            }
+            return "N/A";
         }
     }
 }
