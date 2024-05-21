@@ -208,8 +208,8 @@ export default {
 }
 
 .stat-cell {
-    max-width: 250px;
-    min-width: 100px;
+    width: 250px;
+    min-width: 25%;
     margin: 0 auto;
 }
 

@@ -9,7 +9,7 @@
         <td class="event-name-data">
             <a v-bind:href="eventLink">{{ year }} {{ name }}</a>
         </td>
-        <td v-for="stat in eventData">
+        <td v-for="stat in visibleData">
             {{ valueDisplay(stat) }}
         </td>
     </tr>
@@ -22,7 +22,8 @@ export default {
         name: null,
         year: null,
         eventId: null,
-        eventData: null
+        eventData: null,
+        columnData: null
     },
     computed: {
         rankNumberString() {
@@ -36,6 +37,18 @@ export default {
         },
         eventAvailable() {
             return this.eventId != null && this.eventData != null;
+        },
+        visibleData() {
+            // Default to showing all columns.
+            let data = this.eventData;
+
+            // If column data is provided, only show the visible columns based on name matching.
+            if (this.columnData) {
+                let cols = this.columnData.filter((col) => col.visible == true);
+                let colNames = cols.map(({ name }) => name);
+                data = this.eventData.filter((item) => colNames.includes(item.name));
+            }
+            return data;
         }
     },
     methods: {
