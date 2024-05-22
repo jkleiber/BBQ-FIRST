@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import sys
 
 from data_loader import DataLoader
 
@@ -71,5 +72,6 @@ if __name__ == "__main__":
     elif args.mode == "event":
         load_events(args.event_mode, args.year, not args.info_only)
 
-    # The banner factory must be closed or else the supabase process will continue to run and hang the terminal.
+    # The data loader must be closed or else the supabase process will continue to run and hang the terminal.
+    # Note: by not setting the auto-refresh token in supabase_api.py, if close() fails the script will still exit.
     data_loader.close()

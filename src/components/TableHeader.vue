@@ -4,7 +4,7 @@
 
 <template>
     <thead>
-        <th v-for="col, i in columnData" :class="headerClass(col, i)" @click="sortIfSortable(col, i)">
+        <th v-for="col, i in visibleColumns" :class="headerClass(col, i)" @click="sortIfSortable(col, i)">
             {{ col.name }}
         </th>
     </thead>
@@ -15,6 +15,12 @@ export default {
     props: {
         columnData: null,
         sortedColumnIndex: -1
+    },
+    computed: {
+        visibleColumns() {
+            let cols = this.columnData.filter(col => col.visible == true);
+            return cols;
+        }
     },
     methods: {
         headerClass(col, idx) {
@@ -38,6 +44,12 @@ export default {
 </script>
 
 <style scoped>
+table th {
+    position: sticky;
+    top: 0px;
+    background: var(--bbq-background-color);
+}
+
 .stat-row {
     display: flex;
     flex-direction: row;

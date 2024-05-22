@@ -189,6 +189,30 @@ export default {
                     {
                         "name": "Team Attribute BBQ",
                         "value": data[0].team_bbq
+                    },
+                    {
+                        "name": "Robot SAUCE",
+                        "value": data[0].robot_sauce
+                    },
+                    {
+                        "name": "Team Attribute SAUCE",
+                        "value": data[0].team_sauce
+                    },
+                    {
+                        "name": "Robot BRIQUETTE",
+                        "value": data[0].robot_briquette
+                    },
+                    {
+                        "name": "Team Attribute BRIQUETTE",
+                        "value": data[0].team_briquette
+                    },
+                    {
+                        "name": "Robot RIBS",
+                        "value": data[0].robot_ribs
+                    },
+                    {
+                        "name": "Team Attribute RIBS",
+                        "value": data[0].team_ribs
                     }
                 ]
             }
