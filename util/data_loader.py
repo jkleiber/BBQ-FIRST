@@ -124,7 +124,7 @@ class DataLoader:
             # Log out of supabase. If we don't do this, then the program will never end.
             self.supabase_api.logout()
         except Exception as e:
-            # HACK: If there's an error, just print the exception and ignore it.
+            # HACK: If there's an error, just print the exception and proceed.
             # This is a quick way of allowing the script to close in the event of 
             # underlying connections closing prior to the supabase API closing.
             print(e)

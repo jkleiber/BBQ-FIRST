@@ -1,6 +1,6 @@
 
 
-from supabase import create_client, Client
+from supabase import create_client, Client, ClientOptions
 from postgrest import SyncSelectRequestBuilder, SyncFilterRequestBuilder
 from postgrest.base_request_builder import BaseFilterRequestBuilder
 from typing import Union
@@ -8,8 +8,9 @@ from typing import Union
 class SupabaseAPI:
 
     def __init__(self, supabase_api_info: dict):
+        # Setting auto_refresh_token = False ensures the supabase client doesn't hang the script if the program ends.
         self.supabase_client: Client = create_client(
-            supabase_url=supabase_api_info['base_url'], supabase_key=supabase_api_info['api_key'])
+            supabase_url=supabase_api_info['base_url'], supabase_key=supabase_api_info['api_key'], options=ClientOptions(auto_refresh_token=False))
 
         # Log in using the supabase award inserter credentials in order to be able to post updates to the database.
         self.supabase_user = self.supabase_client.auth.sign_in_with_password(
@@ -114,3 +115,5 @@ class SupabaseAPI:
 
     def logout(self):
         res = self.supabase_client.auth.sign_out()
+        if res is not None:
+            print(res)
