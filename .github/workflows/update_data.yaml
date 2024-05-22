@@ -46,6 +46,7 @@ jobs:
     name: Load Blue Banners
     needs: set_up_environment
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: ./util
@@ -74,6 +75,7 @@ jobs:
     name: Load Event Data
     needs: [set_up_environment, load_blue_banners]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: ./util
@@ -102,6 +104,7 @@ jobs:
     name: Load Team Data
     needs: [set_up_environment, load_blue_banners]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: ./util
