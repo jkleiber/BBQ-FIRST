@@ -44,6 +44,12 @@ export default {
 </script>
 
 <style scoped>
+table th {
+    position: sticky;
+    top: 0px;
+    background: var(--bbq-background-color);
+}
+
 .stat-row {
     display: flex;
     flex-direction: row;

@@ -64,9 +64,11 @@ import '@material/web/chips/filter-chip';
             <table>
                 <TableHeader :column-data="tableColumns" :sorted-column-index="sortedColumnIdx" @sort="sortColumn">
                 </TableHeader>
-                <EventDataRow v-for="event, rank in eventList" :rank="rank + 1" :event-id="event.event_id"
-                    :name="event.name" :year="event.year" :event-data="event.event_data" :column-data="tableColumns">
-                </EventDataRow>
+                <tbody class="scrollable-table-body">
+                    <EventDataRow v-for="event, rank in eventList" :rank="rank + 1" :event-id="event.event_id"
+                        :name="event.name" :year="event.year" :event-data="event.event_data" :column-data="tableColumns">
+                    </EventDataRow>
+                </tbody>
             </table>
         </div>
         <div v-else-if="loadingEvents && eventList.length == 0">
@@ -322,6 +324,7 @@ export default {
 .filter-container {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .filter-options {
