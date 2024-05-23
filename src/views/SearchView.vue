@@ -4,7 +4,7 @@ import MainPageHeader from '@/components/MainPageHeader.vue';
 
 import SearchBar from '@/components/SearchBar.vue';
 
-import { loadSearchData } from '@/lib/search/load_autocomplete.js';
+import { loadSearchData } from '@/lib/search/bbq-autocomplete.js';
 </script>
 
 <template>

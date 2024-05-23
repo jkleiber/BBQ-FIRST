@@ -4,6 +4,8 @@ import '@material/web/textfield/filled-text-field';
 import '@material/web/button/filled-button';
 import '@material/web/icon/icon';
 
+import { getCategoricalAutocompleteOptions } from '@/lib/search/bbq-autocomplete';
+
 </script>
 
 
@@ -102,7 +104,7 @@ export default {
     methods: {
         search() {
             // If the user commands a search with no option selected, do nothing.
-            if (this.selectedOption == -1) {
+            if (this.selectedOption < 0 || this.selectedCategory < 0) {
                 return;
             }
 
@@ -194,8 +196,9 @@ export default {
             // If the option index is now less than 0, move to a previous category with 
             // selectable options and start from the end of that category.
             if (this.selectedOption < 0) {
-                this.selectedCategory -= 1;
-                for (let i = this.selectedCategory; i >= 0; i--) {
+                let prevCategory = this.selectedCategory - 1;
+                this.selectedCategory = -1;
+                for (let i = prevCategory; i >= 0; i--) {
                     if (this.autoCompleteData.categories[i].options.length > 0) {
                         this.selectedCategory = i;
                         break;
@@ -228,102 +231,34 @@ export default {
 
             return searchable;
         },
-        autoCompleteRank(a, b, isAscendingTiebreaker) {
-            let direction = isAscendingTiebreaker ? 1 : -1;
-
-            // Sort by priority.
-            if (a.priority < b.priority) {
-                return -1;
-            } else if (b.priority < a.priority) {
-                return 1;
-            }
-
-            // If two items have equal priority, sort alphabetically 
-            return a.item.label.localeCompare(b.item.label) * direction;
-        },
         updateAutoComplete() {
             // NOTE: this function should be called on keyup in order to 
             // capture the latest frame of query data.
 
-            // Reset the selected indices if the input has changed.
-            if (!this.lastQuery || this.searchQuery != this.lastQuery) {
-                this.selectedCategory = -1;
-                this.selectedOption = -1;
-            }
-            this.lastQuery = this.searchQuery;
-
             if ("categories" in this.searchData) {
-                for (let i = 0; i < this.searchData.categories.length; i++) {
+                this.autoCompleteData = getCategoricalAutocompleteOptions(this.searchQuery, this.searchData);
 
-                    let options = [];
-                    let numOptions = 0;
-
-                    let searchCategory = this.searchData.categories[i];
-                    let categoryIndex = searchCategory.id;
-                    let categoryName = searchCategory.label;
-                    let searchItems = searchCategory.items;
-                    numOptions = searchCategory.autocomplete_max;
-
-                    const queryLength = this.searchQuery.length;
-
-                    // Tokenize the query into words in case that yields better results (in case the user types in a mostly correct search).
-                    const lowercaseQuery = this.searchQuery.toLocaleLowerCase();
-                    const queryTokens = lowercaseQuery.split(' ');
-
-                    for (let i = 0; i < searchItems.length; i++) {
-                        const lowercaseSearchItem = searchItems[i].label.toLocaleLowerCase();
-                        // The best options are those which start with the same characters as the query.
-                        if (lowercaseSearchItem.substring(0, queryLength).includes(lowercaseQuery)) {
-                            options.push({
-                                "priority": 0,
-                                "item": searchItems[i]
-                            });
-                        } else if (lowercaseSearchItem.includes(lowercaseQuery)) {
-                            options.push({
-                                "priority": 1,
-                                "item": searchItems[i]
-                            });
-                        } else {
-                            let tokenMatchCounter = 0;
-                            for (const j in queryTokens) {
-                                let token = queryTokens[j];
-                                if (token == "") {
-                                    continue;
-                                }
-
-                                if (lowercaseSearchItem.includes(token)) {
-                                    tokenMatchCounter += 1;
-                                }
-                            }
-
-                            // If multiple words match, put this item in.
-                            if (tokenMatchCounter >= 2) {
-                                options.push({
-                                    "priority": 4 - tokenMatchCounter,
-                                    "item": searchItems[i]
-                                });
-                            }
+                // If there is no query, make the indices invalid.
+                if (this.searchQuery.length == 0) {
+                    this.selectedCategory = -1;
+                    this.selectedOption = -1;
+                }
+                else if (!this.lastQuery || this.searchQuery != this.lastQuery) {
+                    // Default to highlighting the first option in the first non-blank category.
+                    for (let c = 0; c < this.autoCompleteData.categories.length; c++) {
+                        if (this.autoCompleteData.categories[c].options.length > 0) {
+                            this.selectedCategory = c;
+                            this.selectedOption = 0;
+                            break;
                         }
-
-                    }
-
-                    let isAscending = true;
-                    if ("sort_direction" in this.searchData.categories[i]) {
-                        isAscending = (this.searchData.categories[i].sort_direction == "ascending");
-                    }
-
-                    let sortedOptions = options.sort((a, b) => this.autoCompleteRank(a, b, isAscending));
-                    let filteredOptions = sortedOptions.slice(0, numOptions);
-
-                    this.autoCompleteData.categories[categoryIndex] = {
-                        "name": categoryName,
-                        "options": []
-                    }
-
-                    for (let i = 0; i < filteredOptions.length; i++) {
-                        this.autoCompleteData.categories[categoryIndex].options.push(filteredOptions[i].item);
                     }
                 }
+                this.lastQuery = this.searchQuery;
+
+            } else {
+                // there are no categories in searchData, so make the indices invalid.
+                this.selectedCategory = -1;
+                this.selectedOption = -1;
             }
         }
     }

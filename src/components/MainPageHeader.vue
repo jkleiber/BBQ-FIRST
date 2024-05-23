@@ -4,7 +4,7 @@ import { RouterLink } from 'vue-router';
 import SearchBar from '@/components/SearchBar.vue';
 import HamburgerMenu from '@/components/HamburgerMenu.vue';
 
-import { loadSearchData, initSearchDataStructure } from '@/lib/search/load_autocomplete.js';
+import { loadSearchData, initSearchDataStructure } from '@/lib/search/bbq-autocomplete.js';
 import { useViewModeStore } from '@/stores/view-mode-store';
 </script>
 
