@@ -25,10 +25,14 @@ def load_teams(team_mode):
     if team_mode == "info":
         report = data_loader.load_team_info()
     elif team_mode == "data":
-        pass
+        report = data_loader.load_team_data()
     elif team_mode == "full":
-        report = data_loader.load_team_info()
-        # TODO: load team statistics
+        info_report = data_loader.load_team_info()
+        data_report = data_loader.load_team_data()
+        report = {
+            'info': info_report,
+            'data': data_report
+        }
 
     print(report)
 

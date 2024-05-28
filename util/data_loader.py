@@ -6,7 +6,7 @@ from supabase_api import SupabaseAPI
 from event_processor import EventProcessor
 from tba_api import TheBlueAllianceAPI
 from tba_banner_processor import TBABannerProcessor
-from tba_team_processor import TBATeamProcessor
+from team_processor import TeamProcessor
 
 import json
 class DataLoader:
@@ -24,7 +24,7 @@ class DataLoader:
 
         # The banner processor pulls all the relevant banners from TBA.
         self.banner_processor = TBABannerProcessor(self.tba_api, n_jobs=8)
-        self.team_processor = TBATeamProcessor(self.tba_api)
+        self.team_processor = TeamProcessor(self.tba_api, self.supabase_api)
         self.event_processor = EventProcessor(self.tba_api, self.supabase_api)
 
         # Get the current year for determining the maximum year for awards/events that have been awarded/completed.
@@ -86,38 +86,10 @@ class DataLoader:
         return self.load_events_since(self.cur_year, update_event_data)
 
     def load_team_info(self):
-        """
-        Function to load all the team information. The reason we typically load all the teams is 
-        because veteran-rookie teams can sometimes claim numbers that are earlier than 
-        the most recent page pulled from TBA. 
-        """
-        # Keep loading teams until the pages stop existing
-        page_exists = True
-        page_idx = 0
-        most_recent_team = 0
+        return self.team_processor.load_all_team_info()
 
-        report = {}
-        while page_exists:
-            # Pull a batch of ~500 teams. If there are no teams in the batch, 
-            # then the page is assumed to not exist and all teams must be loaded.
-            team_batch = self.team_processor.load_teams_from_page(page_idx)
-            if len(team_batch) == 0:
-                page_exists = False
-                break
-
-            # Push the batch to supabase.
-            res = self.supabase_api.upsert_batch(team_batch, "Team")
-
-            # Track information for the report.
-            report[str(page_idx)] = res
-            most_recent_team = team_batch[-1]['team_number']
-
-            # Clear the team queue for the next run so we aren't submitting stale data.
-            self.team_processor.clear_team_queue()
-            page_idx += 1
-
-        print(f"Last team: {most_recent_team}")
-        print(report)
+    def load_team_data(self):
+        return self.team_processor.load_team_data()
 
     def close(self):
         try:
