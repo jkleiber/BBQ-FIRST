@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import AwardItem from '@/components/AwardItem.vue';
+import StatSummary from '@/components/StatSummary.vue';
 
 import '@material/web/tabs/tabs';
 import '@material/web/tabs/primary-tab';
@@ -31,6 +32,8 @@ import '@material/web/list/list-item';
                 <h3>Team Attribute Banners: {{ numTeamAwards }}</h3>
             </div>
         </div>
+
+        <StatSummary :stats="teamStats"></StatSummary>
 
         <div class="team-container">
             <md-tabs>
@@ -73,7 +76,8 @@ export default {
             robotAwardsList: [],
             teamAwardsList: [],
             nickname: "",
-            rookieYear: null
+            rookieYear: null,
+            teamData: []
         }
     },
     created() {
@@ -105,6 +109,9 @@ export default {
             }
             return rookieString;
         },
+        teamStats() {
+            return this.teamData;
+        }
     },
     methods: {
         changeTab(tab) {
@@ -155,9 +162,54 @@ export default {
                 this.rookieYear = data[0].rookie_year;
             }
         },
+        async getTeamStats() {
+            let teamNumber = this.$route.params.team_number;
+            const { data, error } = await supabase.from("TeamData").select().eq("team_number", teamNumber);
+            console.log(data)
+            if (error) {
+                console.log(error);
+                this.teamData = [];
+            } else {
+                this.teamData = [
+                    {
+                        "name": "Robot BBQ",
+                        "value": data[0].robot_bbq
+                    },
+                    {
+                        "name": "Team Attribute BBQ",
+                        "value": data[0].team_bbq
+                    },
+                    {
+                        "name": "Robot SAUCE",
+                        "value": data[0].robot_sauce
+                    },
+                    {
+                        "name": "Team Attribute SAUCE",
+                        "value": data[0].team_sauce
+                    },
+                    {
+                        "name": "Robot BRIQUETTE",
+                        "value": data[0].robot_briquette
+                    },
+                    {
+                        "name": "Team Attribute BRIQUETTE",
+                        "value": data[0].team_briquette
+                    },
+                    {
+                        "name": "Robot RIBS",
+                        "value": data[0].robot_ribs
+                    },
+                    {
+                        "name": "Team Attribute RIBS",
+                        "value": data[0].team_ribs
+                    }
+                ]
+            }
+        },
         teamChange() {
             if (this.doesTeamExist()) {
                 this.getTeamInfo();
+                this.getTeamStats();
                 this.getAwards();
             }
         }
