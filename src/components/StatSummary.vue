@@ -109,7 +109,7 @@ export default {
     },
     methods: {
         valueDisplay(stat) {
-            if (stat && stat.value) {
+            if (stat !== null && stat.value !== null) {
                 return stat.value.toFixed(4);
             }
             return "N/A";

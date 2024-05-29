@@ -1,9 +1,12 @@
 
+import math
 
 from supabase import create_client, Client, ClientOptions
 from postgrest import SyncSelectRequestBuilder, SyncFilterRequestBuilder
-from postgrest.base_request_builder import BaseFilterRequestBuilder
+from postgrest.base_request_builder import BaseFilterRequestBuilder, APIResponse
 from typing import Union
+
+MAX_ROWS_PER_REQUEST = 1000
 
 class SupabaseAPI:
 
@@ -62,11 +65,12 @@ class SupabaseAPI:
             success_cases += 1
         except Exception as e:
             print(f"Batch Upsert Failed!")
+            print(e)
             fail_cases += 1
 
         return {"num_success": success_cases, "num_fail": fail_cases}
     
-    def _filter_process(self, request_builder: BaseFilterRequestBuilder, filter: list):
+    def _filter_process(self, request_builder: BaseFilterRequestBuilder, filter=[], range=None, limit=None, order_info=None):
         for f in filter:
             if f['operation'] == 'eq':
                 request_builder = request_builder.eq(f['column'], f['value'])
@@ -81,21 +85,58 @@ class SupabaseAPI:
             elif f['operation'] == 'gte':
                 request_builder = request_builder.gte(f['column'], f['value'])
 
-    def get_data(self, table: str, columns: str, filter: list):
-        request_builder: SyncSelectRequestBuilder = self.supabase_client.table(table).select(columns)
+        if range is not None:
+            request_builder = request_builder.range(range[0], range[1])
         
+        if limit is not None:
+            request_builder = request_builder.limit(limit)
+
+        if order_info is not None:
+            col = order_info['column']
+            desc = order_info['desc']
+            request_builder = request_builder.order(col, desc=desc)
+
+    def get_data(self, table: str, columns: str, filter=[], range=None, limit=None, order_info=None) -> APIResponse:
         """ Build a request based on the filter values and operators.
         The filter list contains dictionaries set up with the following keys:
         - column: the column to filter on
         - value: the value to use in the filter
         - operation: the type of filter operation (eq, neq, lt, lte)
         """
-        self._filter_process(request_builder, filter)
+        request_builder: SyncSelectRequestBuilder = self.supabase_client.table(table).select(columns)
+        self._filter_process(request_builder, filter, range, limit, order_info)
 
         # Execute request
         data = request_builder.execute()
 
         return data
+    
+    def get_paged_data(self, table: str, columns: str, filter=[], order_info=None) -> list[APIResponse]:
+        """ Build a request based on the filter values and operators for paged data.
+        Supabase limits the number of rows returned, so this function stacks the API 
+        responses up into a list for processing by the caller.
+
+        The filter list contains dictionaries set up with the following keys:
+        - column: the column to filter on
+        - value: the value to use in the filter
+        - operation: the type of filter operation (eq, neq, lt, lte)
+        """
+        # Automatically handle the page limiting of supabase select.
+        row_count_response = self.supabase_client.table(table).select(columns, count='exact').execute()
+        n_rows = int(row_count_response.model_dump()['count'])
+        n_pages = int(math.ceil(n_rows / MAX_ROWS_PER_REQUEST))
+
+        paged_data = []
+        for p in range(n_pages):
+            start_idx = p * MAX_ROWS_PER_REQUEST
+            end_idx = start_idx + (MAX_ROWS_PER_REQUEST - 1)
+
+            data = self.get_data(table, columns, filter, [start_idx, end_idx], order_info=order_info)
+            paged_data.append(data)
+
+        return paged_data
+
+
     
     def delete_rows(self, table: str, filter: list):
         request_builder: SyncFilterRequestBuilder = self.supabase_client.table(table).delete()

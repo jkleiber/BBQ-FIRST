@@ -3,6 +3,7 @@
 from joblib import Parallel, delayed
 from supabase_api import SupabaseAPI
 from tba_api import TheBlueAllianceAPI
+from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
 
 
 class EventProcessor:
@@ -77,33 +78,6 @@ class EventProcessor:
 
         return team_blue_banners
 
-    def compute_bbq_contribution(self, blue_banners: dict):
-        num_banners = len(blue_banners)
-        return num_banners
-
-    def compute_sauce_contribution(self, blue_banners: dict, event_year: int):
-        # Note: Any event pre-2005 will have 0 sauce.
-        if event_year < 2005:
-            return 0
-
-        sauce_banners = [banner for banner in blue_banners if banner['Event']['year'] >= 2005]
-        num_banners = len(sauce_banners)
-
-        return num_banners
-
-    def compute_rolling_contribution(self, blue_banners: dict, event_year: int, n_seasons: int):
-        # Only consider blue banners won by this team at earlier events to this one, and only including the
-        # most recent N seasons (plus the season in progress). For example, a BRIQUETTE (N=4) from 2024 will include
-        # 2024, 2023, 2022, 2021 and 2020 banners.
-        # Some events feed into other events, and give awards on the same day (i.e. Championship divisions
-        # award blue banners the same day that Einstein does). To handle these scenarios, we must check
-        # that an event associated with a blue banner has an earlier start date than the current event.
-        min_year = event_year - n_seasons
-        rolling_banners = [banner for banner in blue_banners if banner['Event']['year'] >= min_year]
-        num_banners = len(rolling_banners)
-
-        return num_banners
-
     def compute_event_statistics(self, event_info: dict):
         event_id = event_info['event_id']
         event_teams_data = self.tba_api.get_data(f"/event/{event_id}/teams")
@@ -153,25 +127,25 @@ class EventProcessor:
                     event_info['start_date'], event_id, team_number, "Team")
 
                 # BBQ
-                n_banners_robot_bbq += self.compute_bbq_contribution(robot_banners)
-                n_banners_team_bbq += self.compute_bbq_contribution(team_banners)
+                n_banners_robot_bbq += compute_bbq_contribution(robot_banners)
+                n_banners_team_bbq += compute_bbq_contribution(team_banners)
 
                 # SAUCE (BBQ since 2005)
-                n_banners_robot_sauce += self.compute_sauce_contribution(
+                n_banners_robot_sauce += compute_sauce_contribution(
                     robot_banners, event_info['year'])
-                n_banners_team_sauce += self.compute_sauce_contribution(
+                n_banners_team_sauce += compute_sauce_contribution(
                     team_banners, event_info['year'])
 
                 # BRIQUETTE (BBQ only using the most recent 4 years)
-                n_banners_robot_briquette += self.compute_rolling_contribution(
+                n_banners_robot_briquette += compute_rolling_contribution(
                     robot_banners, event_info['year'], 4)
-                n_banners_team_briquette += self.compute_rolling_contribution(
+                n_banners_team_briquette += compute_rolling_contribution(
                     team_banners, event_info['year'], 4)
 
                 # RIBS (BBQ only using the most recent year)
-                n_banners_robot_ribs += self.compute_rolling_contribution(
+                n_banners_robot_ribs += compute_rolling_contribution(
                     robot_banners, event_info['year'], 1)
-                n_banners_team_ribs += self.compute_rolling_contribution(
+                n_banners_team_ribs += compute_rolling_contribution(
                     team_banners, event_info['year'], 1)
 
             # Compute stats (BBQ, SAUCE, BRIQUETTE, RIBS)
