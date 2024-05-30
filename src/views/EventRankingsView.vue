@@ -37,24 +37,26 @@ import '@material/web/chips/filter-chip';
             <div class="filter-options" style="min-width: 120px">
                 <h3>Statistics</h3>
                 <md-chip-set class="vertical-chip-set">
-                    <md-filter-chip label="BBQ" @click="toggleStatFilter('bbq')" v-bind:selected="getStatChipStatus('bbq')"
+                    <md-filter-chip label="BBQ" @click="toggleChip('bbq')" v-bind:selected="getChipStatus('bbq')"
+                        v-bind:disabled="!chipEnabled('bbq')" class="vertical-chip-set-chip"></md-filter-chip>
+                    <md-filter-chip label="SAUCE" @click="toggleChip('sauce')" v-bind:selected="getChipStatus('sauce')"
+                        v-bind:disabled="!chipEnabled('sauce')" class="vertical-chip-set-chip"></md-filter-chip>
+                    <md-filter-chip label="BRIQUETTE" @click="toggleChip('briquette')"
+                        v-bind:selected="getChipStatus('briquette')" v-bind:disabled="!chipEnabled('briquette')"
                         class="vertical-chip-set-chip"></md-filter-chip>
-                    <md-filter-chip label="SAUCE" @click="toggleStatFilter('sauce')"
-                        v-bind:selected="getStatChipStatus('sauce')" class="vertical-chip-set-chip"></md-filter-chip>
-                    <md-filter-chip label="BRIQUETTE" @click="toggleStatFilter('briquette')"
-                        v-bind:selected="getStatChipStatus('briquette')" class="vertical-chip-set-chip"></md-filter-chip>
-                    <md-filter-chip label="RIBS" @click="toggleStatFilter('ribs')"
-                        v-bind:selected="getStatChipStatus('ribs')" class="vertical-chip-set-chip"></md-filter-chip>
+                    <md-filter-chip label="RIBS" @click="toggleChip('ribs')" v-bind:selected="getChipStatus('ribs')"
+                        v-bind:disabled="!chipEnabled('ribs')" class="vertical-chip-set-chip"></md-filter-chip>
                 </md-chip-set>
             </div>
 
             <div class="filter-options" style="min-width: 141px">
                 <h3>Award Types</h3>
                 <md-chip-set class="vertical-chip-set">
-                    <md-filter-chip label="Robot" @click="toggleTypeFilter('robot')"
-                        v-bind:selected="getTypeChipStatus('robot')" class="vertical-chip-set-chip"></md-filter-chip>
-                    <md-filter-chip label="Team Attribute" @click="toggleTypeFilter('team')"
-                        v-bind:selected="getTypeChipStatus('team')" class="vertical-chip-set-chip"></md-filter-chip>
+                    <md-filter-chip label="Robot" @click="toggleChip('robot')" v-bind:selected="getChipStatus('robot')"
+                        v-bind:disabled="!chipEnabled('robot')" class="vertical-chip-set-chip"></md-filter-chip>
+                    <md-filter-chip label="Team Attribute" @click="toggleChip('team')"
+                        v-bind:selected="getChipStatus('team')" v-bind:disabled="!chipEnabled('team')"
+                        class="vertical-chip-set-chip"></md-filter-chip>
                 </md-chip-set>
             </div>
         </div>
@@ -106,6 +108,20 @@ export default {
             lowerYearIndex: 0,
             upperYearIndex: 0,
             sortedColumnIdx: 2,
+            enabledMap: {
+                'stats': {
+                    'info': true,
+                    'bbq': true,
+                    'sauce': true,
+                    'briquette': true,
+                    'ribs': true,
+                },
+                'types': {
+                    'info': true,
+                    'robot': true,
+                    'team': true
+                }
+            },
             visibilityMap: {
                 'stats': {
                     'info': true,
@@ -197,14 +213,14 @@ export default {
             } else {
                 for (let i = 0; i < data.length; i++) {
 
-                    let dataValid = (data[i].robot_bbq
-                        && data[i].team_bbq
-                        && data[i].robot_sauce
-                        && data[i].team_sauce
-                        && data[i].robot_briquette
-                        && data[i].team_briquette
-                        && data[i].robot_ribs
-                        && data[i].team_ribs);
+                    let dataValid = (data[i].robot_bbq !== null
+                        && data[i].team_bbq !== null
+                        && data[i].robot_sauce !== null
+                        && data[i].team_sauce !== null
+                        && data[i].robot_briquette !== null
+                        && data[i].team_briquette !== null
+                        && data[i].robot_ribs !== null
+                        && data[i].team_ribs !== null);
 
                     let eventInfo = {
                         "name": data[i].Event.name,
@@ -266,6 +282,20 @@ export default {
         },
         setUpperYearFilter(yearIdx) {
             this.upperYearIndex = yearIdx;
+
+            // If the upper year is now earlier than 2005, SAUCE is 0. Prevent the SAUCE filter from activating.
+            const prevSauceEnabled = this.enabledMap.stats['sauce'];
+            if (yearIdx < this.upperYearFilters.length && this.upperYearFilters[yearIdx] < 2005) {
+                this.enabledMap.stats['sauce'] = false;
+            } else {
+                this.enabledMap.stats['sauce'] = true;
+            }
+
+            // If SAUCE has been disabled/enabled via the year flag, update the column visibility appropriately.
+            if (this.enabledMap.stats['sauce'] != prevSauceEnabled) {
+                this.updateColumnVisibility();
+            }
+
             this.rankEvents();
         },
         sortColumn(col_idx) {
@@ -274,28 +304,45 @@ export default {
                 this.rankEvents();
             }
         },
-        toggleStatFilter(stat) {
-            if (Object.keys(this.visibilityMap.stats).includes(stat)) {
-                this.visibilityMap.stats[stat] = !this.visibilityMap.stats[stat];
+        chipEnabled(chip) {
+            return (Object.keys(this.enabledMap.stats).includes(chip)
+                && this.enabledMap.stats[chip] === true)
+                || (Object.keys(this.enabledMap.types).includes(chip)
+                    && this.enabledMap.types[chip] === true);
+        },
+        chipVisible(chip) {
+            return (Object.keys(this.visibilityMap.stats).includes(chip)
+                && this.visibilityMap.stats[chip] == true)
+                || (Object.keys(this.visibilityMap.types).includes(chip)
+                    && this.visibilityMap.types[chip] == true)
+        },
+        chipToggleable(chip) {
+            return this.chipEnabled(chip);
+        },
+        toggleChip(chip) {
+            if (!this.chipToggleable(chip)) {
+                return;
+            }
+
+            if (Object.keys(this.visibilityMap.stats).includes(chip)) {
+                this.visibilityMap.stats[chip] = !this.visibilityMap.stats[chip];
+                this.updateColumnVisibility();
+            } else if (Object.keys(this.visibilityMap.types).includes(chip)) {
+                this.visibilityMap.types[chip] = !this.visibilityMap.types[chip];
                 this.updateColumnVisibility();
             }
         },
-        toggleTypeFilter(stat_type) {
-            if (Object.keys(this.visibilityMap.types).includes(stat_type)) {
-                this.visibilityMap.types[stat_type] = !this.visibilityMap.types[stat_type];
-                this.updateColumnVisibility();
+        getChipStatus(chip) {
+            if (!this.chipToggleable(chip)) {
+                return false;
             }
-        },
-        getStatChipStatus(stat) {
-            if (Object.keys(this.visibilityMap.stats).includes(stat)) {
-                return this.visibilityMap.stats[stat];
+
+            if (Object.keys(this.visibilityMap.stats).includes(chip)) {
+                return this.visibilityMap.stats[chip];
+            } else if (Object.keys(this.visibilityMap.types).includes(chip)) {
+                return this.visibilityMap.types[chip];
             }
-            return false;
-        },
-        getTypeChipStatus(stat_type) {
-            if (Object.keys(this.visibilityMap.types).includes(stat_type)) {
-                return this.visibilityMap.types[stat_type];
-            }
+
             return false;
         },
         updateColumnVisibility() {
@@ -303,8 +350,14 @@ export default {
                 let colType = this.tableColumns[i].type;
                 let colStat = this.tableColumns[i].stat;
 
-                if (Object.keys(this.visibilityMap.types).includes(colType) && Object.keys(this.visibilityMap.stats).includes(colStat)) {
-                    let visibility = (this.visibilityMap.types[colType]) && (this.visibilityMap.stats[colStat]);
+                if (Object.keys(this.visibilityMap.types).includes(colType)
+                    && Object.keys(this.visibilityMap.stats).includes(colStat)
+                    && Object.keys(this.enabledMap.types).includes(colType)
+                    && Object.keys(this.enabledMap.stats).includes(colStat)) {
+                    let visibility = (this.visibilityMap.types[colType])
+                        && (this.visibilityMap.stats[colStat])
+                        && (this.enabledMap.types[colType])
+                        && (this.enabledMap.stats[colStat]);
                     this.tableColumns[i].visible = visibility;
                 }
             }
