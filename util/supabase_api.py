@@ -12,8 +12,11 @@ class SupabaseAPI:
 
     def __init__(self, supabase_api_info: dict):
         # Setting auto_refresh_token = False ensures the supabase client doesn't hang the script if the program ends.
+        # Setting the postgrest_client_timeout = 30 sets a 30 second timeout, which may be less flaky than the 5 second default.
         self.supabase_client: Client = create_client(
-            supabase_url=supabase_api_info['base_url'], supabase_key=supabase_api_info['api_key'], options=ClientOptions(auto_refresh_token=False))
+            supabase_url=supabase_api_info['base_url'], 
+            supabase_key=supabase_api_info['api_key'], 
+            options=ClientOptions(auto_refresh_token=False, postgrest_client_timeout=30))
 
         # Log in using the supabase award inserter credentials in order to be able to post updates to the database.
         self.supabase_user = self.supabase_client.auth.sign_in_with_password(
