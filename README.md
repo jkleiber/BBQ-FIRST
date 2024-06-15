@@ -31,13 +31,13 @@ Things that only need to be done once:
 1. Create a fork of this repository.
 2. Clone the fork.
 
-Then, the following steps are repeated for each Github issue:
-3. Checkout the `main` branch
-4. Pull the latest updates
-5. Create and checkout a new feature branch
-6. Write code / documentation / etc.
-7. Push code to the fork
-8. Create a pull request to get the feature into this repository
+Then, the following steps are repeated for each Github issue:  
+1. Checkout the `main` branch.  
+2. Pull the latest updates.  
+3. Create and checkout a new feature branch.  
+4. Write code / documentation / etc.  
+5. Push code to the fork.  
+6. Create a pull request to get the feature into this repository.  
 
 At this point, if the pull request is for a prioritized issue (i.e. it is associated with a Github issue that has a tracked milestone), it will be reviewed by a project admin. If it is not a prioritized issue, it may still be reviewed depending on the project admins availability.
 
