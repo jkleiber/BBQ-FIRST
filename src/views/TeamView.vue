@@ -165,7 +165,7 @@ export default {
         async getTeamStats() {
             let teamNumber = this.$route.params.team_number;
             const { data, error } = await supabase.from("TeamData").select().eq("team_number", teamNumber);
-            console.log(data)
+
             if (error) {
                 console.log(error);
                 this.teamData = [];
