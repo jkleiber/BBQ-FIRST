@@ -3,8 +3,6 @@ import EventRankingsView from './EventRankingsView.vue';
 </script>
 
 <template>
-    <MainPageHeader></MainPageHeader>
-
     <EventRankingsView></EventRankingsView>
 </template>
 

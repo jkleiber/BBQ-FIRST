@@ -24,7 +24,7 @@ class DataLoader:
 
         # The banner processor pulls all the relevant banners from TBA.
         self.banner_processor = TBABannerProcessor(self.tba_api, n_jobs=8)
-        self.team_processor = TeamProcessor(self.tba_api, self.supabase_api)
+        self.team_processor = TeamProcessor(self.tba_api, self.supabase_api, n_jobs=8)
         self.event_processor = EventProcessor(self.tba_api, self.supabase_api)
 
         # Get the current year for determining the maximum year for awards/events that have been awarded/completed.
