@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase-client';
 
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import TableHeader from '@/components/TableHeader.vue';
-import EventDataRow from '@/components/EventDataRow.vue';
+import TeamDataRow from '@/components/TeamDataRow.vue';
 
 import '@material/web/select/outlined-select';
 import '@material/web/select/select-option';
@@ -18,17 +18,10 @@ import '@material/web/chips/filter-chip';
         <!-- Filters -->
         <div class="filter-container">
             <div class="filter-options">
-                <h3>Year Range</h3>
-                <md-outlined-select class="filter-select" v-bind:display-text="lowerYearDisplay">
-                    <md-select-option v-for="filter, idx in lowerYearFilters" v-bind:selected="idx == lowerYearIndex"
-                        :key="idx" :ref="lowerYearIndex" v-bind:aria-label="filter" @click="setLowerYearFilter(idx)">
-                        <div slot="headline">{{ filter }}</div>
-                    </md-select-option>
-                </md-outlined-select>
-                to
-                <md-outlined-select class="filter-select" v-bind:display-text="upperYearDisplay">
-                    <md-select-option v-for="filter, idx in upperYearFilters" v-bind:selected="idx == upperYearIndex"
-                        v-bind:aria-label="filter" @click="setUpperYearFilter(idx)">
+                <h3>Latest Rookie Year</h3>
+                <md-outlined-select class="filter-select" v-bind:display-text="rookieYearDisplay">
+                    <md-select-option v-for="filter, idx in rookieYearFilters" v-bind:selected="idx == rookieYearIndex"
+                        :key="idx" :ref="rookieYearIndex" v-bind:aria-label="filter" @click="setRookieYearFilter(idx)">
                         <div slot="headline">{{ filter }}</div>
                     </md-select-option>
                 </md-outlined-select>
@@ -36,44 +29,46 @@ import '@material/web/chips/filter-chip';
 
             <div class="filter-options" style="min-width: 120px">
                 <h3>Statistics</h3>
-                <md-chip-set class="vertical-chip-set">
+                <md-chip-set class="horizontal-chip-set">
+                    <md-filter-chip label="Total" @click="toggleChip('count')" v-bind:selected="getChipStatus('count')"
+                        v-bind:disabled="!chipEnabled('count')" class="horizontal-chip-set-chip"></md-filter-chip>
                     <md-filter-chip label="BBQ" @click="toggleChip('bbq')" v-bind:selected="getChipStatus('bbq')"
-                        v-bind:disabled="!chipEnabled('bbq')" class="vertical-chip-set-chip"></md-filter-chip>
+                        v-bind:disabled="!chipEnabled('bbq')" class="horizontal-chip-set-chip"></md-filter-chip>
                     <md-filter-chip label="SAUCE" @click="toggleChip('sauce')" v-bind:selected="getChipStatus('sauce')"
-                        v-bind:disabled="!chipEnabled('sauce')" class="vertical-chip-set-chip"></md-filter-chip>
+                        v-bind:disabled="!chipEnabled('sauce')" class="horizontal-chip-set-chip"></md-filter-chip>
                     <md-filter-chip label="BRIQUETTE" @click="toggleChip('briquette')"
                         v-bind:selected="getChipStatus('briquette')" v-bind:disabled="!chipEnabled('briquette')"
                         class="vertical-chip-set-chip"></md-filter-chip>
                     <md-filter-chip label="RIBS" @click="toggleChip('ribs')" v-bind:selected="getChipStatus('ribs')"
-                        v-bind:disabled="!chipEnabled('ribs')" class="vertical-chip-set-chip"></md-filter-chip>
+                        v-bind:disabled="!chipEnabled('ribs')" class="horizontal-chip-set-chip"></md-filter-chip>
                 </md-chip-set>
             </div>
 
             <div class="filter-options" style="min-width: 141px">
                 <h3>Award Types</h3>
-                <md-chip-set class="vertical-chip-set">
+                <md-chip-set class="horizontal-chip-set">
                     <md-filter-chip label="Robot" @click="toggleChip('robot')" v-bind:selected="getChipStatus('robot')"
-                        v-bind:disabled="!chipEnabled('robot')" class="vertical-chip-set-chip"></md-filter-chip>
+                        v-bind:disabled="!chipEnabled('robot')" class="horizontal-chip-set-chip"></md-filter-chip>
                     <md-filter-chip label="Team Attribute" @click="toggleChip('team')"
                         v-bind:selected="getChipStatus('team')" v-bind:disabled="!chipEnabled('team')"
-                        class="vertical-chip-set-chip"></md-filter-chip>
+                        class="horizontal-chip-set-chip"></md-filter-chip>
                 </md-chip-set>
             </div>
         </div>
 
         <!-- Rankings -->
-        <div v-if="!loadingEvents || eventList.length > 0" class="ranking-container">
+        <div v-if="!loadingTeams || teamList.length > 0" class="ranking-container">
             <table>
                 <TableHeader :column-data="tableColumns" :sorted-column-index="sortedColumnIdx" @sort="sortColumn">
                 </TableHeader>
                 <tbody class="scrollable-table-body">
-                    <EventDataRow v-for="event, rank in eventList" :rank="rank + 1" :event-id="event.event_id"
-                        :name="event.name" :year="event.year" :event-data="event.event_data" :column-data="tableColumns">
-                    </EventDataRow>
+                    <TeamDataRow v-for="team, rank in teamList" :rank="rank + 1" :team-number="team.team_number"
+                        :name="team.name" :year="team.year" :team-data="team.team_data" :column-data="tableColumns">
+                    </TeamDataRow>
                 </tbody>
             </table>
         </div>
-        <div v-else-if="loadingEvents && eventList.length == 0">
+        <div v-else-if="loadingTeams && teamList.length == 0">
             Loading Events...
         </div>
         <div v-else>
@@ -88,11 +83,13 @@ import '@material/web/chips/filter-chip';
 export default {
     data() {
         return {
-            loadingEvents: false,
-            eventList: [],
+            loadingTeams: false,
+            teamList: [],
             tableColumns: [
                 { "name": "Rank", visible: true, stat: 'info', type: 'info' },
-                { "name": "Event Name", visible: true, stat: 'info', type: 'info' },
+                { "name": "Team", visible: true, stat: 'info', type: 'info' },
+                { "name": "Robot Banners", "sortable": true, "db_col": "robot_banners", visible: true, stat: 'count', type: 'robot' },
+                { "name": "Team Attribute Banners", "sortable": true, "db_col": "team_banners", visible: true, stat: 'count', type: 'team' },
                 { "name": "Robot BBQ", "sortable": true, "db_col": "robot_bbq", visible: true, stat: 'bbq', type: 'robot' },
                 { "name": "Team Attribute BBQ", "sortable": true, "db_col": "team_bbq", visible: true, stat: 'bbq', type: 'team' },
                 { "name": "Robot SAUCE", "sortable": true, "db_col": "robot_sauce", visible: true, stat: 'sauce', type: 'robot' },
@@ -102,15 +99,11 @@ export default {
                 { "name": "Robot RIBS", "sortable": true, "db_col": "robot_ribs", visible: true, stat: 'ribs', type: 'robot' },
                 { "name": "Team Attribute RIBS", "sortable": true, "db_col": "team_ribs", visible: true, stat: 'ribs', type: 'team' }
             ],
-            latestYear: null,
-            upperYearFilters: [],
-            lowerYearFilters: [],
-            lowerYearIndex: 0,
-            upperYearIndex: 0,
             sortedColumnIdx: 2,
             enabledMap: {
                 'stats': {
                     'info': true,
+                    'count': true,
                     'bbq': true,
                     'sauce': true,
                     'briquette': true,
@@ -125,6 +118,7 @@ export default {
             visibilityMap: {
                 'stats': {
                     'info': true,
+                    'count': true,
                     'bbq': true,
                     'sauce': true,
                     'briquette': true,
@@ -135,22 +129,19 @@ export default {
                     'robot': true,
                     'team': true
                 }
-            }
+            },
+            latestYear: null,
+            rookieYearFilters: [],
+            rookieYearIndex: 0
         }
     },
     created() {
         this.initComponent();
     },
     computed: {
-        lowerYearDisplay() {
-            if (this.lowerYearIndex < this.lowerYearFilters.length) {
-                return this.lowerYearFilters[this.lowerYearIndex];
-            }
-            return ""
-        },
-        upperYearDisplay() {
-            if (this.upperYearIndex < this.upperYearFilters.length) {
-                return this.upperYearFilters[this.upperYearIndex];
+        rookieYearDisplay() {
+            if (this.rookieYearIndex < this.rookieYearFilters.length) {
+                return this.rookieYearFilters[this.rookieYearIndex];
             }
             return ""
         },
@@ -158,16 +149,15 @@ export default {
     methods: {
         async initComponent() {
             await this.getAvailableYears();
-            this.rankEvents();
+            this.rankTeams();
         },
         async getAvailableYears() {
             this.upperYearFilters = [];
 
             // Get the latest event year in the database.
-            const { data, error } = await supabase.from("Event")
-                .select()
-                .not("year", "is", null)
-                .order("year", { ascending: false })
+            const { data, error } = await supabase.from("Team")
+                .select().not("rookie_year", "is", null)
+                .order("rookie_year", { ascending: false })
                 .limit(1);
             if (error) {
                 console.log(error);
@@ -175,39 +165,33 @@ export default {
             }
 
             // Set the latest year.
-            this.latestYear = data[0].year;
+            this.latestYear = data[0].rookie_year;
 
             // Create a list of years going back to 1992, which is the first competition year.
             const kFirstYear = 1992;
             if (this.latestYear) {
                 for (let y = this.latestYear; y >= kFirstYear; y--) {
-                    this.upperYearFilters.push(y);
+                    this.rookieYearFilters.push(y);
                 }
             }
 
-            // Reverse the lower year filter to count up.
-            this.lowerYearFilters = this.upperYearFilters.slice().reverse();
+            this.rookieYearIndex = 0;
         },
-        async getEvents() {
+        async getTeams() {
             // Get the active column. The active column must be visible.
             let visibleCols = this.tableColumns.filter(col => col.visible == true);
             let activeDbColumn = visibleCols[this.sortedColumnIdx].db_col;
 
-            this.loadingEvents = true;
-            let query = supabase.from("EventData")
-                .select("*, Event!inner( event_id, name, year, type, type_string )")
+            this.loadingTeams = true;
+            let query = supabase.from("TeamData")
+                .select("*, Team!inner( team_number, nickname, rookie_year )")
                 .not(activeDbColumn, "is", null)
                 .order(activeDbColumn, { ascending: false });
 
             // Apply the year filtering.
-            let upperYear = this.upperYearFilters[this.upperYearIndex];
-            if (upperYear) {
-                query = query.lte("Event.year", upperYear);
-            }
-
-            let lowerYear = this.lowerYearFilters[this.lowerYearIndex];
-            if (lowerYear) {
-                query = query.gte("Event.year", lowerYear);
+            let maxRookieYear = this.rookieYearFilters[this.rookieYearIndex];
+            if (maxRookieYear) {
+                query = query.lte("Team.rookie_year", maxRookieYear);
             }
 
             const { data, error } = await query.limit(100);
@@ -227,11 +211,18 @@ export default {
                         && data[i].robot_ribs !== null
                         && data[i].team_ribs !== null);
 
-                    let eventInfo = {
-                        "name": data[i].Event.name,
-                        "year": data[i].Event.year,
-                        "event_id": data[i].event_id,
-                        "event_data": [
+                    let teamInfo = {
+                        "name": "Team " + data[i].Team.team_number + ": " + data[i].Team.nickname,
+                        "team_number": data[i].Team.team_number,
+                        "team_data": [
+                            {
+                                "name": "Robot Banners",
+                                "value": data[i].robot_banners
+                            },
+                            {
+                                "name": "Team Attribute Banners",
+                                "value": data[i].team_banners
+                            },
                             {
                                 "name": "Robot BBQ",
                                 "value": data[i].robot_bbq
@@ -268,45 +259,27 @@ export default {
                     }
 
                     if (dataValid) {
-                        stagedList.push(eventInfo);
+                        stagedList.push(teamInfo);
                     }
                 }
             }
 
-            this.eventList = stagedList;
+            this.teamList = stagedList;
 
-            // Mark the event as loaded to allow the doesEventExist function to determine existence of a loaded event.
-            this.loadingEvents = false;
+            // Mark the teams as loaded to allow the doesTeamsExist function to determine existence of a loaded event.
+            this.loadingTeams = false;
         },
-        async rankEvents() {
-            await this.getEvents();
+        async rankTeams() {
+            await this.getTeams();
         },
-        setLowerYearFilter(yearIdx) {
-            this.lowerYearIndex = yearIdx;
-            this.rankEvents();
-        },
-        setUpperYearFilter(yearIdx) {
-            this.upperYearIndex = yearIdx;
-
-            // If the upper year is now earlier than 2005, SAUCE is 0. Prevent the SAUCE filter from activating.
-            const prevSauceEnabled = this.enabledMap.stats['sauce'];
-            if (yearIdx < this.upperYearFilters.length && this.upperYearFilters[yearIdx] < 2005) {
-                this.enabledMap.stats['sauce'] = false;
-            } else {
-                this.enabledMap.stats['sauce'] = true;
-            }
-
-            // If SAUCE has been disabled/enabled via the year flag, update the column visibility appropriately.
-            if (this.enabledMap.stats['sauce'] != prevSauceEnabled) {
-                this.updateColumnVisibility();
-            }
-
-            this.rankEvents();
+        setRookieYearFilter(yearIdx) {
+            this.rookieYearIndex = yearIdx;
+            this.rankTeams();
         },
         sortColumn(col_idx) {
             if (col_idx) {
                 this.sortedColumnIdx = col_idx;
-                this.rankEvents();
+                this.rankTeams();
             }
         },
         chipEnabled(chip) {
@@ -372,7 +345,7 @@ export default {
             this.sortedColumnIdx = 2;
 
             // re-rank events
-            this.rankEvents();
+            this.rankTeams();
         }
     },
 }
@@ -401,6 +374,16 @@ export default {
 
 .vertical-chip-set-chip {
     margin-bottom: 5px;
+}
+
+.horizontal-chip-set {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.horizontal-chip-set-chip {
+    margin-right: 5px;
 }
 
 .ranking-container {

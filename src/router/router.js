@@ -5,6 +5,7 @@ import HomeView from '@/views/HomeView.vue';
 import TeamView from '@/views/TeamView.vue';
 import EventView from '@/views/EventView.vue';
 import EventRankingsView from '@/views/EventRankingsView.vue';
+import TeamRankingsView from '@/views/TeamRankingsView.vue';
 import SearchView from '@/views/SearchView.vue';
 import PageNotFound from '@/views/PageNotFound.vue'
 
@@ -37,7 +38,7 @@ const routes = [
     {
         path: '/teams',
         name: 'Team Rankings',
-        component: TeamView,
+        component: TeamRankingsView,
         meta: {
             requireAuth: false,
             skipIfAuth: false

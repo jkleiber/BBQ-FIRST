@@ -1,5 +1,6 @@
 
 import datetime
+from joblib import Parallel, delayed
 
 from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
 from tba_api import TheBlueAllianceAPI
@@ -8,9 +9,10 @@ from supabase_api import SupabaseAPI
 
 class TeamProcessor:
 
-    def __init__(self, tba_api: TheBlueAllianceAPI, supabase_api: SupabaseAPI):
+    def __init__(self, tba_api: TheBlueAllianceAPI, supabase_api: SupabaseAPI, n_jobs=8):
         self.tba_api = tba_api
         self.supabase_api = supabase_api
+        self.n_jobs = n_jobs
 
         self.team_queue = []
 
@@ -108,72 +110,82 @@ class TeamProcessor:
             current_year = data['data'][0]['year']
 
         for page in team_data:
-            robot_bbq = 0
-            team_bbq = 0
-            robot_sauce = 0
-            team_sauce = 0
-            robot_briquette = 0
-            team_briquette = 0
-            robot_ribs = 0
-            team_ribs = 0
-
             team_data_queue = []
 
+            # Compute team statistics in parallel, since this is a time-costly operation to do sequentially.
+            # Use the threading backend to ensure self.event_queue is actually updated.
             page_data = page.model_dump()['data']
-            for team in page_data:
-                # Extract the team information if it exists. Some team information is very null because the team folded quickly or didn't participate in any events.
-                if 'team_number' in team and 'rookie_year' in team and team['team_number'] is not None and team['rookie_year'] is not None:
-                    team_number = team['team_number']
-                    rookie_year = team['rookie_year']
-
-                    team_duration = (current_year - rookie_year) + 1
-                    sauce_duration = (current_year - 2005) + 1
-
-                    # Get all robot and team awards separately
-                    robot_banners = self._get_banners(team_number, "Robot")
-                    team_banners = self._get_banners(team_number, "Team")
-
-                    # BBQ
-                    robot_bbq = compute_bbq_contribution(robot_banners) / team_duration
-                    team_bbq = compute_bbq_contribution(team_banners) / team_duration
-
-                    # SAUCE
-                    robot_sauce = compute_sauce_contribution(
-                        robot_banners, current_year) / sauce_duration
-                    team_sauce = compute_sauce_contribution(
-                        team_banners, current_year) / sauce_duration
-
-                    # BRIQUETTE
-                    robot_briquette = compute_rolling_contribution(
-                        robot_banners, current_year, 4) / 4
-                    team_briquette = compute_rolling_contribution(team_banners, current_year, 4) / 4
-
-                    # RIBS
-                    robot_ribs = compute_rolling_contribution(robot_banners, current_year, 1)
-                    team_ribs = compute_rolling_contribution(team_banners, current_year, 1)
-
-                    # Add to the team data update packet.
-                    team_data = {
-                        "team_number": team_number,
-                        "robot_bbq": robot_bbq,
-                        "team_bbq": team_bbq,
-                        "robot_sauce": robot_sauce,
-                        "team_sauce": team_sauce,
-                        "robot_briquette": robot_briquette,
-                        "team_briquette": team_briquette,
-                        "robot_ribs": robot_ribs,
-                        "team_ribs": team_ribs
-                    }
-                    team_data_queue.append(team_data)
-                else:
-                    print("Invalid team info detected")
-                    print(team)
+            Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_single_team_data)(team, current_year, team_data_queue)
+                                                          for team in page_data)
 
             # Upsert the data.
             res_info = self.supabase_api.upsert_batch(team_data_queue, "TeamData")
             report.append(res_info)
 
         return report
+
+    def compute_single_team_data(self, team: dict, current_year: int, team_data_queue: list):
+        robot_bbq = 0
+        team_bbq = 0
+        robot_sauce = 0
+        team_sauce = 0
+        robot_briquette = 0
+        team_briquette = 0
+        robot_ribs = 0
+        team_ribs = 0
+        
+        # Extract the team information if it exists. Some team information is very null because the team 
+        # folded quickly or didn't participate in any events.
+        if 'team_number' in team and 'rookie_year' in team and team['team_number'] is not None and team['rookie_year'] is not None:
+            team_number = team['team_number']
+            rookie_year = team['rookie_year']
+
+            team_duration = (current_year - rookie_year) + 1
+            sauce_duration = (current_year - 2005) + 1
+
+            # Get all robot and team awards separately
+            robot_banners = self._get_banners(team_number, "Robot")
+            team_banners = self._get_banners(team_number, "Team")
+
+            # BBQ
+            robot_banner_count = compute_bbq_contribution(robot_banners)
+            robot_bbq = robot_banner_count / team_duration
+            team_banner_count = compute_bbq_contribution(team_banners)
+            team_bbq = team_banner_count / team_duration
+
+            # SAUCE
+            robot_sauce = compute_sauce_contribution(
+                robot_banners, current_year) / sauce_duration
+            team_sauce = compute_sauce_contribution(
+                team_banners, current_year) / sauce_duration
+
+            # BRIQUETTE
+            robot_briquette = compute_rolling_contribution(
+                robot_banners, current_year, 4) / 4
+            team_briquette = compute_rolling_contribution(team_banners, current_year, 4) / 4
+
+            # RIBS
+            robot_ribs = compute_rolling_contribution(robot_banners, current_year, 1)
+            team_ribs = compute_rolling_contribution(team_banners, current_year, 1)
+
+            # Add to the team data update packet.
+            team_data = {
+                "team_number": team_number,
+                "robot_banners": robot_banner_count,
+                "team_banners": team_banner_count,
+                "robot_bbq": robot_bbq,
+                "team_bbq": team_bbq,
+                "robot_sauce": robot_sauce,
+                "team_sauce": team_sauce,
+                "robot_briquette": robot_briquette,
+                "team_briquette": team_briquette,
+                "robot_ribs": robot_ribs,
+                "team_ribs": team_ribs
+            }
+            team_data_queue.append(team_data)
+        else:
+            print("Invalid team info detected")
+            print(team)
 
     def clear_team_queue(self):
         self.team_queue.clear()

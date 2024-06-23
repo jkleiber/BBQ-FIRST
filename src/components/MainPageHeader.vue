@@ -9,29 +9,30 @@ import { useViewModeStore } from '@/stores/view-mode-store';
 </script>
 
 <template>
-    <div class="nav">
+    <!-- Mobile navigation bar (hamburger menu) -->
+    <div class="nav" v-if="viewMode?.isMobile">
         <RouterLink to="/" class="nav-home"></RouterLink>
 
-        <!--Right Aligned Elements-->
-        <!-- <RouterLink to="/help" class="nav-link">Help</RouterLink> -->
 
-        <!-- <RouterLink to="/teams" class="nav-link">Teams</RouterLink> -->
-        <!-- <RouterLink to="/events" class="nav-link">Events</RouterLink> -->
+        <HamburgerMenu>
+            <template v-slot:menu-content>
+                <RouterLink to="/teams" class="nav-link nav-link-mobile">Teams</RouterLink>
+                <RouterLink to="/events" class="nav-link nav-link-mobile">Events</RouterLink>
+                <span v-if="searchVisible">
+                    <SearchBar :search-data="searchData" :mobile="true"></SearchBar>
+                </span>
+            </template>
+        </HamburgerMenu>
+    </div>
+    <div class="nav" v-else>
+        <RouterLink to="/" class="nav-home"></RouterLink>
 
-        <div v-if="viewMode?.isMobile">
-            <HamburgerMenu>
-                <template v-slot:menu-content>
-                    <span v-if="searchVisible">
-                        <SearchBar :search-data="searchData" :mobile="true"></SearchBar>
-                    </span>
-                </template>
-            </HamburgerMenu>
-        </div>
-        <div v-else>
-            <span class="nav-search" v-if="searchVisible">
-                <SearchBar :search-data="searchData" :mobile="false"></SearchBar>
-            </span>
-        </div>
+        <RouterLink to="/teams" class="nav-link">Teams</RouterLink>
+        <RouterLink to="/events" class="nav-link">Events</RouterLink>
+
+        <span class="nav-search" v-if="searchVisible">
+            <SearchBar :search-data="searchData" :mobile="false"></SearchBar>
+        </span>
     </div>
 </template>
 
@@ -136,6 +137,11 @@ a.nav-link:active {
     background-color: var(--bbq-header-hover-color);
     color: #FFF;
     border-bottom: var(--bbq-primary-color) 5px solid;
+}
+
+a.nav-link-mobile {
+    width: 100%;
+    padding: 15px;
 }
 
 .nav-search {
