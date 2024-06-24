@@ -4,7 +4,11 @@ from joblib import Parallel, delayed
 from supabase_api import SupabaseAPI
 from tba_api import TheBlueAllianceAPI
 from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
+from tba_banner_processor import VALID_EVENT_TYPES
 
+# World championship event types.
+# See more here: https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/event_type.py#L2
+WCMP_EVENT_TYPES = (3, 4, 6)
 
 class EventProcessor:
 
@@ -16,6 +20,11 @@ class EventProcessor:
         self.event_queue = []
         self.event_data_queue = []
 
+        # Timing information for all loaded years.
+        self.max_week_of_year = {}
+        self.max_date_of_year = {}
+        self.min_date_of_year = {}
+
     def load_year_event_info(self, year: int):
         year_events_data = self.tba_api.get_data(f"/events/{year}")
 
@@ -24,6 +33,24 @@ class EventProcessor:
             if 'week' in event and event['week'] is not None:
                 # Note: Event week is zero-indexed for some reason, so add 1.
                 week = event['week'] + 1
+
+            # Track the min/max dates and max week for a given year.
+            # The assumption is that the championships are 1 week greater than the maximum week.
+            if event['event_type'] in VALID_EVENT_TYPES:
+                if year in self.max_week_of_year.keys() and self.max_week_of_year[year] < week:
+                    self.max_week_of_year[year] = week
+                elif year not in self.max_week_of_year.keys():
+                    self.max_week_of_year[year] = week
+
+                if year in self.max_date_of_year.keys() and self.max_date_of_year[year] < event['start_date'] and event['start_date'] is not None:
+                    self.max_date_of_year[year] = event['start_date']
+                elif year not in self.max_date_of_year.keys() and event['start_date'] is not None:
+                    self.max_date_of_year[year] = event['start_date']
+
+                if year in self.min_date_of_year.keys() and self.min_date_of_year[year] > event['start_date'] and event['start_date'] is not None:
+                    self.min_date_of_year[year] = event['start_date']
+                elif year not in self.min_date_of_year.keys() and event['start_date'] is not None:
+                    self.min_date_of_year[year] = event['start_date']
 
             event_info = {
                 "event_id": event['key'],
@@ -35,6 +62,20 @@ class EventProcessor:
                 "week": week
             }
             self.event_queue.append(event_info)
+
+    def get_season_timeline_info(self, year: int):
+        start_date = None
+        end_date = None
+        end_week = 0
+
+        if year in self.min_date_of_year.keys():
+            start_date = self.min_date_of_year[year]
+        if year in self.max_date_of_year.keys():
+            end_date = self.max_date_of_year[year]
+        if year in self.max_week_of_year.keys():
+            end_week = self.max_week_of_year[year]
+
+        return (start_date, end_date, end_week)
 
     def get_prior_banners(self, start_date, event_id: str, team_number: int, banner_type: str):
         # Only consider blue banners won by this team at earlier events to this one.
@@ -84,6 +125,26 @@ class EventProcessor:
 
         if event_teams_data is None:
             return
+        
+
+        # The championship is 1 week after the maximum week, because the championship 
+        # week defaults to week 1 in TBA.
+        champ_week = self.max_week_of_year[event_info['year']] + 1
+
+        # Compute the actual event week.
+        event_week = event_info['week']
+        # If this is a championship (or a championship division / Festival of Champions), 
+        # set the current week to the championship week. This will result in time-window 
+        # based stats considering the current season at full strength, and the minimum 
+        # season at 0 strength (i.e. the current season is fully faded in).
+        if event_info['type'] in WCMP_EVENT_TYPES:
+            event_week = self.max_week_of_year[event_info['year']] + 1
+        elif event_info['type'] == 99:
+            # If this is an offseason event, make the event week larger than the championship week.
+            event_week = self.max_week_of_year[event_info['year']] + 2
+        elif event_info['type'] == 100:
+            # The event week is 0 if this is a preseason event.
+            event_week = 0
 
         # Raw totals.
         n_teams = 0
@@ -136,17 +197,17 @@ class EventProcessor:
                 n_banners_team_sauce += compute_sauce_contribution(
                     team_banners, event_info['year'])
 
-                # BRIQUETTE (BBQ only using the most recent 4 years)
+                # BRIQUETTE (BBQ only using the most recent 4 years).
                 n_banners_robot_briquette += compute_rolling_contribution(
-                    robot_banners, event_info['year'], 4)
+                    robot_banners, event_info['year'], 4, event_week, champ_week)
                 n_banners_team_briquette += compute_rolling_contribution(
-                    team_banners, event_info['year'], 4)
+                    team_banners, event_info['year'], 4, event_week, champ_week)
 
                 # RIBS (BBQ only using the most recent year)
                 n_banners_robot_ribs += compute_rolling_contribution(
-                    robot_banners, event_info['year'], 1)
+                    robot_banners, event_info['year'], 1, event_week, champ_week)
                 n_banners_team_ribs += compute_rolling_contribution(
-                    team_banners, event_info['year'], 1)
+                    team_banners, event_info['year'], 1, event_week, champ_week)
 
             # Compute stats (BBQ, SAUCE, BRIQUETTE, RIBS)
             if n_teams > 0:
