@@ -91,7 +91,7 @@ class TeamProcessor:
 
         return blue_banners
 
-    def load_team_data(self) -> dict:
+    def load_team_data(self, cur_week: float, max_official_week: int) -> dict:
         report = []
 
         # Load all the team information available.
@@ -115,8 +115,8 @@ class TeamProcessor:
             # Compute team statistics in parallel, since this is a time-costly operation to do sequentially.
             # Use the threading backend to ensure self.event_queue is actually updated.
             page_data = page.model_dump()['data']
-            Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_single_team_data)(team, current_year, team_data_queue)
-                                                          for team in page_data)
+            Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_single_team_data)(team, current_year, team_data_queue, cur_week, max_official_week)
+                                                              for team in page_data)
 
             # Upsert the data.
             res_info = self.supabase_api.upsert_batch(team_data_queue, "TeamData")
@@ -124,7 +124,7 @@ class TeamProcessor:
 
         return report
 
-    def compute_single_team_data(self, team: dict, current_year: int, team_data_queue: list):
+    def compute_single_team_data(self, team: dict, current_year: int, team_data_queue: list, cur_week: float, max_official_week: int):
         robot_bbq = 0
         team_bbq = 0
         robot_sauce = 0
@@ -133,8 +133,8 @@ class TeamProcessor:
         team_briquette = 0
         robot_ribs = 0
         team_ribs = 0
-        
-        # Extract the team information if it exists. Some team information is very null because the team 
+
+        # Extract the team information if it exists. Some team information is very null because the team
         # folded quickly or didn't participate in any events.
         if 'team_number' in team and 'rookie_year' in team and team['team_number'] is not None and team['rookie_year'] is not None:
             team_number = team['team_number']
@@ -161,12 +161,15 @@ class TeamProcessor:
 
             # BRIQUETTE
             robot_briquette = compute_rolling_contribution(
-                robot_banners, current_year, 4) / 4
-            team_briquette = compute_rolling_contribution(team_banners, current_year, 4) / 4
+                robot_banners, current_year, 4, cur_week, max_official_week) / 4
+            team_briquette = compute_rolling_contribution(
+                team_banners, current_year, 4, cur_week, max_official_week) / 4
 
             # RIBS
-            robot_ribs = compute_rolling_contribution(robot_banners, current_year, 1)
-            team_ribs = compute_rolling_contribution(team_banners, current_year, 1)
+            robot_ribs = compute_rolling_contribution(
+                robot_banners, current_year, 1, cur_week, max_official_week)
+            team_ribs = compute_rolling_contribution(
+                team_banners, current_year, 1, cur_week, max_official_week)
 
             # Add to the team data update packet.
             team_data = {

@@ -16,8 +16,8 @@ import { useViewModeStore } from '@/stores/view-mode-store';
 
         <HamburgerMenu>
             <template v-slot:menu-content>
-                <RouterLink to="/teams" class="nav-link nav-link-mobile">Teams</RouterLink>
                 <RouterLink to="/events" class="nav-link nav-link-mobile">Events</RouterLink>
+                <RouterLink to="/teams" class="nav-link nav-link-mobile">Teams</RouterLink>
                 <span v-if="searchVisible">
                     <SearchBar :search-data="searchData" :mobile="true"></SearchBar>
                 </span>
@@ -27,8 +27,8 @@ import { useViewModeStore } from '@/stores/view-mode-store';
     <div class="nav" v-else>
         <RouterLink to="/" class="nav-home"></RouterLink>
 
-        <RouterLink to="/teams" class="nav-link">Teams</RouterLink>
         <RouterLink to="/events" class="nav-link">Events</RouterLink>
+        <RouterLink to="/teams" class="nav-link">Teams</RouterLink>
 
         <span class="nav-search" v-if="searchVisible">
             <SearchBar :search-data="searchData" :mobile="false"></SearchBar>
