@@ -96,6 +96,10 @@ class DataLoader:
         # Compute the current week in the season.
         today = datetime.date.today()
 
+        # There are actually N+1 weeks in the season, because the championship week isn't accounted for in
+        # the TBA API.
+        num_weeks += 1
+
         # Compute the current week in the season, defaulting to the end of the season in case of failure.
         cur_week = num_weeks
         if start_date_str is not None:
