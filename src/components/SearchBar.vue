@@ -273,6 +273,7 @@ export default {
 
 .search-container {
     display: block;
+    width: 100%;
 }
 
 form.search-form {

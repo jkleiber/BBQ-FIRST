@@ -2,6 +2,7 @@
 
 import { supabase } from '@/lib/supabase-client';
 
+import TrophyCabinet from '@/components/TrophyCabinet.vue';
 import MainPageHeader from '@/components/MainPageHeader.vue';
 import TeamItem from '@/components/TeamItem.vue';
 import StatSummary from '@/components/StatSummary.vue';
@@ -31,7 +32,10 @@ import '@material/web/list/list-item';
         <div class="event-container" v-if="doesEventExist()">
             <StatSummary :stats="eventStats" :team-data="teamDataComputed"></StatSummary>
 
-            <h2>Team Details</h2>
+            <h2 class="section-header">Event Results</h2>
+            <TrophyCabinet :banners="awardedBanners" mode="event"></TrophyCabinet>
+
+            <h2 class="section-header">Team Details</h2>
             <md-list>
                 <TeamItem v-for="team in teamDict" :number="team.number" :name="team.name" :country="team.country"
                     :robot-awards="team.robot_awards" :team-awards="team.team_awards">
@@ -64,7 +68,8 @@ export default {
             // 3: Championship Division
             // 4: Championship Finals
             // 99: Offseason event
-            specialEventTypes: [3, 4, 99]
+            specialEventTypes: [3, 4, 99],
+            awardedBanners: []
         }
     },
     created() {
@@ -282,12 +287,35 @@ export default {
 
             await this.populateAwards();
         },
+        async getEventAwardedBanners() {
+            const { data, error } = await supabase.from("BlueBanner")
+                .select("team_number, type, date, event_id, name, Team!inner(team_number, nickname)")
+                .eq("event_id", this.eventCode);
+
+            if (error) {
+                console.log(error);
+                return;
+            } else {
+                for (var i = 0; i < data.length; i++) {
+                    let banner = {};
+                    banner['eventId'] = this.eventCode;
+                    banner['eventName'] = this.eventName;
+                    banner['awardName'] = data[i].name;
+                    banner['teamNumber'] = data[i].team_number;
+                    banner['teamName'] = data[i].Team.nickname;
+                    banner['year'] = this.eventYear;
+
+                    this.awardedBanners.push(banner);
+                }
+            }
+        },
         resetEventInfo() {
             this.eventExists = false;
             this.eventName = "";
             this.eventSeasonWeek = -1;
             this.eventYear = 0;
             this.eventDate = null;
+            this.awardedBanners = [];
         },
         async eventChange() {
             await this.getEventInfo();
@@ -295,6 +323,7 @@ export default {
             if (this.eventExists) {
                 this.getEventData();
                 this.getEventTeams();
+                this.getEventAwardedBanners();
             }
         }
     },
@@ -322,5 +351,9 @@ div.event-info-container {
 
 .event-text-field {
     align-items: center;
+}
+
+h2.section-header {
+    margin-top: 20px;
 }
 </style>
