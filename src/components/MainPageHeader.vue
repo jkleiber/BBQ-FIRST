@@ -18,9 +18,8 @@ import { useViewModeStore } from '@/stores/view-mode-store';
             <template v-slot:menu-content>
                 <RouterLink to="/events" class="nav-link nav-link-mobile">Events</RouterLink>
                 <RouterLink to="/teams" class="nav-link nav-link-mobile">Teams</RouterLink>
-                <span v-if="searchVisible">
-                    <SearchBar :search-data="searchData" :mobile="true"></SearchBar>
-                </span>
+                <SearchBar :search-data="searchData" :mobile="true" v-if="searchVisible" class="nav-search-mobile">
+                </SearchBar>
             </template>
         </HamburgerMenu>
     </div>
@@ -153,5 +152,12 @@ a.nav-link-mobile {
     height: 50px;
     margin-top: 7px;
     width: 200px;
+}
+
+.nav-search-mobile {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%;
 }
 </style>

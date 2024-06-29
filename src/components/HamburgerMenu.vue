@@ -71,6 +71,7 @@ export default {
     transition: background-color .5s ease;
     background-color: var(--bbq-header-color);
     display: inline-block;
+    height: fit-content;
 }
 
 /* Transition styling */

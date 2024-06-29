@@ -2,9 +2,10 @@
 
 import { supabase } from '@/lib/supabase-client';
 
-import MainPageHeader from '@/components/MainPageHeader.vue';
 import AwardItem from '@/components/AwardItem.vue';
+import MainPageHeader from '@/components/MainPageHeader.vue';
 import StatSummary from '@/components/StatSummary.vue';
+import TrophyCabinet from '@/components/TrophyCabinet.vue';
 
 import '@material/web/tabs/tabs';
 import '@material/web/tabs/primary-tab';
@@ -44,19 +45,11 @@ import '@material/web/list/list-item';
             </md-tabs>
 
             <div id="robot-panel" class="award-tab" role="tabpanel" aria-labelledby="robot-tab" v-if="isActive(0)">
-                <md-list>
-                    <AwardItem v-for="award in robotAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event" :event_id="award.event_id">
-                    </AwardItem>
-                </md-list>
+                <TrophyCabinet :banners="robotAwardsList" mode="team"></TrophyCabinet>
             </div>
 
             <div id="team-panel" class="award-tab" role="tabpanel" aria-labelledby="team-tab" v-if="isActive(1)">
-                <md-list>
-                    <AwardItem v-for="award in teamAwardsList" :name="award.name" :season="award.season"
-                        :event="award.event" :event_id="award.event_id">
-                    </AwardItem>
-                </md-list>
+                <TrophyCabinet :banners="teamAwardsList" mode="team"></TrophyCabinet>
             </div>
         </div>
     </div>
@@ -129,7 +122,8 @@ export default {
             let robotAwards = [];
             const { data, error } = await supabase.from("BlueBanner")
                 .select("name, team_number, type, Event( event_id, name, year )")
-                .eq("team_number", teamNumber);
+                .eq("team_number", teamNumber)
+                .order("date", { ascending: false });
 
             // If the data is not null, populate the award lists.
             // If the data is null, the award lists will be set to empty. 
@@ -137,10 +131,10 @@ export default {
                 for (let i = 0; i < data.length; i++) {
                     let a = data[i];
                     var award = {
-                        "name": a.name,
-                        "season": a.Event.year,
-                        "event": a.Event.name,
-                        "event_id": a.Event.event_id
+                        "awardName": a.name,
+                        "year": a.Event.year,
+                        "eventName": a.Event.name,
+                        "eventId": a.Event.event_id
                     }
 
                     if (data[i].type == "Robot") {
