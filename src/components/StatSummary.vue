@@ -12,12 +12,18 @@ ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title)
 <template>
     <div class="stat-row">
         <div v-for="stat in stats" class="stat-cell">
-            <div class="stat-name">
-                {{ stat.name }}
-            </div>
-            <div class="stat-value">
-                {{ valueDisplay(stat) }}
-            </div>
+            <VTooltip placement="top">
+                <div class="stat-name">
+                    {{ stat.name }}
+                </div>
+                <div class="stat-value">
+                    {{ valueDisplay(stat) }}
+                </div>
+
+                <template #popper>
+                    {{ stat.tooltip }}
+                </template>
+            </VTooltip>
         </div>
     </div>
     <md-divider inset></md-divider>

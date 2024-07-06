@@ -18,9 +18,6 @@ import '@material/web/list/list-item';
 </script>
 
 <template>
-    <MainPageHeader></MainPageHeader>
-
-
     <!-- Show team information if it exists -->
     <div class="main-content" v-if="doesTeamExist()">
 

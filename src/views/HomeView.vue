@@ -1,5 +1,6 @@
 <script setup>
 import EventRankingsView from './EventRankingsView.vue';
+
 </script>
 
 <template>

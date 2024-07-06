@@ -18,7 +18,6 @@ import '@material/web/list/list-item';
 </script>
 
 <template>
-    <MainPageHeader></MainPageHeader>
     <div class="main-content">
 
         <div class="event-header-container">
@@ -32,7 +31,7 @@ import '@material/web/list/list-item';
         <div class="event-container" v-if="doesEventExist()">
             <StatSummary :stats="eventStats" :team-data="teamDataComputed"></StatSummary>
 
-            <h2 class="section-header">Event Results</h2>
+            <h2 class="section-header" v-if="awardedBanners.length > 0">Event Results</h2>
             <TrophyCabinet :banners="awardedBanners" mode="event"></TrophyCabinet>
 
             <h2 class="section-header">Team Details</h2>
@@ -189,7 +188,8 @@ export default {
                 this.eventData = [
                     {
                         "name": "Robot BBQ",
-                        "value": data[0].robot_bbq
+                        "value": data[0].robot_bbq,
+                        "tooltip": "<strong>BBQ</strong>"
                     },
                     {
                         "name": "Team Attribute BBQ",
@@ -346,7 +346,6 @@ div.event-info-container {
     display: flex;
     flex-flow: column;
     flex: 1;
-    height: 60vh;
 }
 
 .event-text-field {
