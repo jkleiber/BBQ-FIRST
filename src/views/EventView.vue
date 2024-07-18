@@ -189,35 +189,50 @@ export default {
                     {
                         "name": "Robot BBQ",
                         "value": data[0].robot_bbq,
-                        "tooltip": "<strong>BBQ</strong>"
+                        "fullName": "Robot BBQ",
+                        "tooltip": "All time robot banners won by attending teams / Number of attending teams"
                     },
                     {
                         "name": "Team Attribute BBQ",
-                        "value": data[0].team_bbq
+                        "value": data[0].team_bbq,
+                        "fullName": "Team Attribute BBQ",
+                        "tooltip": "All time team attribute banners won by attending teams / Number of attending teams"
                     },
                     {
                         "name": "Robot SAUCE",
-                        "value": data[0].robot_sauce
+                        "value": data[0].robot_sauce,
+                        "fullName": "Robot SAUCE",
+                        "tooltip": "Robot banners won by attending teams since 2005 / Number of attending teams"
                     },
                     {
                         "name": "Team Attribute SAUCE",
-                        "value": data[0].team_sauce
+                        "value": data[0].team_sauce,
+                        "fullName": "Team Attribute SAUCE",
+                        "tooltip": "Team attribute banners won by attending teams since 2005 / Number of attending teams"
                     },
                     {
                         "name": "Robot BRIQUETTE",
-                        "value": data[0].robot_briquette
+                        "value": data[0].robot_briquette,
+                        "fullName": "Robot BRIQUETTE",
+                        "tooltip": "Robot banners won by attending teams in the last 4 years / Number of attending teams"
                     },
                     {
                         "name": "Team Attribute BRIQUETTE",
-                        "value": data[0].team_briquette
+                        "value": data[0].team_briquette,
+                        "fullName": "Team Attribute BRIQUETTE",
+                        "tooltip": "Team attribute banners won by attending teams in the last 4 years / Number of attending teams"
                     },
                     {
                         "name": "Robot RIBS",
-                        "value": data[0].robot_ribs
+                        "value": data[0].robot_ribs,
+                        "fullName": "Robot RIBS",
+                        "tooltip": "Robot banners won by attending teams in the last year / Number of attending teams"
                     },
                     {
                         "name": "Team Attribute RIBS",
-                        "value": data[0].team_ribs
+                        "value": data[0].team_ribs,
+                        "fullName": "Team Attribute RIBS",
+                        "tooltip": "Team attribute banners won by attending teams in the last year / Number of attending teams"
                     }
                 ]
             }

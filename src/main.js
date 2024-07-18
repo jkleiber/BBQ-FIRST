@@ -16,7 +16,19 @@ const app = createApp(App);
 app.use(router);
 app.use(createPinia());
 
-app.use(FloatingVue);
+app.use(FloatingVue, {
+    themes: {
+        'stat-tooltip': {
+            $extend: 'tooltip',
+            triggers: ['hover'],
+            autoHide: true,
+            placement: 'top',
+            html: true,
+            autoSize: 'min',
+            $resetCss: true,
+        },
+    }
+});
 
 // Mount the app.
 app.mount('#app');

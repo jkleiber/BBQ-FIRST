@@ -9,6 +9,7 @@
   /* Primary/Secondary */
   --bbq-primary-color: tomato;
   --bbq-accent-color: #646464;
+  --bbq-primary-color-soft: rgba(255, 99, 71, 0.611);
 
   /* Header */
   --bbq-header-color: #313131;
@@ -127,7 +128,6 @@ a {
 
 
 div {
-  width: 100%;
   text-align: center;
   margin: 0 auto;
 }
@@ -142,9 +142,8 @@ div.main-content {
   display: block;
   margin-top: 70px;
   padding: 2rem;
-  /* max-height: 100%; */
-  /* overflow: auto; */
   flex: 1 1 auto;
+  width: 100%;
 }
 
 md-divider {
@@ -167,4 +166,29 @@ input:focus-visible {
   border-color: var(--bbq-primary-color);
   border-width: 2px;
   outline: none;
+}
+
+/* Tooltip styles */
+.v-popper--theme-stat-tooltip {
+
+  .v-popper__inner {
+    background-color: #ffffff;
+    color: #000000;
+    opacity: 1;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: var(--bbq-accent-color);
+    border-width: 2px;
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 300px;
+  }
+
+  .v-popper__arrow-outer {
+    border-color: var(--bbq-accent-color);
+  }
+
+  .v-popper__popper {
+    width: 300px;
+  }
 }

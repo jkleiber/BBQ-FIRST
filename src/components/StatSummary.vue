@@ -12,7 +12,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title)
 <template>
     <div class="stat-row">
         <div v-for="stat in stats" class="stat-cell">
-            <VTooltip placement="top">
+            <VTooltip placement="top" theme="stat-tooltip">
                 <div class="stat-name">
                     {{ stat.name }}
                 </div>
@@ -21,7 +21,8 @@ ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title)
                 </div>
 
                 <template #popper>
-                    {{ stat.tooltip }}
+                    <p><strong>{{ stat.fullName }}</strong></p>
+                    <p v-html="stat.tooltip"></p>
                 </template>
             </VTooltip>
         </div>
@@ -219,8 +220,15 @@ export default {
     margin: 0 auto;
 }
 
+.stat-name {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-style: dashed;
+}
+
 .chart-view-container {
     display: flex;
+    width: 100%;
 }
 
 .chart-container {
@@ -235,5 +243,9 @@ export default {
 
 .mobile-chart-container {
     width: 100%;
+}
+
+strong {
+    font-weight: bold;
 }
 </style>
