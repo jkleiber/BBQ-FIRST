@@ -168,6 +168,10 @@ input:focus-visible {
   outline: none;
 }
 
+strong {
+  font-weight: bold;
+}
+
 /* Tooltip styles */
 .v-popper--theme-stat-tooltip {
 

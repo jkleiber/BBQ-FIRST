@@ -32,7 +32,9 @@ import '@material/web/button/outlined-button';
                 </template>
                 <template v-slot:content>
                     <div class="stat-full-name">
-                        {{ stat.fullName }}
+                        <p><strong>{{ stat.fullName }}</strong></p>
+                    </div>
+                    <div v-html="stat.content">
                     </div>
                 </template>
             </Expandable>
@@ -60,6 +62,17 @@ export default {
                     'shorthand': "BRIQUETTE",
                     'fullName': "Banner Ratio Indexed to Quadrenniums of Unified Education Total Talent Estimation",
                     'content': ""
+                },
+                {
+                    'shorthand': "RIBS",
+                    'fullName': "Recent Index of Banners",
+                    'content': `For teams, this stat represents the number of banners won over the past year of competition. 
+                    For events, this stat represents the number of banners the average team attending the event has won over 
+                    the past year of competition. <br>
+                    At the end of the season, this is always a whole number. 
+                    During a season, this stat is computed as a weighted average of banners won in the current 
+                    season and the previous season (based on linear interpolation).<br>
+                    `
                 }
             ]
         }

@@ -244,8 +244,4 @@ export default {
 .mobile-chart-container {
     width: 100%;
 }
-
-strong {
-    font-weight: bold;
-}
 </style>
