@@ -2,6 +2,8 @@
 
 import '@material/web/button/outlined-button';
 import '@material/web/divider/divider';
+import '@jamescoyle/svg-icon';
+import { mdiChevronDown } from '@mdi/js';
 </script>
 
 <template>
@@ -16,13 +18,19 @@ import '@material/web/divider/divider';
                 </RouterLink>
 
                 <RouterLink tag="button" to="/teams" v-slot="{ navigate }" custom>
-                    <md-outlined-button @click="navigate" role="link" class="main-button">Team Rankings</md-outlined-button>
+                    <md-outlined-button @click="navigate" role="link" class="main-button">Team
+                        Rankings</md-outlined-button>
                 </RouterLink>
             </div>
         </div>
+        <div class="bottom-button-container">
+            <a href="#stats" class="home-transition-button">
+                <svg-icon type="mdi" :path="mdiChevronDown"></svg-icon>
+            </a>
+        </div>
     </div>
     <div class="home-section-container accent-container" style="min-height: fit-content;">
-
+        <a class="anchor" id="stats"></a>
         <h1 class="full-header">Stats</h1>
 
         <div class="stat-container">
@@ -31,12 +39,11 @@ import '@material/web/divider/divider';
                 <p><strong>Blue Banner Quotient</strong></p>
             </div>
             <div>
-                For teams, BBQ is the average number of blue banners won per year all-time (based on the team's
-                rookie year). Team BBQ represents how dominant a team has been over their entire history.
+                For teams, BBQ is the average number of blue banners won per year since the team was founded. Team BBQ
+                represents how dominant a team has been over their entire history.
                 <br>
                 For events, BBQ is the average number of blue banners won per team attending the event. Event
-                BBQ
-                represents how competitive the event is based on historical team success.
+                BBQ represents how competitive the event is based on historical team success.
             </div>
         </div>
 
@@ -129,11 +136,42 @@ export default {
     flex-wrap: wrap;
     min-height: 100%;
     min-width: 100%;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .main-button {
     margin: 5px;
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -65px;
+    visibility: hidden;
+}
+
+a.home-transition-button {
+    width: 64px;
+    height: 64px;
+    background-color: var(--bbq-primary-color-soft);
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 32px;
+    line-height: 1.0;
+}
+
+a.home-transition-button:hover {
+    background-color: var(--bbq-primary-color);
+}
+
+.bottom-button-container {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
 }
 
 .dark-container {
