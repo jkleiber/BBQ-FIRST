@@ -9,6 +9,9 @@
   background-color: var(--bbq-background-color);
   color: var(--bbq-primary-text-color);
   display: flex;
+  flex-direction: column;
+  overflow: auto;
+  scroll-behavior: smooth;
 }
 
 

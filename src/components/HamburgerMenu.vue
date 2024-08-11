@@ -42,6 +42,7 @@ export default {
 .hamburger-container {
     display: block;
     min-height: 65px;
+    width: 100%;
 }
 
 .hamburger-button-container {
@@ -72,6 +73,7 @@ export default {
     background-color: var(--bbq-header-color);
     display: inline-block;
     height: fit-content;
+    width: 100%;
 }
 
 /* Transition styling */

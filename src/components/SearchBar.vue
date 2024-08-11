@@ -23,10 +23,12 @@ import { getCategoricalAutocompleteOptions } from '@/lib/search/bbq-autocomplete
                     <div v-for="item, itemIndex in category.options">
                         <div v-if="itemIndex == selectedOption && categoryIndex == selectedCategory"
                             class="autocomplete-option-selected">
-                            <RouterLink v-bind:to="item.route" class="autocomplete-link">{{ item.label }}</RouterLink>
+                            <RouterLink v-bind:to="item.route" class="autocomplete-link" @click="clearSearch()">{{
+                                item.label }}</RouterLink>
                         </div>
                         <div v-else class="autocomplete-option">
-                            <RouterLink v-bind:to="item.route" class="autocomplete-link">{{ item.label }}</RouterLink>
+                            <RouterLink v-bind:to="item.route" class="autocomplete-link" @click="clearSearch()">{{
+                                item.label }}</RouterLink>
                         </div>
                     </div>
                 </div>
@@ -102,6 +104,10 @@ export default {
         }
     },
     methods: {
+        clearSearch() {
+            // Clear the query text for a new search.
+            this.searchQuery = "";
+        },
         search() {
             // If the user commands a search with no option selected, do nothing.
             if (this.selectedOption < 0 || this.selectedCategory < 0) {

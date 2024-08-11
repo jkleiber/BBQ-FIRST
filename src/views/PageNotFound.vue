@@ -3,7 +3,6 @@ import MainPageHeader from '@/components/MainPageHeader.vue';
 </script>
 
 <template>
-    <MainPageHeader></MainPageHeader>
     <div class="main-content">
         404 Page Not Found!
         <img src="@/assets/bbqcode.gif" />

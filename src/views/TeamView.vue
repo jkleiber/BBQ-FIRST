@@ -18,9 +18,6 @@ import '@material/web/list/list-item';
 </script>
 
 <template>
-    <MainPageHeader></MainPageHeader>
-
-
     <!-- Show team information if it exists -->
     <div class="main-content" v-if="doesTeamExist()">
 
@@ -167,35 +164,51 @@ export default {
                 this.teamData = [
                     {
                         "name": "Robot BBQ",
-                        "value": data[0].robot_bbq
+                        "value": data[0].robot_bbq,
+                        "fullName": "Blue Banner Quotient",
+                        "tooltip": "Robot banners won by this team per year, since the team was founded"
                     },
                     {
                         "name": "Team Attribute BBQ",
-                        "value": data[0].team_bbq
+                        "value": data[0].team_bbq,
+                        "fullName": "Blue Banner Quotient",
+                        "tooltip": "Team attribute banners won by this team per year, since the team was founded"
                     },
                     {
                         "name": "Robot SAUCE",
-                        "value": data[0].robot_sauce
+                        "value": data[0].robot_sauce,
+                        "fullName": "Sextuple Advancement Uniform Counting Era",
+                        "tooltip": "Robot banners won by this team per year, since 2005"
                     },
                     {
                         "name": "Team Attribute SAUCE",
-                        "value": data[0].team_sauce
+                        "value": data[0].team_sauce,
+                        "fullName": "Sextuple Advancement Uniform Counting Era",
+                        "tooltip": "Team attribute banners won by this team per year, since 2005"
                     },
                     {
                         "name": "Robot BRIQUETTE",
-                        "value": data[0].robot_briquette
+                        "value": data[0].robot_briquette,
+                        "fullName": "Banner Ratio Indexed to Quadrenniums of Unified Education Total Talent Estimation",
+                        "tooltip": "Robot banners won by this team per year, in the last 4 years"
                     },
                     {
                         "name": "Team Attribute BRIQUETTE",
-                        "value": data[0].team_briquette
+                        "value": data[0].team_briquette,
+                        "fullName": "Banner Ratio Indexed to Quadrenniums of Unified Education Total Talent Estimation",
+                        "tooltip": "Team attribute banners won by this team per year, in the last 4 years"
                     },
                     {
                         "name": "Robot RIBS",
-                        "value": data[0].robot_ribs
+                        "value": data[0].robot_ribs,
+                        "fullName": "Recent Index of Banners",
+                        "tooltip": "Robot banners won by this team in the last year"
                     },
                     {
                         "name": "Team Attribute RIBS",
-                        "value": data[0].team_ribs
+                        "value": data[0].team_ribs,
+                        "fullName": "Recent Index of Banners",
+                        "tooltip": "Team attribute banners won by this team in the last year"
                     }
                 ]
             }

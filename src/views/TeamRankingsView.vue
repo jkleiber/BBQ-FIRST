@@ -13,7 +13,6 @@ import '@material/web/chips/filter-chip';
 </script>
 
 <template>
-    <MainPageHeader></MainPageHeader>
     <div class="main-content">
         <!-- Filters -->
         <div class="filter-container">

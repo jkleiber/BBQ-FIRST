@@ -39,6 +39,7 @@ export default {
 
 <style scoped>
 .expand-container {
+    width: 100%;
     margin-bottom: 5px;
 }
 
