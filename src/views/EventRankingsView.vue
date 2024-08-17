@@ -90,16 +90,16 @@ export default {
             loadingEvents: false,
             eventList: [],
             tableColumns: [
-                { "name": "Rank", visible: true, stat: 'info', type: 'info' },
-                { "name": "Event Name", visible: true, stat: 'info', type: 'info' },
-                { "name": "Robot BBQ", "sortable": true, "db_col": "robot_bbq", visible: true, stat: 'bbq', type: 'robot' },
-                { "name": "Team Attribute BBQ", "sortable": true, "db_col": "team_bbq", visible: true, stat: 'bbq', type: 'team' },
-                { "name": "Robot SAUCE", "sortable": true, "db_col": "robot_sauce", visible: true, stat: 'sauce', type: 'robot' },
-                { "name": "Team Attribute SAUCE", "sortable": true, "db_col": "team_sauce", visible: true, stat: 'sauce', type: 'team' },
-                { "name": "Robot BRIQUETTE", "sortable": true, "db_col": "robot_briquette", visible: true, stat: 'briquette', type: 'robot' },
-                { "name": "Team Attribute BRIQUETTE", "sortable": true, "db_col": "team_briquette", visible: true, stat: 'briquette', type: 'team' },
-                { "name": "Robot RIBS", "sortable": true, "db_col": "robot_ribs", visible: true, stat: 'ribs', type: 'robot' },
-                { "name": "Team Attribute RIBS", "sortable": true, "db_col": "team_ribs", visible: true, stat: 'ribs', type: 'team' }
+                { name: "Rank", visible: true, stat: 'info', type: 'info' },
+                { name: "Event Name", visible: true, stat: 'info', type: 'info' },
+                { name: "Robot BBQ", "sortable": true, "db_col": "robot_bbq", visible: true, stat: 'bbq', type: 'robot', label: "All time robot banners won by attending teams / Number of attending teams" },
+                { name: "Team Attribute BBQ", "sortable": true, "db_col": "team_bbq", visible: true, stat: 'bbq', type: 'team', label: "All time team attribute banners won by attending teams / Number of attending teams" },
+                { name: "Robot SAUCE", "sortable": true, "db_col": "robot_sauce", visible: true, stat: 'sauce', type: 'robot', label: "Robot banners won by attending teams since 2005 / Number of attending teams" },
+                { name: "Team Attribute SAUCE", "sortable": true, "db_col": "team_sauce", visible: true, stat: 'sauce', type: 'team', label: "Team attribute banners won by attending teams since 2005 / Number of attending teams" },
+                { name: "Robot BRIQUETTE", "sortable": true, "db_col": "robot_briquette", visible: true, stat: 'briquette', type: 'robot', label: "Robot banners won by attending teams in the last 4 years / Number of attending teams" },
+                { name: "Team Attribute BRIQUETTE", "sortable": true, "db_col": "team_briquette", visible: true, stat: 'briquette', type: 'team', label: "Team attribute banners won by attending teams in the last 4 years / Number of attending teams" },
+                { name: "Robot RIBS", "sortable": true, "db_col": "robot_ribs", visible: true, stat: 'ribs', type: 'robot', label: "Robot banners won by attending teams in the last year / Number of attending teams" },
+                { name: "Team Attribute RIBS", "sortable": true, "db_col": "team_ribs", visible: true, stat: 'ribs', type: 'team' }//, label: "Team attribute banners won by attending teams in the last year / Number of attending teams" }
             ],
             latestYear: null,
             upperYearFilters: [],
@@ -405,7 +405,7 @@ export default {
 .ranking-container {
     flex: 1 auto;
     overflow: auto;
-    max-height: 100%;
+    height: calc(80vh - 20px);
 }
 
 .filter-select {

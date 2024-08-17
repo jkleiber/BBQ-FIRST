@@ -388,7 +388,7 @@ export default {
 .ranking-container {
     flex: 1 auto;
     overflow: auto;
-    max-height: 100%;
+    height: calc(80vh - 20px);
 }
 
 .filter-select {
