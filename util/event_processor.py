@@ -129,7 +129,10 @@ class EventProcessor:
 
         # The championship is 1 week after the maximum week, because the championship 
         # week defaults to week 1 in TBA.
-        champ_week = self.max_week_of_year[event_info['year']] + 1
+        # Default the championship to week 7 because the 
+        champ_week = 7
+        if event_info['year'] in self.max_week_of_year.keys():
+            champ_week = self.max_week_of_year[event_info['year']] + 1
 
         # Compute the actual event week.
         event_week = event_info['week']
@@ -137,9 +140,9 @@ class EventProcessor:
         # set the current week to the championship week. This will result in time-window 
         # based stats considering the current season at full strength, and the minimum 
         # season at 0 strength (i.e. the current season is fully faded in).
-        if event_info['type'] in WCMP_EVENT_TYPES:
+        if event_info['type'] in WCMP_EVENT_TYPES and event_info['year'] in self.max_week_of_year.keys():
             event_week = self.max_week_of_year[event_info['year']] + 1
-        elif event_info['type'] == 99:
+        elif event_info['type'] == 99 and event_info['year'] in self.max_week_of_year.keys():
             # If this is an offseason event, make the event week larger than the championship week.
             event_week = self.max_week_of_year[event_info['year']] + 2
         elif event_info['type'] == 100:
