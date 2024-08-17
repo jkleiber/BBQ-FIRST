@@ -99,7 +99,7 @@ export default {
                 { name: "Robot BRIQUETTE", "sortable": true, "db_col": "robot_briquette", visible: true, stat: 'briquette', type: 'robot', label: "Robot banners won by attending teams in the last 4 years / Number of attending teams" },
                 { name: "Team Attribute BRIQUETTE", "sortable": true, "db_col": "team_briquette", visible: true, stat: 'briquette', type: 'team', label: "Team attribute banners won by attending teams in the last 4 years / Number of attending teams" },
                 { name: "Robot RIBS", "sortable": true, "db_col": "robot_ribs", visible: true, stat: 'ribs', type: 'robot', label: "Robot banners won by attending teams in the last year / Number of attending teams" },
-                { name: "Team Attribute RIBS", "sortable": true, "db_col": "team_ribs", visible: true, stat: 'ribs', type: 'team' }//, label: "Team attribute banners won by attending teams in the last year / Number of attending teams" }
+                { name: "Team Attribute RIBS", "sortable": true, "db_col": "team_ribs", visible: true, stat: 'ribs', type: 'team', label: "Team attribute banners won by attending teams in the last year / Number of attending teams" }
             ],
             latestYear: null,
             upperYearFilters: [],

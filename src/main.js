@@ -20,7 +20,7 @@ app.use(FloatingVue, {
     themes: {
         'stat-tooltip': {
             $extend: 'tooltip',
-            triggers: ['hover'],
+            triggers: ['hover', 'touch'],
             autoHide: true,
             placement: 'top',
             html: true,

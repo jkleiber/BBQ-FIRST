@@ -143,6 +143,10 @@ class TeamProcessor:
             team_duration = (current_year - rookie_year) + 1
             sauce_duration = (current_year - 2005) + 1
 
+            # Teams founded after 2005 have BBQ = SAUCE.
+            if team_duration < sauce_duration:
+                sauce_duration = team_duration
+
             # Get all robot and team awards separately
             robot_banners = self._get_banners(team_number, "Robot")
             team_banners = self._get_banners(team_number, "Team")

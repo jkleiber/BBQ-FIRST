@@ -87,16 +87,16 @@ export default {
             tableColumns: [
                 { "name": "Rank", visible: true, stat: 'info', type: 'info' },
                 { "name": "Team", visible: true, stat: 'info', type: 'info' },
-                { "name": "Robot Banners", "sortable": true, "db_col": "robot_banners", visible: true, stat: 'count', type: 'robot' },
-                { "name": "Team Attribute Banners", "sortable": true, "db_col": "team_banners", visible: true, stat: 'count', type: 'team' },
-                { "name": "Robot BBQ", "sortable": true, "db_col": "robot_bbq", visible: true, stat: 'bbq', type: 'robot' },
-                { "name": "Team Attribute BBQ", "sortable": true, "db_col": "team_bbq", visible: true, stat: 'bbq', type: 'team' },
-                { "name": "Robot SAUCE", "sortable": true, "db_col": "robot_sauce", visible: true, stat: 'sauce', type: 'robot' },
-                { "name": "Team Attribute SAUCE", "sortable": true, "db_col": "team_sauce", visible: true, stat: 'sauce', type: 'team' },
-                { "name": "Robot BRIQUETTE", "sortable": true, "db_col": "robot_briquette", visible: true, stat: 'briquette', type: 'robot' },
-                { "name": "Team Attribute BRIQUETTE", "sortable": true, "db_col": "team_briquette", visible: true, stat: 'briquette', type: 'team' },
-                { "name": "Robot RIBS", "sortable": true, "db_col": "robot_ribs", visible: true, stat: 'ribs', type: 'robot' },
-                { "name": "Team Attribute RIBS", "sortable": true, "db_col": "team_ribs", visible: true, stat: 'ribs', type: 'team' }
+                { "name": "Robot Banners", "sortable": true, "db_col": "robot_banners", visible: true, stat: 'count', type: 'robot', label: "Total count of all time robot banners won by a team" },
+                { "name": "Team Attribute Banners", "sortable": true, "db_col": "team_banners", visible: true, stat: 'count', type: 'team', label: "Total count of all time team attribute banners won by a team" },
+                { "name": "Robot BBQ", "sortable": true, "db_col": "robot_bbq", visible: true, stat: 'bbq', type: 'robot', label: "Robot banners / years of team existence" },
+                { "name": "Team Attribute BBQ", "sortable": true, "db_col": "team_bbq", visible: true, stat: 'bbq', type: 'team', label: "Team attribute banners / years of team existence" },
+                { "name": "Robot SAUCE", "sortable": true, "db_col": "robot_sauce", visible: true, stat: 'sauce', type: 'robot', label: "Robot banners / team years post 2005. Teams founded after 2005 have an equivalent Robot BBQ" },
+                { "name": "Team Attribute SAUCE", "sortable": true, "db_col": "team_sauce", visible: true, stat: 'sauce', type: 'team', label: "Team attribute banners / team years post 2005. Teams founded after 2005 have an equivalent Team Attribute BBQ" },
+                { "name": "Robot BRIQUETTE", "sortable": true, "db_col": "robot_briquette", visible: true, stat: 'briquette', type: 'robot', label: "Robot banners won by a team per year, in the last 4 years, interpolated based on season progress" },
+                { "name": "Team Attribute BRIQUETTE", "sortable": true, "db_col": "team_briquette", visible: true, stat: 'briquette', type: 'team', label: "Team attribute banners won by this team per year, in the last 4 years, interpolated based on season progress" },
+                { "name": "Robot RIBS", "sortable": true, "db_col": "robot_ribs", visible: true, stat: 'ribs', type: 'robot', label: "Robot banners won by this team in the last year, interpolated based on season progress" },
+                { "name": "Team Attribute RIBS", "sortable": true, "db_col": "team_ribs", visible: true, stat: 'ribs', type: 'team', label: "Team attribute banners won by this team in the last year, interpolated based on season progress" }
             ],
             sortedColumnIdx: 2,
             enabledMap: {
