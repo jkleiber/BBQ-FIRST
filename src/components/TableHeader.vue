@@ -5,19 +5,17 @@
 <template>
     <thead>
         <th v-for="col, i in visibleColumns" :class="headerClass(col, i)" @click="sortIfSortable(col, i)">
-
-
             <VTooltip placement="top" theme="stat-tooltip" v-if="col.label">
-                <span>{{ col.name }}</span>
+                <div>{{ col.name }}</div>
 
                 <template #popper>
                     <p><strong>{{ col.name }}</strong></p>
                     <p v-html="col.label"></p>
                 </template>
             </VTooltip>
-            <span v-else>
+            <div v-else>
                 {{ col.name }}
-            </span>
+            </div>
         </th>
     </thead>
 </template>

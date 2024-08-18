@@ -91,23 +91,12 @@ class TeamProcessor:
 
         return blue_banners
 
-    def load_team_data(self, cur_week: float, max_official_week: int) -> dict:
+    def load_team_data(self, current_year: float, cur_week: float, max_official_week: int) -> dict:
         report = []
 
         # Load all the team information available.
         team_data = self.supabase_api.get_paged_data("Team", "team_number, rookie_year", order_info={
                                                      'column': 'team_number', 'desc': False})
-
-        # TODO: Team BBQ and SAUCE are banners per season metrics, and really should be computed
-        # based on active seasons only. However, that has been skipped for simplicity in the current
-        # version. Eventually team appearances should be used to determine these stats more precisely
-        # for inactive teams or teams with gaps in their history due to a hiatus.
-        newest_event = self.supabase_api.get_data("Event", "year", limit=1, order_info={
-                                                  'column': "year", 'desc': True})
-        data = newest_event.model_dump()
-        current_year = datetime.date.today().year
-        if 'data' in data and len(data['data']) > 0:
-            current_year = data['data'][0]['year']
 
         for page in team_data:
             team_data_queue = []
@@ -151,6 +140,11 @@ class TeamProcessor:
             robot_banners = self._get_banners(team_number, "Robot")
             team_banners = self._get_banners(team_number, "Team")
 
+            # TODO: Team BBQ and SAUCE are banners per season metrics, and really should be computed
+            # based on active seasons only. However, that has been skipped for simplicity in the current
+            # version. Eventually team appearances should be used to determine these stats more precisely
+            # for inactive teams or teams with gaps in their history due to a hiatus.
+            
             # BBQ
             robot_banner_count = compute_bbq_contribution(robot_banners)
             robot_bbq = robot_banner_count / team_duration
