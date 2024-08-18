@@ -5,7 +5,17 @@
 <template>
     <thead>
         <th v-for="col, i in visibleColumns" :class="headerClass(col, i)" @click="sortIfSortable(col, i)">
-            {{ col.name }}
+            <VTooltip placement="top" theme="stat-tooltip" v-if="col.label">
+                <div>{{ col.name }}</div>
+
+                <template #popper>
+                    <p><strong>{{ col.name }}</strong></p>
+                    <p v-html="col.label"></p>
+                </template>
+            </VTooltip>
+            <div v-else>
+                {{ col.name }}
+            </div>
         </th>
     </thead>
 </template>
@@ -50,10 +60,6 @@ table th {
     background: var(--bbq-background-color);
 }
 
-.stat-row {
-    display: flex;
-    flex-direction: row;
-}
 
 .sorted-header {
     text-decoration: underline;

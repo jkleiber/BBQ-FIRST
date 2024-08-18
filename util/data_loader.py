@@ -109,7 +109,7 @@ class DataLoader:
             # Compute number of weeks elapsed as a float.
             cur_week = (today - start_date) / datetime.timedelta(weeks=1)
 
-        return self.team_processor.load_team_data(cur_week, num_weeks)
+        return self.team_processor.load_team_data(self.cur_year, cur_week, num_weeks)
 
     def close(self):
         try:

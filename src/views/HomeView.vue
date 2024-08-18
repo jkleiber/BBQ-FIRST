@@ -58,7 +58,8 @@ import { mdiChevronDown } from '@mdi/js';
                 beginning
                 of the modern era of FRC.<br>
                 For teams, SAUCE is the average number of blue banners won per year since 2005. Team SAUCE
-                represents how dominant a team has been in the modern era of FRC.<br>
+                represents how dominant a team has been in the modern era of FRC. If a team was founded after 2005, its BBQ
+                is equivalent to its SAUCE since only years since a team was founded count toward SAUCE.<br>
                 For events, SAUCE is the average number of blue banners won since 2005 per attending team. Event
                 SAUCE represents how competitive the event is based on team success in the modern era.
             </div>
