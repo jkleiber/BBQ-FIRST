@@ -3,8 +3,8 @@
 
 <template>
     <div class="bluebanner">
-        <div class="title-container">
-            <a v-bind:href="bannerLink" class="title-link"> {{ titleText }}</a>
+        <div>
+            <img class="first-icon-img" src="/assets/first_icon.svg">
         </div>
         <div class="banner-text-container">
             <div class="award-details-container">
@@ -12,6 +12,9 @@
                     <b>{{ awardNameText }}</b>
                 </div>
             </div>
+        </div>
+        <div class="title-container">
+            <a v-bind:href="bannerLink" class="title-link"> {{ titleText }}</a>
         </div>
     </div>
 </template>
@@ -67,7 +70,7 @@ export default {
     /* height: fit-content; */
     min-height: 150px;
     width: 150px;
-    background-color: #2790FF;
+    background-color: #0F4BCB;
     margin: 10px;
 
     display: flex;
@@ -76,6 +79,10 @@ export default {
 
 .title-container {
     color: #FFF;
+    height: 100%;
+    font-size: 75%;
+    padding: 2px;
+    text-overflow: ellipsis;
 }
 
 a.title-link {
@@ -94,5 +101,11 @@ a.title-link {
     height: fit-content;
     top: 50%;
     transform: translateY(-50%);
+    text-transform: uppercase;
+}
+
+img.first-icon-img {
+    width: 75px;
+    padding: 5px;
 }
 </style>
