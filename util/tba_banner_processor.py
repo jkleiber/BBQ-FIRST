@@ -83,13 +83,15 @@ class TBABannerProcessor:
         event_info = event_data.json()
 
         # If this is an official event, pull all the awards. We only consider blue banners.
-        if event_info['event_type'] in VALID_EVENT_TYPES:
+        if 'event_type' in event_info.keys() and event_info['event_type'] in VALID_EVENT_TYPES:
             event_award_data = self.tba_api.get_data(f"/event/{event_key}/awards")
 
             for award_info in event_award_data.json():
                 if award_info['award_type'] in TEAM_BLUE_BANNER_AWARD_TYPES or award_info['award_type'] in ROBOT_BLUE_BANNER_AWARD_TYPES:
                     self.process_banner_recipients(
                         award_info['recipient_list'], award_info['award_type'], award_info['name'], award_info['event_key'], event_info['end_date'], year)
+        elif 'event_type' not in event_info.keys():
+            print(f"Malformed event_info: {event_info}")
 
     def pull_year_banners(self, year: int):
         # Request all event keys for the given year. This will be used to collect all relevant banners.
