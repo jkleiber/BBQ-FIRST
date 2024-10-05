@@ -132,6 +132,10 @@ class TeamProcessor:
             team_duration = (current_year - rookie_year) + 1
             sauce_duration = (current_year - 2005) + 1
 
+            # If a team is a rookie for an upcoming season, set the team duration to 1 year.
+            if team_duration <= 0:
+                team_duration = 1
+
             # Teams founded after 2005 have BBQ = SAUCE.
             if team_duration < sauce_duration:
                 sauce_duration = team_duration
