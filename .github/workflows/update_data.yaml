@@ -16,24 +16,18 @@ jobs:
     steps:
       - name: Check out default branch
         uses: actions/checkout@v4
+      
+      - name: Install poetry
+        run: pipx install poetry
 
-      # Cache the poetry installation so it doesn't need to be installed every run.
-      - name: cache poetry install
-        uses: actions/cache@v4
+      # Ensure the correct version of python is installed.
+      - uses: actions/setup-python@v5.2.0
         with:
-          path: ~/.local
-          key: poetry-1.5.1
+          python-version: '3.10'
+          cache: 'poetry'
 
-      # Install Poetry and pin the version to 1.5.1.
-      # Setting `virtualenvs-in-project: true` allows the next step to easily cache it.
-      # snok/install-poetry is version pinned to v1.3.4 because it works, and setting to v1 
-      # would result in always pulling the latest. Upgrading this version number manually is 
-      # preferred in case of regressions introduced in this dependency.
-      - uses: snok/install-poetry@v1.3.4
-        with:
-          version: 1.5.1
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+      - name: Python Version Test
+        run: python3 --version
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
@@ -54,12 +48,14 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      - name: Install poetry
+        run: pipx install poetry
+
       # Load the cached poetry install from the environment set up step.
-      - name: cache poetry install
-        uses: actions/cache@v4
+      - uses: actions/setup-python@v5.2.0
         with:
-          path: ~/.local
-          key: poetry-1.5.1
+          python-version: '3.10'
+          cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
@@ -83,12 +79,14 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      - name: Install poetry
+        run: pipx install poetry
+
       # Load the cached poetry install from the environment set up step.
-      - name: cache poetry install
-        uses: actions/cache@v4
+      - uses: actions/setup-python@v5.2.0
         with:
-          path: ~/.local
-          key: poetry-1.5.1
+          python-version: '3.10'
+          cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
@@ -112,12 +110,14 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      - name: Install poetry
+        run: pipx install poetry
+
       # Load the cached poetry install from the environment set up step.
-      - name: cache poetry install
-        uses: actions/cache@v4
+      - uses: actions/setup-python@v5.2.0
         with:
-          path: ~/.local
-          key: poetry-1.5.1
+          python-version: '3.10'
+          cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
