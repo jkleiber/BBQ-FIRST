@@ -26,12 +26,14 @@ jobs:
           python-version: '3.10'
           cache: 'poetry'
 
+      - name: Python Version Test
+        run: python3 --version
       # Cache the poetry installation so it doesn't need to be installed every run.
-      - name: cache poetry install
-        uses: actions/cache@v4
-        with:
-          path: ~/.local
-          key: poetry-1.5.1
+      # - name: cache poetry install
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/.local
+      #     key: poetry-1.5.1
 
       # Install Poetry and pin the version to 1.5.1.
       # Setting `virtualenvs-in-project: true` allows the next step to easily cache it.
