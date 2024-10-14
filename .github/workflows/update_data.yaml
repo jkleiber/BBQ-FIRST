@@ -48,6 +48,9 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      - name: Install poetry
+        run: pipx install poetry
+
       # Load the cached poetry install from the environment set up step.
       - uses: actions/setup-python@v5.2.0
         with:
@@ -76,6 +79,9 @@ jobs:
       - name: Check out default branch
         uses: actions/checkout@v4
 
+      - name: Install poetry
+        run: pipx install poetry
+
       # Load the cached poetry install from the environment set up step.
       - uses: actions/setup-python@v5.2.0
         with:
@@ -103,6 +109,9 @@ jobs:
     steps:
       - name: Check out default branch
         uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pipx install poetry
 
       # Load the cached poetry install from the environment set up step.
       - uses: actions/setup-python@v5.2.0
