@@ -23,7 +23,7 @@ jobs:
       # Ensure the correct version of python is installed.
       - uses: actions/setup-python@v5.2.0
         with:
-          python-version: '3.10'
+          python-version: '3.13'
           cache: 'poetry'
 
       - name: Python Version Test
@@ -54,7 +54,7 @@ jobs:
       # Load the cached poetry install from the environment set up step.
       - uses: actions/setup-python@v5.2.0
         with:
-          python-version: '3.10'
+          python-version: '3.13'
           cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
@@ -85,7 +85,7 @@ jobs:
       # Load the cached poetry install from the environment set up step.
       - uses: actions/setup-python@v5.2.0
         with:
-          python-version: '3.10'
+          python-version: '3.13'
           cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
@@ -116,7 +116,7 @@ jobs:
       # Load the cached poetry install from the environment set up step.
       - uses: actions/setup-python@v5.2.0
         with:
-          python-version: '3.10'
+          python-version: '3.13'
           cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
