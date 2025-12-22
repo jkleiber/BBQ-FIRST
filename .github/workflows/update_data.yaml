@@ -7,38 +7,10 @@ on:
 jobs:
   # A helpful guide on installing poetry in Github Actions can be found here:
   # https://jacobian.org/til/github-actions-poetry/
-  set_up_environment:
-    name: Set up environment
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./util
-    steps:
-      - name: Check out default branch
-        uses: actions/checkout@v4
-      
-      - name: Install poetry
-        run: pipx install poetry
-
-      # Ensure the correct version of python is installed.
-      - uses: actions/setup-python@v5.2.0
-        with:
-          python-version: '3.13'
-          cache: 'poetry'
-
-      - name: Python Version Test
-        run: python3 --version
-
-      # Install dependencies. `--no-root` means "install all dependencies but not the project
-      # itself", which is what you want to avoid caching _your_ code. The `if` statement
-      # ensures this only runs on a cache miss.
-      - run: poetry install --no-interaction --no-root
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-
+  
   # Load all the blue banners that have been won since the current year.
   load_blue_banners:
     name: Load Blue Banners
-    needs: set_up_environment
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -69,7 +41,7 @@ jobs:
   # Load all the events and update their data.
   load_event_data:
     name: Load Event Data
-    needs: [set_up_environment, load_blue_banners]
+    needs: [load_blue_banners]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -100,7 +72,7 @@ jobs:
   # Refresh the team information in case it has changed. Also update the team data.
   load_team_data:
     name: Load Team Data
-    needs: [set_up_environment, load_blue_banners]
+    needs: [load_blue_banners, load_event_data]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
