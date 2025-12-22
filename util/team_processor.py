@@ -1,20 +1,25 @@
 
-import datetime
+import traceback
 from joblib import Parallel, delayed
 
 from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
 from tba_api import TheBlueAllianceAPI
-from supabase_api import SupabaseAPI
+from supabase_api import SupabaseAPI, MAX_ROWS_PER_REQUEST
 
 
 class TeamProcessor:
 
-    def __init__(self, tba_api: TheBlueAllianceAPI, supabase_api: SupabaseAPI, n_jobs=8):
+    def __init__(self, tba_api: TheBlueAllianceAPI, supabase_api: SupabaseAPI, n_jobs=8, max_retries=2):
         self.tba_api = tba_api
         self.supabase_api = supabase_api
         self.n_jobs = n_jobs
 
         self.team_queue = []
+
+        # Handle retries up to a maximum amount.
+        self.team_attempt_queue = []
+        self.team_retry_status = {}
+        self.max_retries = max_retries
 
     def load_all_team_info(self, verbose=True) -> dict:
         """
@@ -91,25 +96,58 @@ class TeamProcessor:
 
         return blue_banners
 
-    def load_team_data(self, current_year: float, cur_week: float, max_official_week: int) -> dict:
+    def load_team_data(self, current_year: float, cur_week: float, max_official_week: int, verbose=False) -> dict:
         report = []
+
+        self.team_attempt_queue = []
 
         # Load all the team information available.
         team_data = self.supabase_api.get_paged_data("Team", "team_number, rookie_year", order_info={
                                                      'column': 'team_number', 'desc': False})
 
+        # Load up the team attempt queue.
         for page in team_data:
+            page_data = page.model_dump()['data']
+            self.team_attempt_queue.extend(page_data)
+            
+            print(f"# Teams remaining: {len(self.team_attempt_queue)}")
+
+        print("------ Starting team data processing ------")
+
+        # Run team statistics until the queue is empty (via successful runs or exceeding the maximum number of retries).
+        while len(self.team_attempt_queue) > 0:
             team_data_queue = []
 
-            # Compute team statistics in parallel, since this is a time-costly operation to do sequentially.
-            # Use the threading backend to ensure self.event_queue is actually updated.
-            page_data = page.model_dump()['data']
-            Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_single_team_data)(team, current_year, team_data_queue, cur_week, max_official_week)
-                                                              for team in page_data)
+            # Only do at most the maximum supabase pages
+            slice_max_index = len(self.team_attempt_queue)
+            if MAX_ROWS_PER_REQUEST < slice_max_index:
+                slice_max_index = MAX_ROWS_PER_REQUEST
 
-            # Upsert the data.
+            # Compute team statistics in parallel, since this is a time-costly operation to do sequentially.
+            # Use the threading backend to ensure class member variables are actually updated.
+            team_attempt_slice = self.team_attempt_queue[0:slice_max_index]
+            Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_single_team_data)(team, current_year, team_data_queue, cur_week, max_official_week)
+                                                              for team in team_attempt_slice)
+
+            # Pop all the successfully processed teams from the team attempt queue.
+            i = 0
+            iterations = 0
+            while iterations < slice_max_index:
+                team_number = self.team_attempt_queue[i]['team_number']
+                if self.should_retry_team(team_number) is False:
+                    del self.team_attempt_queue[i]
+                    # Don't increment i here because a new element should have moved into the spot.
+                else:
+                    i += 1
+
+                # Always increment the number of iterations to prevent array out of bounds, or clearing the entire queue.
+                iterations += 1
+
+            # # Upsert the data.
             res_info = self.supabase_api.upsert_batch(team_data_queue, "TeamData")
             report.append(res_info)
+
+            print(f"# Teams remaining: {len(self.team_attempt_queue)}")
 
         return report
 
@@ -141,8 +179,19 @@ class TeamProcessor:
                 sauce_duration = team_duration
 
             # Get all robot and team awards separately
-            robot_banners = self._get_banners(team_number, "Robot")
-            team_banners = self._get_banners(team_number, "Team")
+            try:
+                robot_banners = self._get_banners(team_number, "Robot")
+            except Exception as e:
+                print(f"{type(e).__name__} occurred for team {team}")
+                self.request_retry_team(team)
+                return
+            
+            try:
+                team_banners = self._get_banners(team_number, "Team")
+            except Exception as e:
+                print(f"{type(e).__name__} occurred for team {team}")
+                self.request_retry_team(team)
+                return
 
             # TODO: Team BBQ and SAUCE are banners per season metrics, and really should be computed
             # based on active seasons only. However, that has been skipped for simplicity in the current
@@ -188,9 +237,42 @@ class TeamProcessor:
                 "team_ribs": team_ribs
             }
             team_data_queue.append(team_data)
+
+            self.report_team_successfully_processed(team)
         else:
-            print("Invalid team info detected")
-            print(team)
+            print(f"Invalid team info detected for {team}")
+
+    def request_retry_team(self, team):
+        team_number = team["team_number"]
+        if team_number not in self.team_retry_status.keys():
+            self.team_retry_status[team_number] = {
+                "num_retries": 0
+            }
+        else:
+            self.team_retry_status[team_number]['num_retries'] += 1
+
+        if self.team_retry_status[team_number]['num_retries'] < self.max_retries:
+            print(f"Retry #{self.team_retry_status[team_number]['num_retries'] + 1} for {team_number} queued")
+
+    def report_team_successfully_processed(self, team):
+        team_number = team["team_number"]
+        if team_number not in self.team_retry_status.keys():
+            # No reporting is required for teams that have processing succeed on the first try.
+            return
+        
+        self.team_retry_status[team_number]['is_success'] = True
+
+    def should_retry_team(self, team_number) -> bool:
+        if team_number not in self.team_retry_status.keys():
+            return False 
+        
+        if self.team_retry_status[team_number]['num_retries'] > self.max_retries:
+            return False
+        
+        if 'is_success' in self.team_retry_status[team_number] and self.team_retry_status[team_number]['is_success'] is True:
+            return False
+        
+        return True
 
     def clear_team_queue(self):
         self.team_queue.clear()
