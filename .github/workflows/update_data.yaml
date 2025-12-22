@@ -27,7 +27,6 @@ jobs:
       - uses: actions/setup-python@v5.2.0
         with:
           python-version: '3.13'
-          cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
@@ -58,7 +57,6 @@ jobs:
       - uses: actions/setup-python@v5.2.0
         with:
           python-version: '3.13'
-          cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
@@ -72,7 +70,7 @@ jobs:
   # Refresh the team information in case it has changed. Also update the team data.
   load_team_data:
     name: Load Team Data
-    needs: [load_blue_banners, load_event_data]
+    needs: [load_blue_banners]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -89,7 +87,6 @@ jobs:
       - uses: actions/setup-python@v5.2.0
         with:
           python-version: '3.13'
-          cache: 'poetry'
 
       # Install dependencies. `--no-root` means "install all dependencies but not the project
       # itself", which is what you want to avoid caching _your_ code. The `if` statement
