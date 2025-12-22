@@ -15,7 +15,7 @@ import '@material/web/icon/icon';
             </a>
         </div>
         <Transition name="slide">
-            <div class="hamburger-menu-container" v-if="expanded">
+            <div class="hamburger-menu-container" v-if="expanded" @click="expanded = false">
                 <slot name="menu-content"></slot>
             </div>
         </Transition>

@@ -2,7 +2,7 @@
 import math
 
 from supabase import create_client, Client, ClientOptions
-from postgrest import SyncSelectRequestBuilder, SyncFilterRequestBuilder
+from postgrest import AsyncSelectRequestBuilder, AsyncFilterRequestBuilder
 from postgrest.base_request_builder import BaseFilterRequestBuilder, APIResponse
 from typing import Union
 
@@ -106,7 +106,7 @@ class SupabaseAPI:
         - value: the value to use in the filter
         - operation: the type of filter operation (eq, neq, lt, lte)
         """
-        request_builder: SyncSelectRequestBuilder = self.supabase_client.table(table).select(columns)
+        request_builder: AsyncSelectRequestBuilder = self.supabase_client.table(table).select(columns)
         self._filter_process(request_builder, filter, range, limit, order_info)
 
         # Execute request
@@ -142,7 +142,7 @@ class SupabaseAPI:
 
     
     def delete_rows(self, table: str, filter: list):
-        request_builder: SyncFilterRequestBuilder = self.supabase_client.table(table).delete()
+        request_builder: AsyncFilterRequestBuilder = self.supabase_client.table(table).delete()
         
         """ Build a request based on the filter values and operators.
         The filter list contains dictionaries set up with the following keys:
