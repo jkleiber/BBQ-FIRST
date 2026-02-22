@@ -1,5 +1,5 @@
 import datetime
-from joblib import Parallel, delayed
+import asyncio
 
 from tba_api import TheBlueAllianceAPI
 
@@ -25,6 +25,7 @@ class TBABannerProcessor:
 
         # Define the maximum number of parallel jobs this can run when processing banners.
         self.n_jobs = n_jobs
+        self.sem = asyncio.Semaphore(n_jobs)
 
         # Other flags.
         self.verbose = verbose
@@ -41,7 +42,7 @@ class TBABannerProcessor:
 
             try:
                 team_number = team_data.json()['team_number']
-            except:
+            except Exception as e:
                 # Debugging information.
                 print(team_data)
                 print(f"FAIL FAIL FAIL {team_key}")
@@ -77,7 +78,7 @@ class TBABannerProcessor:
             if self.verbose:
                 print(id_str)
 
-    def process_event(self, event_key: str, year: int):
+    async def process_event(self, event_key: str, year: int):
         # Pull this event's data to determine if it is an official event.
         event_data = self.tba_api.get_data(f"/event/{event_key}")
         event_info = event_data.json()
@@ -93,18 +94,23 @@ class TBABannerProcessor:
         elif 'event_type' not in event_info.keys():
             print(f"Malformed event_info: {event_info}")
 
-    def pull_year_banners(self, year: int):
+    async def throttled_compute(self, key, year):
+        async with self.sem:
+            await self.process_event(key, year)
+
+    async def pull_year_banners(self, year: int):
         # Request all event keys for the given year. This will be used to collect all relevant banners.
         event_keys_result = self.tba_api.get_data(f"/events/{year}/keys")
 
-        # Process the events in parallel. The threading backend is used to ensure the banner_queue actually gets updated by the jobs. 
-        # Using the default backend results in an empty list
-        Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.process_event)(key, year)
-                                     for key in event_keys_result.json())
-        
+        tasks = [
+            self.throttled_compute(key, year)
+            for key in event_keys_result.json()
+        ]
+        await asyncio.gather(*tasks)
+
         return self.banner_queue
 
-    def pull_all_banners(self):
+    async def pull_all_banners(self):
 
         # First year of TBA data for event banners
         start_year = 1992
@@ -115,7 +121,7 @@ class TBABannerProcessor:
 
         # Load all banners for all time up to the current year.
         for year in range(start_year, cur_year+1):
-            self.pull_year_banners(year)
+            await self.pull_year_banners(year)
 
         return self.banner_queue
 

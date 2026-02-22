@@ -1,0 +1,39 @@
+name: 'Run Python Script'
+on:
+  workflow_call:
+    inputs:
+      run_command:
+        required: true
+        type: string
+      timeout:
+        required: false
+        default: 30
+        type: number
+
+jobs:
+  run_script:
+    name: Run Script
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout }}
+    defaults:
+      run:
+        working-directory: ./util
+    steps:
+      - name: Check out default branch
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: "util/.python-version"
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+
+      - name: Run input command
+        run: uv run ${{ inputs.run_command }} --credentials=${{ secrets.DATA_UPDATE_CREDENTIALS }}
