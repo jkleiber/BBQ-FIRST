@@ -12,7 +12,7 @@ jobs:
   load_blue_banners:
     name: Load Blue Banners
     timeout-minutes: 30
-    uses: ./.github/run_python.yaml
+    uses: ./.github/workflows/run_python.yaml
     secrets: inherit
     with:
       run_command: python main.py banner --banner_mode=since_current_year
@@ -23,7 +23,7 @@ jobs:
     name: Load Event Data
     needs: [load_blue_banners]
     timeout-minutes: 30
-    uses: ./.github/run_python.yaml
+    uses: ./.github/workflows/run_python.yaml
     secrets: inherit
     with:
       run_command: python main.py event --event_mode=since_current_year
@@ -34,7 +34,7 @@ jobs:
     name: Load Team Data
     needs: [load_blue_banners]
     timeout-minutes: 30
-    uses: ./.github/run_python.yaml
+    uses: ./.github/workflows/run_python.yaml
     secrets: inherit
     with:
       run_command: python main.py team --team_mode=full
