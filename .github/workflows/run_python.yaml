@@ -1,9 +1,10 @@
 name: 'Run Python Script'
 on:
   workflow_call:
-    run_command:
-      required: true
-      type: string
+    inputs:
+      run_command:
+        required: true
+        type: string
 
 jobs:
   run_script:

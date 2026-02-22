@@ -11,7 +11,6 @@ jobs:
   # Load all the blue banners that have been won since the current year.
   load_blue_banners:
     name: Load Blue Banners
-    runs-on: ubuntu-latest
     timeout-minutes: 30
     uses: ./.github/run_python.yaml
     secrets: inherit
@@ -23,7 +22,6 @@ jobs:
   load_event_data:
     name: Load Event Data
     needs: [load_blue_banners]
-    runs-on: ubuntu-latest
     timeout-minutes: 30
     uses: ./.github/run_python.yaml
     secrets: inherit
@@ -35,7 +33,6 @@ jobs:
   load_team_data:
     name: Load Team Data
     needs: [load_blue_banners]
-    runs-on: ubuntu-latest
     timeout-minutes: 30
     uses: ./.github/run_python.yaml
     secrets: inherit
