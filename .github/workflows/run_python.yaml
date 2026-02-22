@@ -5,11 +5,16 @@ on:
       run_command:
         required: true
         type: string
+      timeout:
+        required: false
+        default: 30
+        type: string
 
 jobs:
   run_script:
     name: Run Script
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout }}
     defaults:
       run:
         working-directory: ./util
