@@ -8,7 +8,7 @@ on:
       timeout:
         required: false
         default: 30
-        type: string
+        type: number
 
 jobs:
   run_script:
