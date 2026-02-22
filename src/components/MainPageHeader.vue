@@ -18,7 +18,10 @@ import { useViewModeStore } from '@/stores/view-mode-store';
             <template v-slot:menu-content>
                 <RouterLink to="/events" class="nav-link nav-link-mobile">Events</RouterLink>
                 <RouterLink to="/teams" class="nav-link nav-link-mobile">Teams</RouterLink>
-                <SearchBar :search-data="searchData" :mobile="true" v-if="searchVisible" class="nav-search-mobile">
+            </template>
+            <template v-slot:search-bar-content="{ handleSearch }">
+                <SearchBar :search-data="searchData" :mobile="true" v-on:search="handleSearch" v-if="searchVisible"
+                    class="nav-search-mobile">
                 </SearchBar>
             </template>
         </HamburgerMenu>

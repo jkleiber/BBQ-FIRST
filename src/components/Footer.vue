@@ -11,8 +11,7 @@ import { mdiGithub } from '@mdi/js';
             Powered by <a href="https://www.thebluealliance.com/">The Blue Alliance</a>
         </div>
         <div>
-            <a href="https://github.com/jkleiber/BBQ-FIRST"><svg-icon type="mdi" :path="mdiGithub"
-                    :size="32"></svg-icon></a>
+            <a href="https://github.com/jkleiber/BBQ-FIRST"><svg-icon type="mdi" :path="mdiGithub"></svg-icon></a>
         </div>
     </footer>
 </template>

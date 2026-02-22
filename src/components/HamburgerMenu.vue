@@ -10,13 +10,18 @@ import '@material/web/icon/icon';
     <div class="hamburger-container">
         <div class="hamburger-button-container">
             <a class="hamburger-button" v-if="enabled" @click="expanded = !expanded">
-                <md-icon slot="icon" v-if="expanded">close </md-icon>
+                <md-icon slot="icon" v-if="expanded">close</md-icon>
                 <md-icon slot="icon" v-if="!expanded">menu</md-icon>
             </a>
         </div>
         <Transition name="slide">
-            <div class="hamburger-menu-container" v-if="expanded" @click="expanded = false">
-                <slot name="menu-content"></slot>
+            <div class="hamburger-menu-container" v-if="expanded">
+                <div @click="expanded = false">
+                    <slot name="menu-content"></slot>
+                </div>
+                <div>
+                    <slot name="search-bar-content" :handleSearch="handleSearch"></slot>
+                </div>
             </div>
         </Transition>
     </div>
@@ -33,6 +38,11 @@ export default {
     data() {
         return {
             expanded: false
+        }
+    },
+    methods: {
+        handleSearch() {
+            this.expanded = false;
         }
     }
 }

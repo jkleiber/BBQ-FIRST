@@ -107,6 +107,7 @@ export default {
         clearSearch() {
             // Clear the query text for a new search.
             this.searchQuery = "";
+            this.$emit("search")
         },
         search() {
             // If the user commands a search with no option selected, do nothing.
@@ -119,6 +120,8 @@ export default {
 
             // Otherwise, go to the page requested by the user.
             this.$router.push(this.autoCompleteData.categories[this.selectedCategory].options[this.selectedOption].route);
+
+            this.$emit("search")
         },
         incrementOption() {
             // Return early if an invalid pre-condition occurs.
