@@ -43,7 +43,7 @@ class DataLoader:
         # Submit data to the database each year and report success/failure.
         report = {}
         for year in range(start_year, self.cur_year+2):
-            banner_batch = self.banner_processor.pull_year_banners(year)
+            banner_batch = await self.banner_processor.pull_year_banners(year)
 
             # Submit the results to supabase.
             res = await self.supabase_api.insert_batch(banner_batch, "BlueBanner")
@@ -57,7 +57,7 @@ class DataLoader:
         return report
 
     async def load_year_banners(self, year: int):
-        banner_batch = self.banner_processor.pull_year_banners(year)
+        banner_batch = await self.banner_processor.pull_year_banners(year)
 
         # Submit the results to supabase.
         res = await self.supabase_api.insert_batch(banner_batch, "BlueBanner")
