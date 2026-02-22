@@ -10,7 +10,6 @@ jobs:
   
   # Load all the blue banners that have been won since the current year.
   load_blue_banners:
-    name: Load Blue Banners
     timeout-minutes: 30
     uses: ./.github/workflows/run_python.yaml
     secrets: inherit
@@ -20,7 +19,6 @@ jobs:
 
   # Load all the events and update their data.
   load_event_data:
-    name: Load Event Data
     needs: [load_blue_banners]
     timeout-minutes: 30
     uses: ./.github/workflows/run_python.yaml
@@ -31,7 +29,6 @@ jobs:
   
   # Refresh the team information in case it has changed. Also update the team data.
   load_team_data:
-    name: Load Team Data
     needs: [load_blue_banners]
     timeout-minutes: 30
     uses: ./.github/workflows/run_python.yaml
