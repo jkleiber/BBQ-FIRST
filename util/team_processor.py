@@ -1,6 +1,5 @@
 
-import traceback
-from joblib import Parallel, delayed
+import asyncio
 
 from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
 from tba_api import TheBlueAllianceAPI
@@ -21,7 +20,10 @@ class TeamProcessor:
         self.team_retry_status = {}
         self.max_retries = max_retries
 
-    def load_all_team_info(self, verbose=True) -> dict:
+        # Limit the number of jobs that can run at once.
+        self.sem = asyncio.Semaphore(n_jobs)
+
+    async def load_all_team_info(self, verbose=True) -> dict:
         """
         Function to load all the team information. The reason we typically load all the teams is 
         because veteran-rookie teams can sometimes claim numbers that are earlier than 
@@ -42,7 +44,7 @@ class TeamProcessor:
                 break
 
             # Push the batch to supabase.
-            res = self.supabase_api.upsert_batch(team_batch, "Team")
+            res = await self.supabase_api.upsert_batch(team_batch, "Team")
 
             # Track information for the report.
             report[str(page_idx)] = res
@@ -72,7 +74,7 @@ class TeamProcessor:
 
         return self.team_queue
 
-    def _get_banners(self, team_number, banner_type):
+    async def _get_banners(self, team_number, banner_type):
         bb_filter = [
             {
                 "column": "team_number",
@@ -86,7 +88,7 @@ class TeamProcessor:
             }
         ]
 
-        banners = self.supabase_api.get_data('BlueBanner',
+        banners = await self.supabase_api.get_data('BlueBanner',
                                              'event_id, type, team_number, id_string, season, Event!inner(event_id, year)',
                                              bb_filter)
         banners_dict = banners.model_dump()
@@ -95,14 +97,18 @@ class TeamProcessor:
             blue_banners = banners_dict['data']
 
         return blue_banners
+    
+    async def throttled_compute(self, team, current_year, team_data_queue, cur_week, max_official_week):
+        async with self.sem:
+            await self.compute_single_team_data(team, current_year, team_data_queue, cur_week, max_official_week)
 
-    def load_team_data(self, current_year: float, cur_week: float, max_official_week: int, verbose=False) -> dict:
+    async def load_team_data(self, current_year: float, cur_week: float, max_official_week: int, verbose=False) -> dict:
         report = []
 
         self.team_attempt_queue = []
 
         # Load all the team information available.
-        team_data = self.supabase_api.get_paged_data("Team", "team_number, rookie_year", order_info={
+        team_data = await self.supabase_api.get_paged_data("Team", "team_number, rookie_year", order_info={
                                                      'column': 'team_number', 'desc': False})
 
         # Load up the team attempt queue.
@@ -126,8 +132,11 @@ class TeamProcessor:
             # Compute team statistics in parallel, since this is a time-costly operation to do sequentially.
             # Use the threading backend to ensure class member variables are actually updated.
             team_attempt_slice = self.team_attempt_queue[0:slice_max_index]
-            Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_single_team_data)(team, current_year, team_data_queue, cur_week, max_official_week)
-                                                              for team in team_attempt_slice)
+            tasks = [
+                self.throttled_compute(team, current_year, team_data_queue, cur_week, max_official_week)
+                for team in team_attempt_slice
+            ]
+            await asyncio.gather(*tasks)
 
             # Pop all the successfully processed teams from the team attempt queue.
             i = 0
@@ -144,14 +153,14 @@ class TeamProcessor:
                 iterations += 1
 
             # # Upsert the data.
-            res_info = self.supabase_api.upsert_batch(team_data_queue, "TeamData")
+            res_info = await self.supabase_api.upsert_batch(team_data_queue, "TeamData")
             report.append(res_info)
 
             print(f"# Teams remaining: {len(self.team_attempt_queue)}")
 
         return report
 
-    def compute_single_team_data(self, team: dict, current_year: int, team_data_queue: list, cur_week: float, max_official_week: int):
+    async def compute_single_team_data(self, team: dict, current_year: int, team_data_queue: list, cur_week: float, max_official_week: int):
         robot_bbq = 0
         team_bbq = 0
         robot_sauce = 0
@@ -180,14 +189,14 @@ class TeamProcessor:
 
             # Get all robot and team awards separately
             try:
-                robot_banners = self._get_banners(team_number, "Robot")
+                robot_banners = await self._get_banners(team_number, "Robot")
             except Exception as e:
                 print(f"{type(e).__name__} occurred for team {team}")
                 self.request_retry_team(team)
                 return
             
             try:
-                team_banners = self._get_banners(team_number, "Team")
+                team_banners = await self._get_banners(team_number, "Team")
             except Exception as e:
                 print(f"{type(e).__name__} occurred for team {team}")
                 self.request_retry_team(team)

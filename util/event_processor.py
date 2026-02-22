@@ -1,6 +1,7 @@
 
 
-from joblib import Parallel, delayed
+import asyncio
+
 from supabase_api import SupabaseAPI
 from tba_api import TheBlueAllianceAPI
 from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
@@ -20,10 +21,18 @@ class EventProcessor:
         self.event_queue = []
         self.event_data_queue = []
 
+        # Appearances
+        self.appearance_queue = []
+        self.appearance_delete_queue = []
+
         # Timing information for all loaded years.
         self.max_week_of_year = {}
         self.max_date_of_year = {}
         self.min_date_of_year = {}
+
+        # Limit the number of jobs that can run at once.
+        self.sem = asyncio.Semaphore(n_jobs)
+
 
     def load_year_event_info(self, year: int):
         year_events_data = self.tba_api.get_data(f"/events/{year}")
@@ -77,7 +86,7 @@ class EventProcessor:
 
         return (start_date, end_date, end_week)
 
-    def get_prior_banners(self, start_date, event_id: str, team_number: int, banner_type: str):
+    async def get_prior_banners(self, start_date, event_id: str, team_number: int, banner_type: str):
         # Only consider blue banners won by this team at earlier events to this one.
         # Some events feed into other events, and give awards on the same day (i.e. Championship divisions
         # award blue banners the same day that Einstein does). To handle these scenarios, we must check
@@ -109,7 +118,7 @@ class EventProcessor:
         # (Event.start_date < event start date), the "!inner" hint is needed. Without this
         # hint, the query will return all BlueBanners won by a team with "Event: None"
         # rather than applying the correct filter.
-        banners = self.supabase_api.get_data('BlueBanner',
+        banners = await self.supabase_api.get_data('BlueBanner',
                                              'event_id, type, team_number, id_string, Event!inner(event_id, start_date, year)',
                                              bb_filter)
         banners_dict = banners.model_dump()
@@ -119,7 +128,7 @@ class EventProcessor:
 
         return team_blue_banners
 
-    def compute_event_statistics(self, event_info: dict):
+    async def compute_event_statistics(self, event_info: dict):
         event_id = event_info['event_id']
         event_teams_data = self.tba_api.get_data(f"/event/{event_id}/teams")
 
@@ -169,7 +178,6 @@ class EventProcessor:
         team_briquette = 0
         robot_ribs = 0
         team_ribs = 0
-        appearances = []
         try:
             for team in event_teams_data.json():
                 n_teams += 1
@@ -181,13 +189,13 @@ class EventProcessor:
                     'team_number': team_number,
                     'event_id': event_id
                 }
-                appearances.append(appearance)
+                self.appearance_queue.append(appearance)
 
                 # Get the blue banners won by this particular team prior to this event's start,
                 # and use that to aggregate the various stats.
-                robot_banners = self.get_prior_banners(
+                robot_banners = await self.get_prior_banners(
                     event_info['start_date'], event_id, team_number, "Robot")
-                team_banners = self.get_prior_banners(
+                team_banners = await self.get_prior_banners(
                     event_info['start_date'], event_id, team_number, "Team")
 
                 # BBQ
@@ -226,19 +234,17 @@ class EventProcessor:
                 # Delete all teams from the attendance list. This allows event
                 # appearances to be completely refreshed later when the appearance
                 # queue is upserted.
-                appearance_filter = [{
+                appearance_filter = {
                     "column": "event_id",
                     "value": event_id,
                     "operation": "eq"
-                }]
-                self.supabase_api.delete_rows("Appearance", appearance_filter)
+                }
+                self.appearance_delete_queue.append(appearance_filter)
 
-                # Update appearances for each event in order to avoid events being momentarily blank.
-                _ = self.supabase_api.upsert_batch(appearances, "Appearance")
         except Exception as e:
-            # If there is an error, just keep going.
-            # We will set the event data to 0.
-            pass
+            print(e)
+            # If there is an error, ignore this event.
+            return
 
         # Create an EventData item.
         event_data = {
@@ -252,26 +258,40 @@ class EventProcessor:
             "robot_ribs": robot_ribs,
             "team_ribs": team_ribs
         }
+        print(event_data)
         self.event_data_queue.append(event_data)
 
-    def compute_event_queue_statistics(self):
-        # Compute event statistics in parallel, since this is a time-costly operation to do sequentially.
-        # Use the threading backend to ensure self.event_queue is actually updated.
-        Parallel(n_jobs=self.n_jobs, backend="threading")(delayed(self.compute_event_statistics)(event)
-                                                          for event in self.event_queue)
+    async def throttled_compute(self, event):
+        async with self.sem:
+            await self.compute_event_statistics(event)
 
-    def load_year_events(self, year, update_data=True):
+    async def compute_event_queue_statistics(self):
+        # Compute event statistics in parallel, since this is a time-costly operation to do sequentially.
+        tasks = [
+                self.throttled_compute(event)
+                for event in self.event_queue
+            ]
+        await asyncio.gather(*tasks)
+        
+        if len(self.appearance_delete_queue) > 0:
+            await self.supabase_api.delete_rows("Appearance", self.appearance_delete_queue)
+        
+        # Update appearances for each event in order to avoid events being momentarily blank.
+        if len(self.appearance_queue) > 0: 
+            _ = await self.supabase_api.upsert_batch(self.appearance_queue, "Appearance")
+
+    async def load_year_events(self, year, update_data=True):
         # First load the event info.
         self.load_year_event_info(year)
 
         # Submit the results to supabase.
-        res_info = self.supabase_api.upsert_batch(self.event_queue, "Event")
+        res_info = await self.supabase_api.upsert_batch(self.event_queue, "Event")
 
         # Compute event statistics for the items in the event queue.
         res_data = {}
         if update_data:
-            self.compute_event_queue_statistics()
-            res_data = self.supabase_api.upsert_batch(self.event_data_queue, "EventData")
+            await self.compute_event_queue_statistics()
+            res_data = await self.supabase_api.upsert_batch(self.event_data_queue, "EventData")
 
         # Clear the event queue to avoid spamming the same events repeatedly.
         self.clear_queues()
@@ -281,3 +301,6 @@ class EventProcessor:
     def clear_queues(self):
         self.event_queue.clear()
         self.event_data_queue.clear()
+        self.appearance_queue.clear()
+        self.appearance_delete_queue.clear()
+

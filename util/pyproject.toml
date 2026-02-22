@@ -1,21 +1,9 @@
-[tool.poetry]
-name = "bbq-first-util"
+[project]
+name = "bbq_first_util"
 version = "0.1.0"
-description = "Utilities for BBQ FIRST data"
-authors = ["Justin Kleiber <jkleiber8@gmail.com>"]
-license = "MIT"
+description = "Scripts for updating BBQ FIRST"
 readme = "README.md"
-packages = [{ include = "bbq_first_util" }]
-
-[tool.poetry.dependencies]
-python = "^3.13"
-joblib = "^1.3.2"
-requests = "^2.32.4"
-supabase = "^2.25.1"
-websockets = "^15.0.1"
-httpcore = "^1.0.9"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires-python = ">=3.13"
+dependencies = [
+    "supabase>=2.28.0",
+]

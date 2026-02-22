@@ -1,4 +1,5 @@
 
+import asyncio
 import datetime
 
 from credentials import CredentialManager
@@ -17,6 +18,7 @@ class DataLoader:
         # Initialize the supabase API, used later to submit data to the database.
         supabase_api_info = cred_manager.get_credential("supabase")
         self.supabase_api = SupabaseAPI(supabase_api_info)
+        asyncio.run(self.supabase_api.login())
 
         # Initialize the Blue Alliance API, used to pull competition/team/award information.
         self.tba_api = TheBlueAllianceAPI(tba_api_info['base_url'], tba_api_info['api_key'])
@@ -30,17 +32,13 @@ class DataLoader:
         today = datetime.date.today()
         self.cur_year = today.year
 
-    def __del__(self):
-        # Close the supabase connection if this gets destructed. Done to prevent process from hanging the terminal.
-        self.close()
+    async def load_all_banners(self):
+        return await self.load_banners_since(1992)
 
-    def load_all_banners(self):
-        return self.load_banners_since(1992)
+    async def load_banners_since_current_year(self):
+        return await self.load_banners_since(self.cur_year)
 
-    def load_banners_since_current_year(self):
-        return self.load_banners_since(self.cur_year)
-
-    def load_banners_since(self, start_year: int):
+    async def load_banners_since(self, start_year: int):
         # Load all banners for all time up to the current year + 1.
         # Submit data to the database each year and report success/failure.
         report = {}
@@ -48,7 +46,7 @@ class DataLoader:
             banner_batch = self.banner_processor.pull_year_banners(year)
 
             # Submit the results to supabase.
-            res = self.supabase_api.insert_batch(banner_batch, "BlueBanner")
+            res = await self.supabase_api.insert_batch(banner_batch, "BlueBanner")
 
             print(f"{year} - # Success: {res['num_success']}, # Fail: {res['num_fail']}")
             report[str(year)] = res
@@ -58,23 +56,23 @@ class DataLoader:
 
         return report
 
-    def load_year_banners(self, year: int):
+    async def load_year_banners(self, year: int):
         banner_batch = self.banner_processor.pull_year_banners(year)
 
         # Submit the results to supabase.
-        res = self.supabase_api.insert_batch(banner_batch, "BlueBanner")
+        res = await self.supabase_api.insert_batch(banner_batch, "BlueBanner")
         return res
 
-    def load_year_events(self, year: int, update_event_data=True):
-        res = self.event_processor.load_year_events(year, update_data=update_event_data)
+    async def load_year_events(self, year: int, update_event_data=True):
+        res = await self.event_processor.load_year_events(year, update_data=update_event_data)
         return res
 
-    def load_events_since(self, start_year: int, update_event_data=True):
+    async def load_events_since(self, start_year: int, update_event_data=True):
         report = []
         # Use cur_year + 2 to be able to capture 1 year in the future (useful in the fall).
         for year in range(start_year, self.cur_year+2):
             print(f"Loading {year} events...")
-            year_report = self.load_year_events(year, update_event_data)
+            year_report = await self.load_year_events(year, update_event_data)
             report.append(year_report)
 
         return report
@@ -111,10 +109,10 @@ class DataLoader:
 
         return self.team_processor.load_team_data(self.cur_year, cur_week, num_weeks)
 
-    def close(self):
+    async def close(self) -> None:
         try:
             # Log out of supabase. If we don't do this, then the program will never end.
-            self.supabase_api.logout()
+            await self.supabase_api.logout()
         except Exception as e:
             # HACK: If there's an error, just print the exception and proceed.
             # This is a quick way of allowing the script to close in the event of
