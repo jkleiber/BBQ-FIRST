@@ -3,7 +3,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '00 9 * * *' # once a day at 9:00 AM UTC / 4:00 AM EST
-  
+
+# Limit the GITHUB_TOKEN to reading the repository, which is all the data update jobs need (to check out the code).
+permissions:
+  contents: read
+
 jobs:
   # Load all the blue banners that have been won since the current year.
   load_blue_banners:
