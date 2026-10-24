@@ -46,9 +46,9 @@ class DataLoader:
             banner_batch = await self.banner_processor.pull_year_banners(year)
 
             # Submit the results to supabase.
-            res = await self.supabase_api.insert_batch(banner_batch, "BlueBanner")
+            res = await self.supabase_api.insert_new_batch(banner_batch, "BlueBanner", on_conflict="id_string")
 
-            print(f"{year} - # Success: {res['num_success']}, # Fail: {res['num_fail']}")
+            print(f"{year} - # New: {res['num_new']}, # Fail: {res['num_fail']}")
             report[str(year)] = res
 
             # Clear the banner queue to avoid repeatedly sending duplicates (that ultimately get rejected by supabase).
@@ -60,7 +60,7 @@ class DataLoader:
         banner_batch = await self.banner_processor.pull_year_banners(year)
 
         # Submit the results to supabase.
-        res = await self.supabase_api.insert_batch(banner_batch, "BlueBanner")
+        res = await self.supabase_api.insert_new_batch(banner_batch, "BlueBanner", on_conflict="id_string")
         return res
 
     async def load_year_events(self, year: int, update_event_data=True):
