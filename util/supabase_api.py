@@ -130,7 +130,8 @@ class SupabaseAPI:
         - operation: the type of filter operation (eq, neq, lt, lte)
         """
         # Automatically handle the page limiting of supabase select.
-        row_count_response = await self.supabase_client.table(table).select(columns, count='exact').execute()
+        # Use head=True so only the row count is returned, not the rows themselves.
+        row_count_response = await self.supabase_client.table(table).select(columns, count='exact', head=True).execute()
         n_rows = int(row_count_response.model_dump()['count'])
         n_pages = int(math.ceil(n_rows / MAX_ROWS_PER_REQUEST))
 
