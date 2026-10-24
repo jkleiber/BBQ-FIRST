@@ -1,6 +1,7 @@
 
 import asyncio
 
+from banner_cache import load_banners_by_team
 from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
 from tba_api import TheBlueAllianceAPI
 from supabase_api import SupabaseAPI, MAX_ROWS_PER_REQUEST
@@ -19,6 +20,9 @@ class TeamProcessor:
         self.team_attempt_queue = []
         self.team_retry_status = {}
         self.max_retries = max_retries
+
+        # All blue banners grouped by (team_number, type). Loaded once per team data run.
+        self.banners_by_team = {}
 
         # Limit the number of jobs that can run at once.
         self.sem = asyncio.Semaphore(n_jobs)
@@ -74,29 +78,8 @@ class TeamProcessor:
 
         return self.team_queue
 
-    async def _get_banners(self, team_number, banner_type):
-        bb_filter = [
-            {
-                "column": "team_number",
-                "value": team_number,
-                "operation": "eq"
-            },
-            {
-                "column": "type",
-                "value": banner_type,
-                "operation": "eq"
-            }
-        ]
-
-        banners = await self.supabase_api.get_data('BlueBanner',
-                                             'event_id, type, team_number, id_string, season, Event!inner(event_id, year)',
-                                             bb_filter)
-        banners_dict = banners.model_dump()
-        blue_banners = []
-        if "data" in banners_dict:
-            blue_banners = banners_dict['data']
-
-        return blue_banners
+    def _get_banners(self, team_number, banner_type):
+        return self.banners_by_team.get((team_number, banner_type), [])
     
     async def throttled_compute(self, team, current_year, team_data_queue, cur_week, max_official_week):
         async with self.sem:
@@ -106,6 +89,9 @@ class TeamProcessor:
         report = []
 
         self.team_attempt_queue = []
+
+        # Load all the blue banners up front rather than querying them for each team.
+        self.banners_by_team = await load_banners_by_team(self.supabase_api)
 
         # Load all the team information available.
         team_data = await self.supabase_api.get_paged_data("Team", "team_number, rookie_year", order_info={
@@ -188,19 +174,8 @@ class TeamProcessor:
                 sauce_duration = team_duration
 
             # Get all robot and team awards separately
-            try:
-                robot_banners = await self._get_banners(team_number, "Robot")
-            except Exception as e:
-                print(f"{type(e).__name__} occurred for team {team}")
-                self.request_retry_team(team)
-                return
-            
-            try:
-                team_banners = await self._get_banners(team_number, "Team")
-            except Exception as e:
-                print(f"{type(e).__name__} occurred for team {team}")
-                self.request_retry_team(team)
-                return
+            robot_banners = self._get_banners(team_number, "Robot")
+            team_banners = self._get_banners(team_number, "Team")
 
             # TODO: Team BBQ and SAUCE are banners per season metrics, and really should be computed
             # based on active seasons only. However, that has been skipped for simplicity in the current

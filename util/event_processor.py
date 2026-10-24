@@ -2,6 +2,7 @@
 
 import asyncio
 
+from banner_cache import load_banners_by_team
 from supabase_api import SupabaseAPI
 from tba_api import TheBlueAllianceAPI
 from bbq_stats import compute_bbq_contribution, compute_sauce_contribution, compute_rolling_contribution
@@ -29,6 +30,9 @@ class EventProcessor:
         self.max_week_of_year = {}
         self.max_date_of_year = {}
         self.min_date_of_year = {}
+
+        # All blue banners grouped by (team_number, type). Loaded lazily once per run.
+        self.banners_by_team = None
 
         # Limit the number of jobs that can run at once.
         self.sem = asyncio.Semaphore(n_jobs)
@@ -86,45 +90,18 @@ class EventProcessor:
 
         return (start_date, end_date, end_week)
 
-    async def get_prior_banners(self, start_date, event_id: str, team_number: int, banner_type: str):
+    def get_prior_banners(self, start_date, event_id: str, team_number: int, banner_type: str):
         # Only consider blue banners won by this team at earlier events to this one.
         # Some events feed into other events, and give awards on the same day (i.e. Championship divisions
         # award blue banners the same day that Einstein does). To handle these scenarios, we must check
         # that an event associated with a blue banner has an earlier start date than the current event.
-        bb_filter = [
-            {
-                "column": "team_number",
-                "value": team_number,
-                "operation": "eq"
-            },
-            {
-                "column": "type",
-                "value": banner_type,
-                "operation": "eq"
-            },
-            {
-                "column": "Event.start_date",
-                "value": start_date,
-                "operation": "lt"
-            },
-            {
-                "column": "event_id",
-                "value": event_id,
-                "operation": "neq"
-            }
+        # Dates are ISO formatted (YYYY-MM-DD) strings, so they can be compared directly.
+        team_blue_banners = [
+            banner for banner in self.banners_by_team.get((team_number, banner_type), [])
+            if banner['event_id'] != event_id
+            and banner['Event']['start_date'] is not None
+            and banner['Event']['start_date'] < start_date
         ]
-
-        # In order to filter out the BlueBanner rows based on the foreign key constraints
-        # (Event.start_date < event start date), the "!inner" hint is needed. Without this
-        # hint, the query will return all BlueBanners won by a team with "Event: None"
-        # rather than applying the correct filter.
-        banners = await self.supabase_api.get_data('BlueBanner',
-                                             'event_id, type, team_number, id_string, Event!inner(event_id, start_date, year)',
-                                             bb_filter)
-        banners_dict = banners.model_dump()
-        team_blue_banners = []
-        if 'data' in banners_dict:
-            team_blue_banners = banners_dict['data']
 
         return team_blue_banners
 
@@ -193,9 +170,9 @@ class EventProcessor:
 
                 # Get the blue banners won by this particular team prior to this event's start,
                 # and use that to aggregate the various stats.
-                robot_banners = await self.get_prior_banners(
+                robot_banners = self.get_prior_banners(
                     event_info['start_date'], event_id, team_number, "Robot")
-                team_banners = await self.get_prior_banners(
+                team_banners = self.get_prior_banners(
                     event_info['start_date'], event_id, team_number, "Team")
 
                 # BBQ
@@ -290,6 +267,10 @@ class EventProcessor:
         # Compute event statistics for the items in the event queue.
         res_data = {}
         if update_data:
+            # Banners don't change while events are processed, so load them once and reuse them across years.
+            if self.banners_by_team is None:
+                self.banners_by_team = await load_banners_by_team(self.supabase_api)
+
             await self.compute_event_queue_statistics()
             res_data = await self.supabase_api.upsert_batch(self.event_data_queue, "EventData")
 

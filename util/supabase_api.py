@@ -26,20 +26,39 @@ class SupabaseAPI:
         self.supabase_user = await self.supabase_client.auth.sign_in_with_password(
             {"email": self.supabase_credentials['email'], "password": self.supabase_credentials['pass']})
 
-    async def insert_batch(self, batch: list, table: str):
+    async def insert_new_batch(self, batch: list, table: str, on_conflict: str):
+        """
+        Insert rows that don't exist yet, skipping rows that conflict on the on_conflict column(s).
+        Skipped rows don't raise errors, which avoids filling the logs with duplicate key violations.
+
+        The batch is sent in a single request. If that fails (i.e. a single bad row), fall back to
+        one request per row so the valid rows are still inserted.
+        """
+        if len(batch) == 0:
+            return {"num_new": 0, "num_fail": 0}
+
+        try:
+            res = await self.supabase_client.table(table).upsert(
+                batch, on_conflict=on_conflict, ignore_duplicates=True).execute()
+            # Only the newly inserted rows are returned.
+            return {"num_new": len(res.data), "num_fail": 0}
+        except Exception as e:
+            print(f"Batch insert into {table} failed, retrying row by row: {e}")
+
         # Keep track of the cases that succeed vs fail in order to report to the user if there are problems.
-        success_cases = 0
+        new_cases = 0
         fail_cases = 0
 
         for item in batch:
             try:
-                await self.supabase_client.table(table).insert(item).execute()
-                success_cases += 1
+                res = await self.supabase_client.table(table).upsert(
+                    item, on_conflict=on_conflict, ignore_duplicates=True).execute()
+                new_cases += len(res.data)
             except Exception as e:
                 print(f"FAIL: {item}")
                 fail_cases += 1
 
-        return {"num_success": success_cases, "num_fail": fail_cases}
+        return {"num_new": new_cases, "num_fail": fail_cases}
 
     async def upsert_batch_iterative(self, batch: list, table: str):
         """
@@ -130,7 +149,8 @@ class SupabaseAPI:
         - operation: the type of filter operation (eq, neq, lt, lte)
         """
         # Automatically handle the page limiting of supabase select.
-        row_count_response = await self.supabase_client.table(table).select(columns, count='exact').execute()
+        # Use head=True so only the row count is returned, not the rows themselves.
+        row_count_response = await self.supabase_client.table(table).select(columns, count='exact', head=True).execute()
         n_rows = int(row_count_response.model_dump()['count'])
         n_pages = int(math.ceil(n_rows / MAX_ROWS_PER_REQUEST))
 
