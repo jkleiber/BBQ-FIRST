@@ -29,3 +29,19 @@ jobs:
     secrets: inherit
     with:
       run_command: python main.py team --team_mode=full
+
+  # Redeploy the site so the static search index (built by vite.config.js) includes new teams and events.
+  # Requires a Vercel deploy hook URL stored in the VERCEL_DEPLOY_HOOK_URL secret; skipped if it isn't set.
+  redeploy_site:
+    needs: [load_event_data, load_team_data]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        env:
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$VERCEL_DEPLOY_HOOK_URL" ]; then
+            echo "VERCEL_DEPLOY_HOOK_URL is not set, skipping redeploy."
+            exit 0
+          fi
+          curl --fail -sS -X POST "$VERCEL_DEPLOY_HOOK_URL"
