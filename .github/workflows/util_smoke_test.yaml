@@ -1,0 +1,47 @@
+name: 'Data Update Smoke Test'
+on:
+  # Runs on any change to the data update scripts or their dependencies (including dependabot PRs).
+  pull_request:
+    paths:
+      - 'util/**'
+      - '.github/workflows/util_smoke_test.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'util/**'
+      - '.github/workflows/util_smoke_test.yaml'
+  workflow_dispatch:
+
+# The smoke test only needs to check out the code.
+permissions:
+  contents: read
+
+jobs:
+  smoke_test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ./util
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: "util/.python-version"
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+
+      # Runs the nightly data update commands against a fake TBA + supabase backend (see util/tests/).
+      # No credentials are needed, so this also works on dependabot and fork PRs.
+      - name: Run smoke test
+        run: uv run pytest -v
