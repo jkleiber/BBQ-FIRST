@@ -35,6 +35,8 @@ jobs:
   redeploy_site:
     needs: [load_event_data, load_team_data]
     runs-on: ubuntu-latest
+    # This job only calls the deploy hook, so it doesn't need any GITHUB_TOKEN permissions.
+    permissions: {}
     steps:
       - name: Trigger Vercel deploy hook
         env:
