@@ -3,7 +3,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '00 9 * * *' # once a day at 9:00 AM UTC / 4:00 AM EST
-  
+
+# Limit the GITHUB_TOKEN to reading the repository, which is all the data update jobs need (to check out the code).
+permissions:
+  contents: read
+
 jobs:
   # Load all the blue banners that have been won since the current year.
   load_blue_banners:
@@ -29,3 +33,21 @@ jobs:
     secrets: inherit
     with:
       run_command: python main.py team --team_mode=full
+
+  # Redeploy the site so the static search index (built by vite.config.js) includes new teams and events.
+  # Requires a Vercel deploy hook URL stored in the VERCEL_DEPLOY_HOOK_URL secret; skipped if it isn't set.
+  redeploy_site:
+    needs: [load_event_data, load_team_data]
+    runs-on: ubuntu-latest
+    # This job only calls the deploy hook, so it doesn't need any GITHUB_TOKEN permissions.
+    permissions: {}
+    steps:
+      - name: Trigger Vercel deploy hook
+        env:
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$VERCEL_DEPLOY_HOOK_URL" ]; then
+            echo "VERCEL_DEPLOY_HOOK_URL is not set, skipping redeploy."
+            exit 0
+          fi
+          curl --fail -sS -X POST "$VERCEL_DEPLOY_HOOK_URL"

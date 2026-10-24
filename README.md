@@ -4,6 +4,9 @@ BBQ FIRST was started in 2015 as a way to track FIRST Robotics Competition (FRC)
 
 In lieu of a software architecture document (work in progress): The current website uses the Vue.js framework with Vite as the local development server. The public site is hosted on vercel. The database and any backend services are on supabase. Python is used to periodically update the data, as managed by Github Actions.
 
+More detailed documentation for specific parts of the project can be found in the [docs](docs/) folder:
+- [Search Index](docs/search-index.md): how the search autocomplete data is generated and served, and how to set up the Vercel deploy hook that keeps it up to date.
+
 ## Roadmap
 
 Github milestones are the best way to get visibility into the project roadmap at this time. If you have an idea for a feature, please make a Github issue so it can be added to the appropriate milestone!

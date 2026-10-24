@@ -1,15 +1,11 @@
 <script setup>
 
-import MainPageHeader from '@/components/MainPageHeader.vue';
-
 import SearchBar from '@/components/SearchBar.vue';
 
 import { loadSearchData } from '@/lib/search/bbq-autocomplete.js';
 </script>
 
 <template>
-    <MainPageHeader :search-visible="true"></MainPageHeader>
-
     <div class="main-content">
         <div class="search-title-container">
             <img src="@/assets/bbqcode.gif" width="32" height="32" />

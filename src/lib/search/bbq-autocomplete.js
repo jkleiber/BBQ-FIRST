@@ -1,6 +1,39 @@
 
 
 import { supabase } from '@/lib/supabase-client';
+import { buildSearchIndex } from '@/lib/search/search-index';
+
+// The search index is shared by every search bar, so it is only loaded once per page load.
+let searchIndexPromise = null;
+
+export function getSearchIndex() {
+    if (searchIndexPromise === null) {
+        searchIndexPromise = fetchSearchIndex().catch((error) => {
+            // Clear the failed request so the next search bar can retry.
+            searchIndexPromise = null;
+            throw error;
+        });
+    }
+
+    return searchIndexPromise;
+}
+
+async function fetchSearchIndex() {
+    // Prefer the static index generated at build time (see vite.config.js), which avoids supabase egress.
+    try {
+        const response = await fetch('/search-index.json');
+
+        // In dev the file doesn't exist and the server responds with index.html instead.
+        if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
+            return await response.json();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+    // Fall back to building the index from the database.
+    return await buildSearchIndex(supabase);
+}
 
 export function initSearchDataStructure() {
     return {
@@ -24,8 +57,16 @@ export function initSearchDataStructure() {
 
 export async function loadSearchData(online, searchData, searchCategories) {
     if (online) {
-        await loadTeams(searchCategories.teams, searchData);
-        await loadEvents(searchCategories.events, searchData);
+        let searchIndex;
+        try {
+            searchIndex = await getSearchIndex();
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
+        loadTeams(searchIndex.teams, searchCategories.teams, searchData);
+        loadEvents(searchIndex.events, searchCategories.events, searchData);
     } else {
         // Offline mode is for debugging only. This is especially useful when you 
         // are on an airplane and don't have WiFi, or if you want to carry out your 
@@ -35,36 +76,7 @@ export async function loadSearchData(online, searchData, searchCategories) {
     }
 }
 
-export async function loadTableData(table, columnString) {
-    // Get the number of teams in the database.
-    const { data, count } = await supabase.from(table).select(columnString, { count: 'exact', head: true });
-
-    // Supabase paginates requests at 1000 rows, so we will make multiple calls in order to collect all the team data.
-    const rowsPerRequest = 1000;
-    let numTotalRows = count;
-    let numPages = Math.ceil(numTotalRows / rowsPerRequest);
-    let queryResult = [];
-
-    for (let i = 0; i < numPages; i++) {
-        let startIndex = i * rowsPerRequest;
-        const { data, error } = await supabase.from(table).select(columnString).range(startIndex, startIndex + rowsPerRequest);
-
-        if (error) {
-            console.log(error);
-            break;
-        }
-
-        for (let j = 0; j < data.length; j++) {
-            queryResult.push(data[j]);
-        }
-    }
-
-    return queryResult;
-}
-
-export async function loadTeams(categoryIndex, searchData) {
-    let allTeams = await loadTableData("Team", "*");
-
+export function loadTeams(allTeams, categoryIndex, searchData) {
     for (let i = 0; i < allTeams.length; i++) {
         let teamItem = {
             "label": allTeams[i].team_number + " - " + allTeams[i].nickname,
@@ -74,9 +86,7 @@ export async function loadTeams(categoryIndex, searchData) {
     }
 }
 
-export async function loadEvents(categoryIndex, searchData) {
-    let allEvents = await loadTableData("Event", "*");
-
+export function loadEvents(allEvents, categoryIndex, searchData) {
     for (let i = 0; i < allEvents.length; i++) {
         let eventItem = {
             "label": allEvents[i].event_id + " - " + allEvents[i].year + " " + allEvents[i].name,
